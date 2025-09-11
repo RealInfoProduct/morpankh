@@ -1,0 +1,142 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content class="p-24">
+      <div class="row justify-content-between">
+        <div class="col-lg-4">
+          <mat-form-field appearance="outline" class="w-100 hide-hint">
+            <input matInput placeholder="{{'productMaster.SearchProduct' | translate}}" (keyup)="applyFilter($any($event.target).value)" />
+            <mat-icon matSuffix>
+              <i-tabler name="search" class="icon-20"></i-tabler>
+            </mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-4 d-flex align-items-center justify-content-end">
+          <button mat-flat-button color="primary" (click)="addParty('Add', {})">
+           Rent Order
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="cardWithShadow" >
+    <mat-card-content class="p-24">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="rentDataSource" class="w-100">
+          <ng-container matColumnDef="orderno">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
+            <td mat-cell *matCellDef="let element;let i = index" class= "f-s-12">{{i + 1}}</td>
+          </ng-container>
+  
+          <ng-container matColumnDef="porduct">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Porduct</th>
+            <!-- {{ element.rentProducts?.productNumber }} - {{ element.rentProducts?.productName }} -->
+            <td mat-cell *matCellDef="let element" class= "f-s-12 color-blue cursor-pointer" (click)="addParty('Edit', element)">{{getProductnumberName(element)}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="customername">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Customer</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.customerName}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="pickupdate">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pickup</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.pickupDateTime.toDate() | date:'dd/MM/yyyy hh:mm a'}}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="returndate">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Return</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.returnDateTime.toDate() | date:'dd/MM/yyyy hh:mm a'}}</td>
+          </ng-container>
+
+          <!-- <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.status}}</td>
+          </ng-container> -->
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
+            <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+              <div *ngIf="editingRowId !== element.id"
+                  class="status-text f-s-12"
+                  (click)="enableEdit(element.id); $event.stopPropagation()">
+                {{ element.status || 'Select Status' }}
+              </div>
+
+              <div *ngIf="editingRowId === element.id"
+                  class="status-dropdown"
+                  (click)="$event.stopPropagation()">
+                <mat-form-field appearance="fill" class="w-100">
+                  <mat-select [value]="element.status"
+                              (selectionChange)="saveStatus(element, $event.value)"
+                              autofocus>
+                    <mat-option value="Pending">Pending</mat-option>
+                    <mat-option value="Completed">Completed</mat-option>
+                    <mat-option value="Cancelled">Cancelled</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </td>
+          </ng-container>
+
+
+
+          <ng-container matColumnDef="mobileno">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Mobile No.</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.mobileNumber}}</td>
+          </ng-container>
+
+           <ng-container matColumnDef="rent">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Rent</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.rent}}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="advance">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Advance</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.advance}}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="deposite">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Deposite</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.deposite}}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="return">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Return</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.returnAmount}}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="orderdate">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Order</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.orderDate.toDate() | date:'dd/MM/yyyy'}}</td>
+          </ng-container>
+          
+          <ng-container matColumnDef="aadharCard">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Aadhar No</th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.aadharCard}}</td>
+          </ng-container>
+  
+    
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">
+              {{'productMaster.Action' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let element" class= "f-s-12" class="action-link">
+              <!-- <a class="m-r-10 cursor-pointer"><i-tabler name="edit" (click)="addParty('Edit', element)"
+                  class="icon-18"></i-tabler></a> -->
+              <a class="m-r-10 cursor-pointer">
+                <i-tabler name="trash" (click)="addParty('Delete', element)" class="icon-18"></i-tabler>
+              </a>
+            </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+              No record found
+            </td>
+          </tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>

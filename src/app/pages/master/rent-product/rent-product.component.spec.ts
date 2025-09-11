@@ -1,0 +1,21 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { RentProductComponent } from './rent-product.component';
+
+describe('RentProductComponent', () => {
+  let component: RentProductComponent;
+  let fixture: ComponentFixture<RentProductComponent>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [RentProductComponent]
+    });
+    fixture = TestBed.createComponent(RentProductComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

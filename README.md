@@ -1,0 +1,2 @@
+# mystock
+stock management system
