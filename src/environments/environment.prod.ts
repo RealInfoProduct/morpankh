@@ -1,12 +1,12 @@
 export const environment = {
-    production: true,
-     firebaseConfig: {
-         apiKey: "AIzaSyBr3D5XEXzAvU3ScEc1qUk3XZMh9l0He2Q",
-         authDomain: "stock-management-system-4055b.firebaseapp.com",
-         projectId: "stock-management-system-4055b",
-         storageBucket: "stock-management-system-4055b.firebasestorage.app",
-         messagingSenderId: "797719240542",
-         appId: "1:797719240542:web:47f065f2602bc8ccb979cf",
-         measurementId: "G-C1PZBCNG1V"
-      }
+    production: false,
+    firebaseConfig : {
+        apiKey: "AIzaSyC62psNZENcPZi9goa_l_LFy099pmX7a1s",
+        authDomain: "morpankh-7db46.firebaseapp.com",
+        projectId: "morpankh-7db46",
+        storageBucket: "morpankh-7db46.firebasestorage.app",
+        messagingSenderId: "337140811353",
+        appId: "1:337140811353:web:ba43a26350e358af899348",
+        measurementId: "G-LNBCLC8C4D"
+    }
 }

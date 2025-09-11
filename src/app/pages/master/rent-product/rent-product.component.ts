@@ -152,6 +152,7 @@ export class rentproductMasterDialogComponent implements OnInit {
       this.rentproductForm.controls['productNumber'].setValue(this.local_data.productNumber)
       this.rentproductForm.controls['productName'].setValue(this.local_data.productName)
       this.rentproductForm.controls['rent'].setValue(this.local_data.rent)
+      this.rentproductForm.controls['id'].setValue(this.local_data.id)
     }
   }
 
@@ -159,7 +160,8 @@ export class rentproductMasterDialogComponent implements OnInit {
     this.rentproductForm = this.fb.group({
       productNumber: ['',Validators.required],
       productName: ['',Validators.required],
-      rent: ['',Validators.required]
+      rent: ['',Validators.required],
+      id: ['']
     })
   }
 
