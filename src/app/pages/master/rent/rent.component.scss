@@ -1,18 +1,18 @@
 .picker {
-      font-size: 12px;
+  font-size: 12px;
   max-width: 200px;
 }
 
-.m-w-70{
+.m-w-70 {
   min-width: 70px;
 }
 
-.m-w-100{
+.m-w-100 {
   min-width: 100px;
 }
 
-.color-blue{
-      color: blue;
+.color-blue {
+  color: blue;
 }
 
 .status-display {
@@ -22,4 +22,21 @@
 
 .status-select {
   width: 100%;
+}
+
+.color-red {
+  color: red;
+}
+
+
+.status-booked {
+  color: #004085;
+}
+
+.status-in-progress {
+  color: #ffc316;
+}
+
+.status-completed {
+  color: #2fb64f;
 }

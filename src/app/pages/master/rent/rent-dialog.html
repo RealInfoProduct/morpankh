@@ -45,8 +45,18 @@
           <input matInput [ngxMatDatetimePicker]="picker" placeholder="Pickup date & time"
             formControlName="pickupDateTime" required />
           <ngx-mat-datepicker-toggle matSuffix [for]="picker"></ngx-mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepMinute]="30"
-            [touchUi]="true"></ngx-mat-datetime-picker>
+          <ngx-mat-datetime-picker #picker [showSpinners]="true" [enableMeridian]="enableMeridian" [showSeconds]="false" [stepMinute]="30"
+            [touchUi]="true">
+              <ngx-mat-datepicker-actions>
+                <button mat-button ngxMatDatepickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" ngxMatDatepickerApply>
+                    <mat-icon>done</mat-icon> Apply
+                </button>
+            </ngx-mat-datepicker-actions>
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="productForm.get('pickupDateTime')?.hasError('pickupAfterReturn')">
+            Pickup date/time must be before return date/time
+          </mat-error>
         </mat-form-field>
       </div>
       <div class="col-lg-4">
@@ -55,8 +65,18 @@
           <input matInput [ngxMatDatetimePicker]="return" placeholder="Return date & time"
             formControlName="returnDateTime" required />
           <ngx-mat-datepicker-toggle matSuffix [for]="return"></ngx-mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #return [showSpinners]="true" [showSeconds]="false" [stepMinute]="30"
-            [touchUi]="true"></ngx-mat-datetime-picker>
+          <ngx-mat-datetime-picker #return [showSpinners]="true" [enableMeridian]="enableMeridian"  [showSeconds]="false" [stepMinute]="30"
+            [touchUi]="true">
+            <ngx-mat-datepicker-actions>
+                <button mat-button ngxMatDatepickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" ngxMatDatepickerApply>
+                    <mat-icon>done</mat-icon> Apply
+                </button>
+            </ngx-mat-datepicker-actions>
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="productForm.get('returnDateTime')?.hasError('returnBeforePickup')">
+            Return date/time must be after pickup date/time
+          </mat-error>
         </mat-form-field>
       </div>
       <div class="col-lg-4">

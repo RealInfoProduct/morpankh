@@ -28,8 +28,7 @@
   
           <ng-container matColumnDef="porduct">
             <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Porduct</th>
-            <!-- {{ element.rentProducts?.productNumber }} - {{ element.rentProducts?.productName }} -->
-            <td mat-cell *matCellDef="let element" class= "f-s-12 color-blue cursor-pointer" (click)="addParty('Edit', element)">{{getProductnumberName(element)}}</td>
+            <td mat-cell *matCellDef="let element" class= "f-s-12 color-blue cursor-pointer" (click)="addParty('Edit', element)">{{element?.product}}</td>
           </ng-container>
 
           <ng-container matColumnDef="customername">
@@ -54,7 +53,7 @@
 
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
-            <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+            <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()"  [ngClass]="getStatusClass(element.status)">
               <div *ngIf="editingRowId !== element.id"
                   class="status-text f-s-12"
                   (click)="enableEdit(element.id); $event.stopPropagation()">
@@ -68,8 +67,9 @@
                   <mat-select [value]="element.status"
                               (selectionChange)="saveStatus(element, $event.value)"
                               autofocus>
-                    <mat-option value="Pending">Pending</mat-option>
-                    <mat-option value="Completed">Completed</mat-option>
+                    <mat-option value="Booked">Booked</mat-option>
+                    <mat-option value="In-Progress">In-Progress</mat-option>
+                    <mat-option value="Completed" >Completed</mat-option>
                     <mat-option value="Cancelled">Cancelled</mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -86,7 +86,7 @@
 
            <ng-container matColumnDef="rent">
             <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Rent</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.rent}}</td>
+            <td mat-cell *matCellDef="let element" class= "f-s-12 color-red">{{element.rent}}</td>
           </ng-container>
           
           <ng-container matColumnDef="advance">

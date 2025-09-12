@@ -59,7 +59,6 @@ displayedColumns: string[] = [
   
   addParty(action: string, obj: any) {
     obj.action = action;
-
     const dialogRef = this.dialog.open(rentDialogComponent, 
       { data: obj, width: '1000px' }
     );
@@ -96,52 +95,62 @@ displayedColumns: string[] = [
         })
       }
       if (result?.event === 'Edit') {
-        this.rentList.forEach((element: any) => {
-          if (element.id === result.data.id) {
-            const payload: RentList = {
-              id: result.data.id,
-              rentProducts: result.data.rentProducts,
-              customerName: result.data.customerName,
-              status: result.data.status,
-              mobileNumber: result.data.mobileNumber,
-              rent: result.data.rent,
-              pickupDateTime: result.data.pickupDateTime,
-              advance: result.data.advance,
-              returnDateTime: result.data.returnDateTime,
-              deposite: result.data.deposite,
-              orderDate: result.data.orderDate,
-              returnAmount: result.data.returnAmount,
-              aadharCard: result.data.aadharCard,
-              userId : localStorage.getItem("userId")
-            }
-              this.firebaseService.updateRent(result.data.id , payload).then((res:any) => {
-                  this.getRentList()
-                  this.openConfigSnackBar('record update successfully')
-              }, (error) => {
-                console.log("error => " , error);
-                
-              })
-          }
-        });
+        this.editRentProduct(result)
       }
       if (result?.event === 'Delete') {
-        this.firebaseService.deleteRent(result.data.id).then((res:any) => {
-            this.getRentList()
-            this.openConfigSnackBar('record delete successfully')
-        }, (error) => {
-          console.log("error => " , error);
-          
-        })
+        this.deleteRentProduct(result);
       }
     });
   }
 
 
-    getRentProductList() {
+  deleteRentProduct(result:any) {
+    this.firebaseService.deleteRent(result.data.id).then((res:any) => {
+      this.getRentList()
+      this.openConfigSnackBar('record delete successfully')
+    }, (error) => {
+      console.log("error => " , error);
+      
+    })
+  }
+
+  editRentProduct(result:any) {
+    const payload: RentList = {
+      id: result.data.id,
+      rentProducts: result.data.rentProducts,
+      customerName: result.data.customerName,
+      status: result.data.status,
+      mobileNumber: result.data.mobileNumber,
+      rent: result.data.rent,
+      pickupDateTime: result.data.pickupDateTime,
+      advance: result.data.advance,
+      returnDateTime: result.data.returnDateTime,
+      deposite: result.data.deposite,
+      orderDate: result.data.orderDate,
+      returnAmount: result.data.returnAmount,
+      aadharCard: result.data.aadharCard,
+      userId : localStorage.getItem("userId")
+    }
+
+    this.firebaseService.updateRent(result.data.id , payload).then((res:any) => {
+        this.getRentList()
+        this.openConfigSnackBar('record update successfully')
+    }, (error) => {
+      console.log("error => " , error);
+      
+    })
+  }
+
+
+  getRentProductList() {
     this.loaderService.setLoader(true)
     this.firebaseService.getAllRentProduct().subscribe((res: any) => {
       if (res) {
-        this.allRentProductList = res
+        this.allRentProductList = res;
+        this.rentList.forEach((element:any) => {
+          const data = res.find((id:any) => id.id === element.rentProducts)
+          element['product'] = data?.productNumber + '-' + data?.productName
+        })
         this.loaderService.setLoader(false)
       }
 
@@ -153,6 +162,7 @@ displayedColumns: string[] = [
     this.firebaseService.getAllRent().subscribe((res: any) => {
       if (res) {
         this.rentList = res.filter((id:any) => id.userId === localStorage.getItem("userId"));
+
         this.rentList.sort((a:any, b:any) => a.orderDate.seconds - b.orderDate.seconds);
         this.rentDataSource = new MatTableDataSource(this.rentList);
         this.rentDataSource.paginator = this.paginator;
@@ -160,12 +170,11 @@ displayedColumns: string[] = [
       }
     })
   }
-    getProductnumberName(data :any){
-      const findProuct =  this.allRentProductList.find((id:any) => id.id === data.rentProducts)
-      return findProuct?.productNumber + '-' + findProuct?.productName
-      
-
-    }
+  // getProductnumberName(data :any){
+  //   const findProuct =  this.allRentProductList.find((id:any) => id.id === data.rentProducts)
+    
+  //   return findProuct?.productNumber + '-' + findProuct?.productName
+  // }
 
   openConfigSnackBar(snackbarTitle: any) {
     this._snackBar.open(snackbarTitle, 'Splash', {
@@ -175,20 +184,20 @@ displayedColumns: string[] = [
     });
   }
 
-
-onStatusChange(row: any, newStatus: string) {
-    row.status = newStatus;
-    console.log('Status changed:', row);
-  }
-
   editingRowId: string | null = null;
 
- enableEdit(rowId: string): void {
-    this.editingRowId = rowId;
+  enableEdit(rowId: string): void {
+      this.editingRowId = rowId;
   }
 
   saveStatus(row: any, newStatus: string): void {
-    row.status = newStatus;
+    if(newStatus === 'Cancelled') {
+      this.addParty('Delete', row);
+      // row.status = newStatus;
+    } else {
+      row.status = newStatus;
+      this.editRentProduct({data : row});
+    }
     this.editingRowId = null;
   }
 
@@ -198,8 +207,22 @@ onStatusChange(row: any, newStatus: string) {
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
-      this.cancelEdit();
+    this.cancelEdit();
   }
+
+  getStatusClass(status: string): string {
+  switch (status) {
+    case 'Booked':
+      return 'status-booked';
+    case 'In-Progress':
+      return 'status-in-progress';
+    case 'Completed':
+      return 'status-completed';
+    default:
+      return '';
+  }
+}
+
 }
 
 
@@ -215,11 +238,13 @@ export class rentDialogComponent implements OnInit {
   action: string;
   local_data: any;
   statusList :any = [
-    'Pending',
-    'In progress',
-    'Done'
+    'Booked',
+    'In-Progress',
+    'Completed',
+    'Cancelled'
   ]
   rentProductList:any =[]
+  enableMeridian = true
 
   constructor(
     private fb: FormBuilder,
@@ -235,21 +260,28 @@ export class rentDialogComponent implements OnInit {
   }
   ngOnInit(): void {
     this.buildForm();
-    if (this.action === 'Edit') {
-      debugger
+    if (this.action === 'Edit' || this.action === 'Delete') {
       this.productForm.patchValue(this.local_data);
       this.productForm.controls['rentProducts'].setValue(this.local_data.rentProducts.id ? this.local_data.rentProducts.id : this.local_data.rentProducts);
       this.productForm.controls['pickupDateTime'].setValue(new Date(this.local_data.pickupDateTime.seconds * 1000));
       this.productForm.controls['orderDate'].setValue(new Date(this.local_data.orderDate.seconds * 1000));
       this.productForm.controls['returnDateTime'].setValue(new Date(this.local_data.returnDateTime.seconds * 1000));
-
     }
-    this.productForm.controls['status'].setValue('Pending');
     this.productForm.get('deposite')?.valueChanges.subscribe(value => {
       const newValue = this.calculateTotal();
       this.productForm.get('returnAmount')?.setValue(newValue, { emitEvent: false });
     });
-    this.getRentProductList()
+    this.getRentProductList();
+
+
+
+    this.productForm.get('pickupDateTime')?.valueChanges.subscribe(() => {
+      this.validateDateOrder();
+    });
+
+    this.productForm.get('returnDateTime')?.valueChanges.subscribe(() => {
+      this.validateDateOrder();
+    });
   }
 
   buildForm() {
@@ -266,6 +298,7 @@ export class rentDialogComponent implements OnInit {
       deposite: ['',Validators.required],
       returnAmount: ['',Validators.required],
       aadharCard: [''],
+      id: ['']
     })
   }
 
@@ -279,22 +312,6 @@ export class rentDialogComponent implements OnInit {
 }
 
   doAction(): void {
-    // const payload = {
-    //   id: this.local_data.id ? this.local_data.id : '',
-    //   customerName: this.productForm.value.customerName,
-    //   status: this.productForm.value.status,
-    //   mobileNumber: this.productForm.value.mobileNumber,
-    //   rent: this.productForm.value.rent,
-    //   pickupDateTime: this.productForm.value.pickupDateTime,
-    //   advance: this.productForm.value.advance,
-    //   returnDateTime: this.productForm.value.returnDateTime,
-    //   deposite: this.productForm.value.deposite,
-    //   orderDate: this.productForm.value.orderDate,
-    //   returnAmount: this.productForm.value.returnAmount,
-    //   aadharCard: this.productForm.value.aadharCard,
-    //   numberofday: this.productForm.value.numberofday
-    // }
-
     const payload = this.productForm.value
     this.dialogRef.close({ event: this.action, data: payload });
   }
@@ -310,10 +327,27 @@ export class rentDialogComponent implements OnInit {
       if (res) {
         this.rentProductList = res.filter((id:any) => id.userId === localStorage.getItem("userId"));
         this.loaderService.setLoader(false)
-
       }
-     
     });
+  }
+
+ validateDateOrder(): void {
+    const pickup = new Date(this.productForm.get('pickupDateTime')?.value);
+    const returnDate = new Date(this.productForm.get('returnDateTime')?.value);
+
+    const pickupControl = this.productForm.get('pickupDateTime');
+    const returnControl = this.productForm.get('returnDateTime');
+
+    // Clear old errors
+    pickupControl?.setErrors(null);
+    returnControl?.setErrors(null);
+
+    if (pickup && returnDate) {
+      if (pickup.getTime() >= returnDate.getTime()) {
+        pickupControl?.setErrors({ pickupAfterReturn: true });
+        returnControl?.setErrors({ returnBeforePickup: true });
+      }
+    }
   }
 
 }

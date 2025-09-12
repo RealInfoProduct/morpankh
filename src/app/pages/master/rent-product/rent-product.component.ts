@@ -47,7 +47,9 @@ displayedColumns: string[] = [
   addParty(action: string, obj: any) {
     obj.action = action;
 
-    const dialogRef = this.dialog.open(rentproductMasterDialogComponent, { data: obj });
+    const dialogRef = this.dialog.open(rentproductMasterDialogComponent, { 
+        data: {obj : obj, rentList : this.rentProductList} 
+      });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.event === 'Add') {
@@ -135,14 +137,17 @@ export class rentproductMasterDialogComponent implements OnInit {
   rentproductForm: FormGroup;
   action: string;
   local_data: any;
+  rentProductArr:any = [];
 
   constructor(
     private fb: FormBuilder,
+    private _snackBar : MatSnackBar,
     public dialogRef: MatDialogRef<rentproductMasterDialogComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
 
-    this.local_data = { ...data };
+    this.rentProductArr = data.rentList;
+    this.local_data = { ...data.obj };
     this.action = this.local_data.action;
     
   }
@@ -166,11 +171,23 @@ export class rentproductMasterDialogComponent implements OnInit {
   }
 
   doAction(): void {
-    const payload = this.rentproductForm.value
-    this.dialogRef.close({ event: this.action, data: payload });
+    if(this.rentProductArr.find((id:any) => id.productNumber === this.rentproductForm.controls['productNumber'].value) && this.action !== 'Edit'){
+      this.openConfigSnackBar('Product number is already exits.')
+    } else {
+      const payload = this.rentproductForm.value
+      this.dialogRef.close({ event: this.action, data: payload });
+    }
   }
 
   closeDialog(): void {
     this.dialogRef.close({ event: 'Cancel' });
+  }
+
+    openConfigSnackBar(snackbarTitle: any) {
+    this._snackBar.open(snackbarTitle, 'Splash', {
+      duration: 4 * 1000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+    });
   }
 }
