@@ -9,6 +9,20 @@
             </mat-icon>
           </mat-form-field>
         </div>
+        <div class="col-lg-4">
+          <mat-form-field appearance="outline" class="example-form-field">
+            <mat-label>Pickup Date Range</mat-label>
+            <form [formGroup]="dateForm">
+              <mat-date-range-input [rangePicker]="campaignOnePicker" (click)="filterByDateRange()">
+                <input matStartDate placeholder="Start date" formControlName="start">
+                <input matEndDate placeholder="End date" formControlName="end">
+              </mat-date-range-input>
+            </form>
+              <!-- <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint> -->
+              <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
+              <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+          </mat-form-field>
+        </div>
         <div class="col-lg-4 d-flex align-items-center justify-content-end">
           <button mat-flat-button color="primary" (click)="addParty('Add', {})">
            Rent Order
