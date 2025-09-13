@@ -8,9 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: npm install -g @angular/cli        # Install Angular CLI globally
-      - run: npm run deploy:dev                 # This handles build + deploy
+      - run: ng build --configuration=development
+      # - run: npm run deploy:dev                 # This handles build + deploy
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      # - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_STOCK_MANAGEMENT_SYSTEM_4055B }}
