@@ -24,5 +24,8 @@ jobs:
       - name: Install Angular CLI globally
         run: npm install -g @angular/cli
 
-      - name: Deploy using custom script
-        run: npm run deploy:dev
+      - name: Build for dev
+        run: npm run build:dev
+
+      - name: Hosting for dev
+        run: firebase deploy --only hosting
