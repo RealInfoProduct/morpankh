@@ -10,8 +10,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - run: npm install -g @angular/cli        # Install Angular CLI globally
-      - run: npm install                        # Install project dependencies
-      - run: npm run deploy:dev                 # Build and deploy using your script
+      - run: npm run deploy:dev                 # This handles build + deploy
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
