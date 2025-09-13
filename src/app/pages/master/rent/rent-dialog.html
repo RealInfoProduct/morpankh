@@ -6,8 +6,10 @@
       <div class="col-lg-4">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <mat-label>Rent Products</mat-label>
-          <mat-select formControlName="rentProducts" placeholder="Rent Product">
-            <mat-option [value]="item.id" *ngFor="let item of rentProductList">{{item.productNumber}} - {{item.productName}}</mat-option>
+          <mat-select formControlName="rentProducts" placeholder="Rent Product" (selectionChange)="onRentProductChange($event)">
+            <input matInput class="search" type="text" placeholder="Search..." (keyup)="filterRentProducts($event)"
+              style="border: none; outline: none;">
+            <mat-option [value]="item.id" *ngFor="let item of filteredRentProducts">{{item.productNumber}} - {{item.productName}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -82,19 +84,19 @@
       <div class="col-lg-4">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <mat-label>Rent Amount</mat-label>
-          <input type="number" matInput required formControlName="rent" placeholder="Rent" />
+          <input type="number" matInput required formControlName="rent" placeholder="Rent" (ngModelChange)="rentCalculation($event)" />
         </mat-form-field>
       </div>
       <div class="col-lg-4">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <mat-label>Advance</mat-label>
-          <input type="number" matInput required formControlName="advance" placeholder="Advance" />
+          <input type="number" matInput required formControlName="advance" placeholder="Advance" (ngModelChange)="rentCalculation($event)" />
         </mat-form-field>
       </div>
       <div class="col-lg-4">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <mat-label>Deposite</mat-label>
-          <input type="number" matInput required formControlName="deposite" placeholder="Deposite" />
+          <input type="number" matInput required formControlName="deposite" placeholder="Deposite" (ngModelChange)="rentCalculation($event)" />
         </mat-form-field>
       </div>
       <div class="col-lg-4">

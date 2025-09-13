@@ -9,10 +9,18 @@ export const navItems: NavItem[] = [
     iconName: 'aperture',
     route: '/dashboards/dashboard1',
   },
-    {
-    displayName: 'Rent',
+  {
+    navCap: 'Rent',
+  },
+  {
+    displayName: 'Order',
     iconName: 'hanger',
     route: '/master/rent',
+  },
+  {
+    displayName: 'Product',
+    iconName: 'hanger-2',
+    route: '/master/rentproducts',
   },
   {
     navCap: 'Master',
@@ -42,11 +50,7 @@ export const navItems: NavItem[] = [
     iconName: 'list-details',
     route: '/master/invoicelist',
   },
-  {
-    displayName: 'Rent Product',
-    iconName: 'hanger-2',
-    route: '/master/rentproducts',
-  },
+  
 
   // {
   //   displayName: 'Account',

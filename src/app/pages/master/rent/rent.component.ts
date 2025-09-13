@@ -147,6 +147,7 @@ export class RentComponent implements OnInit {
         this.firebaseService.addRent(payload).then((res) => {
           if (res) {
             this.getRentList()
+            this.sendWhatsAppMessage(payload)
             this.openConfigSnackBar('record create successfully')
           }
         }, (error) => {
@@ -161,6 +162,34 @@ export class RentComponent implements OnInit {
         this.deleteRentProduct(result);
       }
     });
+  }
+
+  sendWhatsAppMessage(order: any) {
+    const message = `Hello ${order.customerName},
+    Your Saree Rental Order has been confirmed ✅
+
+    📌 Order Details:
+    - Product: ${order.rentProduct}
+    - Status: ${order.status}
+    - Order Date: ${order.orderDate}
+    - Pickup Date & Time: ${order.pickupDateTime}
+    - Return Date & Time: ${order.returnDateTime}
+    - Rent Amount: ₹${order.rent}
+    - Advance Paid: ₹${order.advance}
+    - Deposit: ₹${order.deposit}
+    - Return Amount: ₹${order.returnAmount}
+    - Aadhar: ${order.aadhar}
+
+    📜 Rules:
+    1. Deposit will be refunded after product check.
+    2. If the saree is damaged, deduction will be applied.
+    3. Late return will incur extra charges.
+
+    Thank you for booking with us 💐`;
+
+    const phone = order.mobileNumber; // customer mobile number
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
   }
 
 
@@ -194,6 +223,7 @@ export class RentComponent implements OnInit {
 
     this.firebaseService.updateRent(result.data.id, payload).then((res: any) => {
       this.getRentList()
+      
       this.openConfigSnackBar('record update successfully')
     }, (error) => {
       console.log("error => ", error);
@@ -213,7 +243,6 @@ export class RentComponent implements OnInit {
         })
         this.loaderService.setLoader(false)
       }
-
     });
   }
 
@@ -227,6 +256,8 @@ export class RentComponent implements OnInit {
         this.rentDataSource = new MatTableDataSource(this.rentList);
         this.rentDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false)
+
+        this.getRentProductList()
       }
     })
   }
@@ -304,6 +335,7 @@ export class rentDialogComponent implements OnInit {
     'Cancelled'
   ]
   rentProductList: any = []
+  filteredRentProducts: any = []
   enableMeridian = true
 
   constructor(
@@ -320,21 +352,22 @@ export class rentDialogComponent implements OnInit {
   }
   ngOnInit(): void {
     this.buildForm();
+    this.getRentProductList();
     if (this.action === 'Edit' || this.action === 'Delete') {
       this.productForm.patchValue(this.local_data);
       this.productForm.controls['rentProducts'].setValue(this.local_data.rentProducts.id ? this.local_data.rentProducts.id : this.local_data.rentProducts);
       this.productForm.controls['pickupDateTime'].setValue(new Date(this.local_data.pickupDateTime.seconds * 1000));
       this.productForm.controls['orderDate'].setValue(new Date(this.local_data.orderDate.seconds * 1000));
       this.productForm.controls['returnDateTime'].setValue(new Date(this.local_data.returnDateTime.seconds * 1000));
+
+      this.rentCalculation('');
     }
-    this.productForm.get('deposite')?.valueChanges.subscribe(value => {
-      const newValue = this.calculateTotal();
-      this.productForm.get('returnAmount')?.setValue(newValue, { emitEvent: false });
-    });
-    this.getRentProductList();
 
-
-
+    // this.productForm.get('deposite')?.valueChanges.subscribe(value => {
+    //   const newValue = this.calculateTotal();
+    //   this.productForm.get('returnAmount')?.setValue(newValue, { emitEvent: false });
+    // });
+    
     this.productForm.get('pickupDateTime')?.valueChanges.subscribe(() => {
       this.validateDateOrder();
     });
@@ -386,6 +419,17 @@ export class rentDialogComponent implements OnInit {
     this.firebaseService.getAllRentProduct().subscribe((res: any) => {
       if (res) {
         this.rentProductList = res.filter((id: any) => id.userId === localStorage.getItem("userId"));
+
+        this.rentProductList.forEach((element: any) => {
+          // const data = res.find((id: any) => id.id === element.id)
+          element['product'] = element?.productNumber + '-' + element?.productName
+        })
+
+        this.filteredRentProducts = [...this.rentProductList];
+        if (this.action === 'Edit') {
+          const data = this.rentProductList.find((id: any) => id.id === (this.local_data.rentProducts.id ? this.local_data.rentProducts.id : this.local_data.rentProducts))
+          this.productForm.get('rent')?.setValue(data.rent)
+        }
         this.loaderService.setLoader(false)
       }
     });
@@ -407,6 +451,27 @@ export class rentDialogComponent implements OnInit {
         returnControl?.setErrors({ returnBeforePickup: true });
       }
     }
+  }
+
+  onRentProductChange(event: any) {
+    const data = this.rentProductList.find((id: any) => id.id === event.value)
+    this.productForm.get('rent')?.setValue(data.rent)
+  }
+
+  rentCalculation(event: any) {
+    const rent = Number(this.productForm.get('rent')?.value) || 0;
+    const advance = Number(this.productForm.get('advance')?.value) || 0;
+    const deposite = Number(this.productForm.get('deposite')?.value) || 0;
+    const total = rent - advance;
+    this.productForm.get('returnAmount')?.setValue(total - deposite)
+  }
+
+  filterRentProducts(event: any) {
+    const search = (event.target.value || '').toLowerCase();
+    debugger
+    this.filteredRentProducts = this.rentProductList.filter((item:any) =>
+      item.product.toLowerCase().includes(search)
+    );
   }
 
 }

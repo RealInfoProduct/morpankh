@@ -2,7 +2,7 @@
     <mat-card-content class="p-24">
       <div class="row justify-content-between">
         <div class="col-lg-4">
-          <mat-form-field appearance="outline" class="w-100 hide-hint">
+          <mat-form-field appearance="outline" class="w-100 hide-hint text-center">
             <input matInput placeholder="{{'productMaster.SearchProduct' | translate}}" (keyup)="applyFilter($any($event.target).value)" />
             <mat-icon matSuffix>
               <i-tabler name="search" class="icon-20"></i-tabler>
@@ -18,7 +18,6 @@
                 <input matEndDate placeholder="End date" formControlName="end">
               </mat-date-range-input>
             </form>
-              <!-- <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint> -->
               <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
               <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
           </mat-form-field>
@@ -150,7 +149,7 @@
             </td>
           </tr>
         </table>
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
       </div>
     </mat-card-content>
   </mat-card>

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, Optional, ViewChild } from '@angular/core';
+import { Component, HostListener, Inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -72,24 +72,7 @@ displayedColumns: string[] = [
         })
       }
       if (result?.event === 'Edit') {
-        this.rentProductList.forEach((element: any) => {
-          if (element.id === result.data.id) {
-            const payload: RentProductList = {
-              id: result.data.id,
-              productNumber: result.data.productNumber,
-              productName: result.data.productName,
-              rent: result.data.rent,
-              userId : localStorage.getItem("userId")
-            }
-              this.firebaseService.updateRentProduct(result.data.id , payload).then((res:any) => {
-                  this.getRentProductList()
-                  this.openConfigSnackBar('record update successfully')
-              }, (error) => {
-                console.log("error => " , error);
-                
-              })
-          }
-        });
+        this.editRentProduct(result);
       }
       if (result?.event === 'Delete') {
         this.firebaseService.deleteRentProduct(result.data.id).then((res:any) => {
@@ -103,11 +86,29 @@ displayedColumns: string[] = [
     });
   }
 
+  editRentProduct(result:any) {
+    const payload: RentProductList = {
+      id: result.data.id,
+      productNumber: result.data.productNumber,
+      productName: result.data.productName,
+      rent: result.data.rent,
+      userId: localStorage.getItem("userId")
+    }
+    this.firebaseService.updateRentProduct(result.data.id, payload).then((res: any) => {
+      this.getRentProductList()
+      this.openConfigSnackBar('record update successfully')
+    }, (error) => {
+      console.log("error => ", error);
+
+    })
+  }
+
   getRentProductList() {
     this.loaderService.setLoader(true)
     this.firebaseService.getAllRentProduct().subscribe((res: any) => {
       if (res) {
-        this.rentProductList = res.filter((id:any) => id.userId === localStorage.getItem("userId"))
+        this.rentProductList = res.filter((id: any) => id.userId === localStorage.getItem("userId"))
+        this.rentProductList = this.rentProductList.sort((a: any, b: any) => a.productNumber - b.productNumber);
         this.productDataSource = new MatTableDataSource(this.rentProductList);
         this.productDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false)
@@ -121,6 +122,52 @@ displayedColumns: string[] = [
       horizontalPosition: 'right',
       verticalPosition: 'top',
     });
+  }
+
+  //////////////////////////////////////////////////////
+  editingRowId: string | null = null;
+
+  enableEdit(rowId: string): void {
+    this.editingRowId = rowId;
+  }
+
+  productNameChange(row: any, event: any): void {
+    row.productName = event.target.value;
+    this.editRentProduct({data: row})
+    this.editingRowId = null;
+  }
+
+  cancelEdit(): void {
+    this.editingRowId = null;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    this.cancelEdit();
+  }
+  //////////////////////////////////////////////////////
+
+
+  //////////////////////////////////////////////////////
+  editingRentRowId: string | null = null;
+
+  enableRentEdit(rowId: string): void {
+    this.editingRentRowId = rowId;
+  }
+
+  rentChange(row: any, event: any): void {
+    row.rent = event.target.value;
+    this.editRentProduct({ data: row })
+    this.editingRentRowId = null;
+  }
+
+  cancelRentEdit(): void {
+    this.editingRentRowId = null;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickRentOutside(event: MouseEvent) {
+    this.cancelRentEdit();
   }
 
 }
