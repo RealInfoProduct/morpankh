@@ -24,13 +24,5 @@ jobs:
       - name: Install Angular CLI globally
         run: npm install -g @angular/cli
 
-      - name: Build Angular project
-        run: ng build
-
-      - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MYINVOICE_E4E41 }}'
-          channelId: live
-          projectId: stock-management-system-4055b
+      - name: Deploy using custom script
+        run: npm run deploy:dev
