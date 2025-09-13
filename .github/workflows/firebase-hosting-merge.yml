@@ -1,19 +1,36 @@
 name: Deploy to Firebase Hosting on merge
+
 'on':
   push:
     branches:
       - dev
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    steps:
-      - run: npm install -g @angular/cli        # Install Angular CLI globally
-      - run: ng build --configuration=development
-      # - run: npm run deploy:dev                 # This handles build + deploy
 
-      # - uses: FirebaseExtended/action-hosting-deploy@v0
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install --force
+
+      - name: Install Angular CLI globally
+        run: npm install -g @angular/cli
+
+      - name: Build Angular project
+        run: ng build
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_STOCK_MANAGEMENT_SYSTEM_4055B }}
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MYINVOICE_E4E41 }}'
           channelId: live
-          projectId: stock-management-system-405b
+          projectId: stock-management-system-4055b
