@@ -5,6 +5,12 @@
     <div class="row">
       <div class="col-lg-4">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Bill No</mat-label>
+          <input type="number" matInput required formControlName="billNo" placeholder="Bill No"  min="0" readonly />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
           <mat-label>Rent Products</mat-label>
           <mat-select formControlName="rentProducts" placeholder="Rent Product" (selectionChange)="onRentProductChange($event)">
             <input matInput class="search" type="text" placeholder="Search..." (keyup)="filterRentProducts($event)"
@@ -29,8 +35,20 @@
       </div>
       <div class="col-lg-4">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Address</mat-label>
+          <input type="text" matInput required formControlName="address" placeholder="Address"/>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
           <mat-label>Mobile Number</mat-label>
-          <input type="number" matInput required formControlName="mobileNumber" placeholder="Mobile Number" />
+          <input type="number" matInput required formControlName="mobileNumber" placeholder="Mobile Number" min="0"  onKeyPress="if(this.value.length==10) return false;"/>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Other Mobile Number</mat-label>
+          <input type="number" matInput  formControlName="othermobileNumber" placeholder="Other Mobile Number" min="0" />
         </mat-form-field>
       </div>
       <div class="col-lg-4">

@@ -56,9 +56,12 @@ export interface PurchaseList {
 
 export interface RentList {
     id:any,
+    billNo?:any,
     rentProducts:string,
     customerName:string,
-    status:any,
+    status:string,
+    address?:string,
+    othermobileNumber?:any,
     mobileNumber:any,
     rent:any,
     pickupDateTime:any,

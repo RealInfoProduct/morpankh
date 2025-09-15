@@ -128,10 +128,13 @@ export class RentComponent implements OnInit {
         const payload: RentList = {
           id: '',
           rentProducts: result.data.rentProducts,
+          billNo: result.data.billNo,
           customerName: result.data.customerName,
           status: result.data.status,
-          mobileNumber: result.data.mobileNumber,
           rent: result.data.rent,
+          address: result.data.address,
+          mobileNumber: result.data.mobileNumber,
+          othermobileNumber: result.data.othermobileNumber,
           pickupDateTime: result.data.pickupDateTime,
           advance: result.data.advance,
           returnDateTime: result.data.returnDateTime,
@@ -165,6 +168,7 @@ export class RentComponent implements OnInit {
   }
 
   sendWhatsAppMessage(order: any) {
+    debugger
     const message = `Hello ${order.customerName},
     Your Saree Rental Order has been confirmed ✅
 
@@ -176,7 +180,7 @@ export class RentComponent implements OnInit {
     - Return Date & Time: ${order.returnDateTime}
     - Rent Amount: ₹${order.rent}
     - Advance Paid: ₹${order.advance}
-    - Deposit: ₹${order.deposit}
+    - Deposit: ₹${order.deposite}
     - Return Amount: ₹${order.returnAmount}
     - Aadhar: ${order.aadhar}
 
@@ -207,9 +211,12 @@ export class RentComponent implements OnInit {
     const payload: RentList = {
       id: result.data.id,
       rentProducts: result.data.rentProducts,
+      billNo: result.data.billNo,
       customerName: result.data.customerName,
       status: result.data.status,
+      address: result.data.address,
       mobileNumber: result.data.mobileNumber,
+      othermobileNumber: result.data.othermobileNumber,
       rent: result.data.rent,
       pickupDateTime: result.data.pickupDateTime,
       advance: result.data.advance,
@@ -353,6 +360,9 @@ export class rentDialogComponent implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.getRentProductList();
+    if (this.action === 'Add') {
+      this.setAutoBillNo();
+    }
     if (this.action === 'Edit' || this.action === 'Delete') {
       this.productForm.patchValue(this.local_data);
       this.productForm.controls['rentProducts'].setValue(this.local_data.rentProducts.id ? this.local_data.rentProducts.id : this.local_data.rentProducts);
@@ -377,12 +387,27 @@ export class rentDialogComponent implements OnInit {
     });
   }
 
+  setAutoBillNo() {
+    this.firebaseService.getAllRent().subscribe((res: any) => {
+      if (res && res.length > 0) {
+        const lastBill = res[0].billNo || 0;
+        this.productForm.get('billNo')?.setValue(lastBill + 1);
+      } else {
+        this.productForm.get('billNo')?.setValue(1); 
+      }
+    });
+  }
+
+
   buildForm() {
     this.productForm = this.fb.group({
       rentProducts: ['', Validators.required],
+      billNo:['',Validators.required],
       customerName: ['', Validators.required],
       status: ['', Validators.required],
+      address: ['', Validators.required],
       mobileNumber: ['', Validators.required],
+      othermobileNumber: ['',],
       orderDate: [new Date()],
       pickupDateTime: ['', Validators.required],
       returnDateTime: ['', Validators.required],
