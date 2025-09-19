@@ -26,13 +26,8 @@ export class RentComponent implements OnInit {
   displayedColumns: string[] = [
     'expand',
     'orderno',
-    // 'porduct',
     'customername',
-    // 'pickupdate',
-    // 'returndate',
-    'status',
     'mobileno',
-    // 'rent',
     'advance',
     'deposite',
     'return',
@@ -45,7 +40,7 @@ export class RentComponent implements OnInit {
   allRentProductList: any = []
   expandedElement: null;
   dateForm: FormGroup;
-  totalRent:any= 0 ;
+  totalRent: any = 0;
   expandedRow: any = null;
   isRowHide: any = null;
 
@@ -99,17 +94,17 @@ export class RentComponent implements OnInit {
 
 
 
-toggleRow(row: any) {
-  this.expandedRow = this.expandedRow === row ? null : row;
-}
+  toggleRow(row: any) {
+    this.expandedRow = this.expandedRow === row ? null : row;
+  }
 
-isExpanded(row: any): boolean {
-  return this.expandedRow === row;
-}
+  isExpanded(row: any): boolean {
+    return this.expandedRow === row;
+  }
 
-isExpansionDetailRow = (index: number, row: any): boolean => {
-  return this.isExpanded(row);
-};
+  isExpansionDetailRow = (index: number, row: any): boolean => {
+    return this.isExpanded(row);
+  };
 
 
   filterByDateRange(): void {
@@ -138,7 +133,7 @@ isExpansionDetailRow = (index: number, row: any): boolean => {
 
   applyFilter(filterValue: string): void {
     this.rentDataSource.filter = filterValue.trim().toLowerCase();
-    
+
 
   }
 
@@ -148,7 +143,6 @@ isExpansionDetailRow = (index: number, row: any): boolean => {
   }
 
   addParty(action: string, obj: any) {
-    debugger
     obj.action = action;
     const dialogRef = this.dialog.open(rentDialogComponent,
       { data: obj, width: '1000px' }
@@ -182,7 +176,7 @@ isExpansionDetailRow = (index: number, row: any): boolean => {
   }
 
   sendWhatsAppMessage(order: any) {
-    const product = this.rentList.find((id:any) => id?.rentProducts === order?.rentProducts)?.product;
+    const product = this.rentList.find((id: any) => id?.rentProducts === order?.rentProducts)?.product;
     const formatDate = (timestamp: any): string => {
       if (!timestamp) return '';
 
@@ -200,7 +194,7 @@ isExpansionDetailRow = (index: number, row: any): boolean => {
 
       return this.datePipe.transform(date, 'dd/MM/yyyy hh:mm a') ?? '';
     };
-    
+
     const pickupDateStr = formatDate(order?.pickupDateTime);
     const returnDateStr = formatDate(order?.returnDateTime);
     const orderDate = formatDate(order?.orderDate);
@@ -236,7 +230,7 @@ isExpansionDetailRow = (index: number, row: any): boolean => {
     Instagram: https://www.instagram.com/_.morpankh_saree._?igsh=MTBkaG5rb2Fxdzg2cw==
 
     Thank you for booking with us 💐`;
-    
+
     const phone = order.mobileNumber;
     const url = `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
@@ -254,34 +248,13 @@ isExpansionDetailRow = (index: number, row: any): boolean => {
   }
 
   editRentProduct(result: any) {
-    // const payload: RentList = {
-    //   id: result.data.id,
-    //   rentProducts: result.data.rentProducts,
-    //   billNo: result.data.billNo,
-    //   customerName: result.data.customerName,
-    //   status: result.data.status,
-    //   address: result.data.address,
-    //   mobileNumber: result.data.mobileNumber,
-    //   othermobileNumber: result.data.othermobileNumber,
-    //   rent: result.data.rent,
-    //   pickupDateTime: result.data.pickupDateTime,
-    //   advance: result.data.advance,
-    //   returnDateTime: result.data.returnDateTime,
-    //   deposite: result.data.deposite,
-    //   orderDate: result.data.orderDate,
-    //   returnAmount: result.data.returnAmount,
-    //   aadharCard: result.data.aadharCard,
-    //   total: result.data.total,
-    //   userId: localStorage.getItem("userId")
-    // }
-
     const payload = result.data;
     payload.userId = localStorage.getItem("userId");
 
     this.firebaseService.updateRent(result.data.id, payload).then((res: any) => {
       this.sendWhatsAppMessage(payload);
       this.getRentList()
-      
+
       this.openConfigSnackBar('record update successfully')
     }, (error) => {
       console.log("error => ", error);
@@ -299,8 +272,8 @@ isExpansionDetailRow = (index: number, row: any): boolean => {
           element.rentDetails.forEach((rentItem: any) => {
             const data = res.find((product: any) => product.id === rentItem.rentProducts);
             rentItem['product'] = data ? `${data.productNumber} - ${data.productName}` : '';
-  });
-});
+          });
+        });
 
         this.loaderService.setLoader(false)
       }
@@ -324,11 +297,6 @@ isExpansionDetailRow = (index: number, row: any): boolean => {
       }
     })
   }
-  // getProductnumberName(data :any){
-  //   const findProuct =  this.allRentProductList.find((id:any) => id.id === data.rentProducts)
-
-  //   return findProuct?.productNumber + '-' + findProuct?.productName
-  // }
 
   openConfigSnackBar(snackbarTitle: any) {
     this._snackBar.open(snackbarTitle, 'Splash', {
@@ -384,17 +352,9 @@ isExpansionDetailRow = (index: number, row: any): boolean => {
     this.editOrderRowId = rowId;
   }
 
-  updateOrderStatus(element:any, row: any, newStatus: string): void {
-    debugger
+  updateOrderStatus(element: any, row: any, newStatus: string): void {
     row.status = newStatus;
     this.editRentProduct({ data: element });
-    // if (newStatus === 'Cancelled') {
-    //   this.addParty('Delete', row);
-    //   // row.status = newStatus;
-    // } else {
-    //   row.status = newStatus;
-    //   this.editRentProduct({ data: row });
-    // }
     this.editOrderRowId = null;
   }
 
@@ -453,14 +413,14 @@ export class rentDialogComponent implements OnInit {
       this.productForm.patchValue(this.local_data);
       this.productForm.controls['orderDate'].setValue(new Date(this.local_data.orderDate.seconds * 1000));
 
-      if(this.local_data?.rentDetails?.length) {
+      if (this.local_data?.rentDetails?.length) {
         this.rentDetails.clear();
         this.local_data?.rentDetails.forEach((val: any) => {
           (this.productForm.controls['rentDetails'] as FormArray).push(this.createRentDetailGroup(val))
         });
       }
 
-      this.productForm.value.rentDetails.forEach((ele:any) => {
+      this.productForm.value.rentDetails.forEach((ele: any) => {
         ele['']
       })
 
@@ -477,23 +437,22 @@ export class rentDialogComponent implements OnInit {
   }
 
   setAutoBillNo() {
-      this.firebaseService.getAllRent().subscribe((res: any) => {
+    this.firebaseService.getAllRent().subscribe((res: any) => {
       const userId = localStorage.getItem("userId");
       if (res && res.length > 0) {
         const userData = res.filter((item: any) => item.userId === userId);
         this.productForm.get('billNo')?.setValue(userData.length + 1);
       } else {
-        this.productForm.get('billNo')?.setValue(1); 
+        this.productForm.get('billNo')?.setValue(1);
       }
     });
-
   }
 
 
   buildForm() {
     this.productForm = this.fb.group({
       id: [''],
-      billNo:['',Validators.required],
+      billNo: ['', Validators.required],
       customerName: ['', Validators.required],
       status: ['', Validators.required],
       address: ['', Validators.required],
@@ -508,11 +467,11 @@ export class rentDialogComponent implements OnInit {
       rentDetails: this.fb.array([this.createRentDetailGroup()])
     })
   }
-  
-  createRentDetailGroup(data?:any): FormGroup {
+
+  createRentDetailGroup(data?: any): FormGroup {
     return this.fb.group({
       rentProducts: [data?.rentProducts || '', Validators.required],
-      rent: [data?.rent ||  '', Validators.required],
+      rent: [data?.rent || '', Validators.required],
       pickupDateTime: [data?.pickupDateTime ? new Date(data.pickupDateTime.seconds * 1000) : '', Validators.required],
       returnDateTime: [data?.returnDateTime ? new Date(data.returnDateTime.seconds * 1000) : '', Validators.required],
       billNo: [data?.billNo || ''],
@@ -522,15 +481,14 @@ export class rentDialogComponent implements OnInit {
   }
 
   get rentDetails(): FormArray {
-      return this.productForm.get('rentDetails') as FormArray;
-    }
+    return this.productForm.get('rentDetails') as FormArray;
+  }
 
-     removeRentDetail(index: number) {
+  removeRentDetail(index: number) {
     this.rentDetails.removeAt(index);
-     }
+  }
 
-     
-addRentDetail() {
+  addRentDetail() {
     this.rentDetails.push(this.createRentDetailGroup());
   }
 
@@ -544,8 +502,7 @@ addRentDetail() {
   }
 
   doAction(): void {
-    debugger
-    this.productForm.value.rentDetails.forEach((ele:any) => {
+    this.productForm.value.rentDetails.forEach((ele: any) => {
       ele['status'] = ele?.status || "Booked";
       ele['billNo'] = this.productForm.value.billNo;
       ele['id'] = ele?.id || this.generateUniqueId();
@@ -568,16 +525,11 @@ addRentDetail() {
     this.firebaseService.getAllRentProduct().subscribe((res: any) => {
       if (res) {
         this.rentProductList = res.filter((id: any) => id.userId === localStorage.getItem("userId"));
-debugger
         this.rentProductList.forEach((element: any) => {
           element['product'] = element?.productNumber + '-' + element?.productName
         })
 
         this.filteredRentProducts = [...this.rentProductList];
-        if (this.action === 'Edit') {
-          // const data = this.rentProductList.find((id: any) => id.id === (this.local_data.rentProducts.id ? this.local_data.rentProducts.id : this.local_data.rentProducts))
-          // this.productForm.get('rent')?.setValue(data.rent)
-        }
         this.loaderService.setLoader(false)
       }
     });
@@ -589,9 +541,6 @@ debugger
 
     const pickupControl = this.productForm.get('pickupDateTime');
     const returnControl = this.productForm.get('returnDateTime');
-
-    // pickupControl?.setErrors(null);
-    // returnControl?.setErrors(null);
 
     if (pickup && returnDate) {
       if (pickup.getTime() >= returnDate.getTime()) {
@@ -606,38 +555,28 @@ debugger
     this.productForm.get('rent')?.setValue(data.rent)
   }
 
-  // rentCalculation(event: any) {
-  //   const rent = Number(this.productForm.get('rent')?.value) || 0;
-  //   const advance = Number(this.productForm.get('advance')?.value) || 0;
-  //   const deposite = Number(this.productForm.get('deposite')?.value) || 0;
-  //   const total = rent - advance;
-
-  //   this.productForm.get('returnAmount')?.setValue(deposite - total)
-  // }
-
   rentCalculation(event: any) {
-  const rentArray = this.productForm.get('rentDetails') as FormArray;
-  if (!rentArray) return;
+    const rentArray = this.productForm.get('rentDetails') as FormArray;
+    if (!rentArray) return;
 
-  let rentSum = 0;
-  rentArray.controls.forEach(group => {
-    const rent = Number(group.get('rent')?.value) || 0;
-    rentSum += rent;
-  });
+    let rentSum = 0;
+    rentArray.controls.forEach(group => {
+      const rent = Number(group.get('rent')?.value) || 0;
+      rentSum += rent;
+    });
 
-  this.productForm.get('total')?.setValue(rentSum, { emitEvent: false });
+    this.productForm.get('total')?.setValue(rentSum, { emitEvent: false });
 
-  const advance = Number(this.productForm.get('advance')?.value) || 0;
-  const deposite = Number(this.productForm.get('deposite')?.value) || 0;
-  const returnAmount = (rentSum - advance) - deposite;
+    const advance = Number(this.productForm.get('advance')?.value) || 0;
+    const deposite = Number(this.productForm.get('deposite')?.value) || 0;
+    const returnAmount = (rentSum - advance) - deposite;
 
-  this.productForm.get('returnAmount')?.setValue(returnAmount, { emitEvent: false });
-}
-
+    this.productForm.get('returnAmount')?.setValue(returnAmount, { emitEvent: false });
+  }
 
   filterRentProducts(event: any) {
     const search = (event.target.value || '').toLowerCase();
-    this.filteredRentProducts = this.rentProductList.filter((item:any) =>
+    this.filteredRentProducts = this.rentProductList.filter((item: any) =>
       item.product.toLowerCase().includes(search)
     );
   }
