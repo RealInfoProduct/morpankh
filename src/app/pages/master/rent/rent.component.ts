@@ -6,34 +6,49 @@ import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { RentList } from 'src/app/interface/invoice';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-rent',
   templateUrl: './rent.component.html',
-  styleUrls: ['./rent.component.scss']
+  styleUrls: ['./rent.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class RentComponent implements OnInit {
   displayedColumns: string[] = [
+    'expand',
     'orderno',
-    'porduct',
+    // 'porduct',
     'customername',
-    'pickupdate',
-    'returndate',
+    // 'pickupdate',
+    // 'returndate',
     'status',
     'mobileno',
-    'rent',
+    // 'rent',
     'advance',
     'deposite',
     'return',
     'orderdate',
+    'total',
     'aadharCard',
     'action'
   ];
   rentList: any = []
   allRentProductList: any = []
+  expandedElement: null;
   dateForm: FormGroup;
+  totalRent:any= 0 ;
+  expandedRow: any = null;
+  isRowHide: any = null;
+
   rentDataSource = new MatTableDataSource(this.rentList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
@@ -82,6 +97,21 @@ export class RentComponent implements OnInit {
     });
   }
 
+
+
+toggleRow(row: any) {
+  this.expandedRow = this.expandedRow === row ? null : row;
+}
+
+isExpanded(row: any): boolean {
+  return this.expandedRow === row;
+}
+
+isExpansionDetailRow = (index: number, row: any): boolean => {
+  return this.isExpanded(row);
+};
+
+
   filterByDateRange(): void {
     const { start, end } = this.dateForm.value;
 
@@ -118,6 +148,7 @@ export class RentComponent implements OnInit {
   }
 
   addParty(action: string, obj: any) {
+    debugger
     obj.action = action;
     const dialogRef = this.dialog.open(rentDialogComponent,
       { data: obj, width: '1000px' }
@@ -125,32 +156,15 @@ export class RentComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.event === 'Add') {
-        const payload: RentList = {
-          id: '',
-          rentProducts: result.data.rentProducts,
-          billNo: result.data.billNo,
-          customerName: result.data.customerName,
-          status: result.data.status,
-          rent: result.data.rent,
-          address: result.data.address,
-          mobileNumber: result.data.mobileNumber,
-          othermobileNumber: result.data.othermobileNumber,
-          pickupDateTime: result.data.pickupDateTime,
-          advance: result.data.advance,
-          returnDateTime: result.data.returnDateTime,
-          deposite: result.data.deposite,
-          orderDate: result.data.orderDate,
-          returnAmount: result.data.returnAmount,
-          aadharCard: result.data.aadharCard,
-          userId: localStorage.getItem("userId")
-        }
+        const payload = result.data;
+        payload.userId = localStorage.getItem("userId");
         console.log(payload);
 
 
         this.firebaseService.addRent(payload).then((res) => {
           if (res) {
             this.getRentList()
-            this.sendWhatsAppMessage(payload)
+            this.sendWhatsAppMessage(payload);
             this.openConfigSnackBar('record create successfully')
           }
         }, (error) => {
@@ -168,31 +182,63 @@ export class RentComponent implements OnInit {
   }
 
   sendWhatsAppMessage(order: any) {
-    debugger
+    const product = this.rentList.find((id:any) => id?.rentProducts === order?.rentProducts)?.product;
+    const formatDate = (timestamp: any): string => {
+      if (!timestamp) return '';
+
+      let date: Date;
+
+      if (typeof timestamp === 'string') {
+        date = new Date(timestamp);
+      } else if (timestamp instanceof Date) {
+        date = timestamp;
+      } else if (timestamp.seconds) {
+        date = new Date(timestamp.seconds * 1000);
+      } else {
+        return '';
+      }
+
+      return this.datePipe.transform(date, 'dd/MM/yyyy hh:mm a') ?? '';
+    };
+    
+    const pickupDateStr = formatDate(order?.pickupDateTime);
+    const returnDateStr = formatDate(order?.returnDateTime);
+    const orderDate = formatDate(order?.orderDate);
+
     const message = `Hello ${order.customerName},
     Your Saree Rental Order has been confirmed ✅
 
     📌 Order Details:
-    - Product: ${order.rentProduct}
+    - Product: ${product}
     - Status: ${order.status}
-    - Order Date: ${order.orderDate}
-    - Pickup Date & Time: ${order.pickupDateTime}
-    - Return Date & Time: ${order.returnDateTime}
+    - Order Date: ${orderDate}
+    - Pickup Date & Time: ${pickupDateStr}
+    - Return Date & Time: ${returnDateStr}
     - Rent Amount: ₹${order.rent}
-    - Advance Paid: ₹${order.advance}
+    - Advance Paid: ₹${order.advance} 
     - Deposit: ₹${order.deposite}
-    - Return Amount: ₹${order.returnAmount}
-    - Aadhar: ${order.aadhar}
+    - Remaing Amount: ₹${order.rent - order.advance}
+
+    ડીલવરી લેતી વખતે ₹${(order.rent - order.advance) + order.deposite} રકમ આપવાની રહેશે. ડીલેવરી લેવા આવો ત્યારે ડિપોઝિટ કેશ માં લાવવી.
 
     📜 Rules:
-    1. Deposit will be refunded after product check.
-    2. If the saree is damaged, deduction will be applied.
-    3. Late return will incur extra charges.
+    1) ઓર્ડર બુકિંગ થયા પછી કોઈપણ વસ્તુમાં ચેન્જ કે કેન્સલ થશે નહીં અને બિલ ની રકમ પરત મળશે નહીં.
+    2) ડીલવરી લેતી વખતે બાકી રહેતી રકમ અને ડિપોઝિટ આપવાની રહેશે. ડીલેવરી લેવા આવો ત્યારે ડિપોઝિટ કેશ માં લાવવી.
+    3) કોઈપણ ઓર્ડર ના બુકિંગ સાથે 50% રકમ જમા કરાવવાની રહેશે.
+    4) ચોલીના બ્લાઉઝમાં ફીટીંગ માટે ફરજિયાત હાથ સિલાઈ કરવાની રહેશે, મશીન સિલાઈ હશે તો ૫૦૦ ચાર્જ લેવામાં આવશે.
+    5) ભાડેથી લઈ ગયેલ ઓર્ડર આપેલ તારીખ છે કે સમય નહીં પહોંચે તો બે ગણું ભાડું લેવામાં આવશે.
+    6) ભાડા ની બધી જ વસ્તુઓ રિટર્ન કરવાની રહેશે
+    7) ડીલવરી લેતી વખતે સામાન બરાબર ચેક કરીને લઈ જવો.(ઘરે જઈને સામાન ફરી પહેરીને બરાબર ચેક કરવો અને કોઈ ભૂલ દેખાય તો ૪ કલાક માં જાણ કરવી પછી શો-રૂમની કોઈ જવાબદારી રહેશે નહીં)
+    8) શો-રૂમ સમય સવારે ૧૦:૦૦ થી સાંજે ૯:૦૦ સુધીનો રહેશે.
+    9) ઉપરના બધા જ નિયમો અને સૂચનો અમે વાંચ્યા છે અને અમને મંજુર છે, અને તેનું સંપૂર્ણ પણે પાલન કરવા અમે બંધાયેલા છીએ. ડીલીવરી ૮:૦૦ સાંજે વાગ્યા સુધીમાં લઈ જવી.
+
+    Follow our Instagram or Facebook for new updates:
+    Instagram: https://www.instagram.com/_.morpankh_saree._?igsh=MTBkaG5rb2Fxdzg2cw==
 
     Thank you for booking with us 💐`;
-
-    const phone = order.mobileNumber; // customer mobile number
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    
+    const phone = order.mobileNumber;
+    const url = `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   }
 
@@ -208,27 +254,32 @@ export class RentComponent implements OnInit {
   }
 
   editRentProduct(result: any) {
-    const payload: RentList = {
-      id: result.data.id,
-      rentProducts: result.data.rentProducts,
-      billNo: result.data.billNo,
-      customerName: result.data.customerName,
-      status: result.data.status,
-      address: result.data.address,
-      mobileNumber: result.data.mobileNumber,
-      othermobileNumber: result.data.othermobileNumber,
-      rent: result.data.rent,
-      pickupDateTime: result.data.pickupDateTime,
-      advance: result.data.advance,
-      returnDateTime: result.data.returnDateTime,
-      deposite: result.data.deposite,
-      orderDate: result.data.orderDate,
-      returnAmount: result.data.returnAmount,
-      aadharCard: result.data.aadharCard,
-      userId: localStorage.getItem("userId")
-    }
+    // const payload: RentList = {
+    //   id: result.data.id,
+    //   rentProducts: result.data.rentProducts,
+    //   billNo: result.data.billNo,
+    //   customerName: result.data.customerName,
+    //   status: result.data.status,
+    //   address: result.data.address,
+    //   mobileNumber: result.data.mobileNumber,
+    //   othermobileNumber: result.data.othermobileNumber,
+    //   rent: result.data.rent,
+    //   pickupDateTime: result.data.pickupDateTime,
+    //   advance: result.data.advance,
+    //   returnDateTime: result.data.returnDateTime,
+    //   deposite: result.data.deposite,
+    //   orderDate: result.data.orderDate,
+    //   returnAmount: result.data.returnAmount,
+    //   aadharCard: result.data.aadharCard,
+    //   total: result.data.total,
+    //   userId: localStorage.getItem("userId")
+    // }
+
+    const payload = result.data;
+    payload.userId = localStorage.getItem("userId");
 
     this.firebaseService.updateRent(result.data.id, payload).then((res: any) => {
+      this.sendWhatsAppMessage(payload);
       this.getRentList()
       
       this.openConfigSnackBar('record update successfully')
@@ -245,9 +296,12 @@ export class RentComponent implements OnInit {
       if (res) {
         this.allRentProductList = res;
         this.rentList.forEach((element: any) => {
-          const data = res.find((id: any) => id.id === element.rentProducts)
-          element['product'] = data?.productNumber + '-' + data?.productName
-        })
+          element.rentDetails.forEach((rentItem: any) => {
+            const data = res.find((product: any) => product.id === rentItem.rentProducts);
+            rentItem['product'] = data ? `${data.productNumber} - ${data.productName}` : '';
+  });
+});
+
         this.loaderService.setLoader(false)
       }
     });
@@ -258,12 +312,14 @@ export class RentComponent implements OnInit {
     this.firebaseService.getAllRent().subscribe((res: any) => {
       if (res) {
         this.rentList = res.filter((id: any) => id.userId === localStorage.getItem("userId"));
-
         this.rentList.sort((a: any, b: any) => a.orderDate.seconds - b.orderDate.seconds);
+        this.totalRent = this.rentList.reduce((acc: number, item: any) => {
+          return acc + (parseFloat(item.total) || 0);
+        }, 0);
+
         this.rentDataSource = new MatTableDataSource(this.rentList);
         this.rentDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false)
-
         this.getRentProductList()
       }
     })
@@ -321,6 +377,36 @@ export class RentComponent implements OnInit {
     }
   }
 
+
+  editOrderRowId: string | null = null;
+
+  enableOrderEdit(rowId: string): void {
+    this.editOrderRowId = rowId;
+  }
+
+  updateOrderStatus(element:any, row: any, newStatus: string): void {
+    debugger
+    row.status = newStatus;
+    this.editRentProduct({ data: element });
+    // if (newStatus === 'Cancelled') {
+    //   this.addParty('Delete', row);
+    //   // row.status = newStatus;
+    // } else {
+    //   row.status = newStatus;
+    //   this.editRentProduct({ data: row });
+    // }
+    this.editOrderRowId = null;
+  }
+
+  cancelOrder(): void {
+    this.editOrderRowId = null;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOrderOutside(event: MouseEvent) {
+    this.cancelOrder();
+  }
+
 }
 
 
@@ -365,19 +451,22 @@ export class rentDialogComponent implements OnInit {
     }
     if (this.action === 'Edit' || this.action === 'Delete') {
       this.productForm.patchValue(this.local_data);
-      this.productForm.controls['rentProducts'].setValue(this.local_data.rentProducts.id ? this.local_data.rentProducts.id : this.local_data.rentProducts);
-      this.productForm.controls['pickupDateTime'].setValue(new Date(this.local_data.pickupDateTime.seconds * 1000));
       this.productForm.controls['orderDate'].setValue(new Date(this.local_data.orderDate.seconds * 1000));
-      this.productForm.controls['returnDateTime'].setValue(new Date(this.local_data.returnDateTime.seconds * 1000));
+
+      if(this.local_data?.rentDetails?.length) {
+        this.rentDetails.clear();
+        this.local_data?.rentDetails.forEach((val: any) => {
+          (this.productForm.controls['rentDetails'] as FormArray).push(this.createRentDetailGroup(val))
+        });
+      }
+
+      this.productForm.value.rentDetails.forEach((ele:any) => {
+        ele['']
+      })
 
       this.rentCalculation('');
     }
 
-    // this.productForm.get('deposite')?.valueChanges.subscribe(value => {
-    //   const newValue = this.calculateTotal();
-    //   this.productForm.get('returnAmount')?.setValue(newValue, { emitEvent: false });
-    // });
-    
     this.productForm.get('pickupDateTime')?.valueChanges.subscribe(() => {
       this.validateDateOrder();
     });
@@ -388,20 +477,22 @@ export class rentDialogComponent implements OnInit {
   }
 
   setAutoBillNo() {
-    this.firebaseService.getAllRent().subscribe((res: any) => {
+      this.firebaseService.getAllRent().subscribe((res: any) => {
+      const userId = localStorage.getItem("userId");
       if (res && res.length > 0) {
-        const lastBill = res[0].billNo || 0;
-        this.productForm.get('billNo')?.setValue(lastBill + 1);
+        const userData = res.filter((item: any) => item.userId === userId);
+        this.productForm.get('billNo')?.setValue(userData.length + 1);
       } else {
         this.productForm.get('billNo')?.setValue(1); 
       }
     });
+
   }
 
 
   buildForm() {
     this.productForm = this.fb.group({
-      rentProducts: ['', Validators.required],
+      id: [''],
       billNo:['',Validators.required],
       customerName: ['', Validators.required],
       status: ['', Validators.required],
@@ -409,15 +500,38 @@ export class rentDialogComponent implements OnInit {
       mobileNumber: ['', Validators.required],
       othermobileNumber: ['',],
       orderDate: [new Date()],
-      pickupDateTime: ['', Validators.required],
-      returnDateTime: ['', Validators.required],
-      rent: ['', Validators.required],
       advance: ['', Validators.required],
       deposite: ['', Validators.required],
       returnAmount: ['', Validators.required],
       aadharCard: [''],
-      id: ['']
+      total: [''],
+      rentDetails: this.fb.array([this.createRentDetailGroup()])
     })
+  }
+  
+  createRentDetailGroup(data?:any): FormGroup {
+    return this.fb.group({
+      rentProducts: [data?.rentProducts || '', Validators.required],
+      rent: [data?.rent ||  '', Validators.required],
+      pickupDateTime: [data?.pickupDateTime ? new Date(data.pickupDateTime.seconds * 1000) : '', Validators.required],
+      returnDateTime: [data?.returnDateTime ? new Date(data.returnDateTime.seconds * 1000) : '', Validators.required],
+      billNo: [data?.billNo || ''],
+      id: [data?.id || ''],
+      status: [data?.status || '']
+    });
+  }
+
+  get rentDetails(): FormArray {
+      return this.productForm.get('rentDetails') as FormArray;
+    }
+
+     removeRentDetail(index: number) {
+    this.rentDetails.removeAt(index);
+     }
+
+     
+addRentDetail() {
+    this.rentDetails.push(this.createRentDetailGroup());
   }
 
   calculateTotal(): any {
@@ -430,30 +544,39 @@ export class rentDialogComponent implements OnInit {
   }
 
   doAction(): void {
+    debugger
+    this.productForm.value.rentDetails.forEach((ele:any) => {
+      ele['status'] = ele?.status || "Booked";
+      ele['billNo'] = this.productForm.value.billNo;
+      ele['id'] = ele?.id || this.generateUniqueId();
+    });
+
     const payload = this.productForm.value
     this.dialogRef.close({ event: this.action, data: payload });
+  }
+
+  generateUniqueId(): string {
+    return Date.now().toString() + Math.floor(Math.random() * 1000).toString();
   }
 
   closeDialog(): void {
     this.dialogRef.close({ event: 'Cancel' });
   }
 
-
   getRentProductList() {
     this.loaderService.setLoader(true)
     this.firebaseService.getAllRentProduct().subscribe((res: any) => {
       if (res) {
         this.rentProductList = res.filter((id: any) => id.userId === localStorage.getItem("userId"));
-
+debugger
         this.rentProductList.forEach((element: any) => {
-          // const data = res.find((id: any) => id.id === element.id)
           element['product'] = element?.productNumber + '-' + element?.productName
         })
 
         this.filteredRentProducts = [...this.rentProductList];
         if (this.action === 'Edit') {
-          const data = this.rentProductList.find((id: any) => id.id === (this.local_data.rentProducts.id ? this.local_data.rentProducts.id : this.local_data.rentProducts))
-          this.productForm.get('rent')?.setValue(data.rent)
+          // const data = this.rentProductList.find((id: any) => id.id === (this.local_data.rentProducts.id ? this.local_data.rentProducts.id : this.local_data.rentProducts))
+          // this.productForm.get('rent')?.setValue(data.rent)
         }
         this.loaderService.setLoader(false)
       }
@@ -467,8 +590,8 @@ export class rentDialogComponent implements OnInit {
     const pickupControl = this.productForm.get('pickupDateTime');
     const returnControl = this.productForm.get('returnDateTime');
 
-    pickupControl?.setErrors(null);
-    returnControl?.setErrors(null);
+    // pickupControl?.setErrors(null);
+    // returnControl?.setErrors(null);
 
     if (pickup && returnDate) {
       if (pickup.getTime() >= returnDate.getTime()) {
@@ -483,17 +606,37 @@ export class rentDialogComponent implements OnInit {
     this.productForm.get('rent')?.setValue(data.rent)
   }
 
+  // rentCalculation(event: any) {
+  //   const rent = Number(this.productForm.get('rent')?.value) || 0;
+  //   const advance = Number(this.productForm.get('advance')?.value) || 0;
+  //   const deposite = Number(this.productForm.get('deposite')?.value) || 0;
+  //   const total = rent - advance;
+
+  //   this.productForm.get('returnAmount')?.setValue(deposite - total)
+  // }
+
   rentCalculation(event: any) {
-    const rent = Number(this.productForm.get('rent')?.value) || 0;
-    const advance = Number(this.productForm.get('advance')?.value) || 0;
-    const deposite = Number(this.productForm.get('deposite')?.value) || 0;
-    const total = rent - advance;
-    this.productForm.get('returnAmount')?.setValue(total - deposite)
-  }
+  const rentArray = this.productForm.get('rentDetails') as FormArray;
+  if (!rentArray) return;
+
+  let rentSum = 0;
+  rentArray.controls.forEach(group => {
+    const rent = Number(group.get('rent')?.value) || 0;
+    rentSum += rent;
+  });
+
+  this.productForm.get('total')?.setValue(rentSum, { emitEvent: false });
+
+  const advance = Number(this.productForm.get('advance')?.value) || 0;
+  const deposite = Number(this.productForm.get('deposite')?.value) || 0;
+  const returnAmount = (rentSum - advance) - deposite;
+
+  this.productForm.get('returnAmount')?.setValue(returnAmount, { emitEvent: false });
+}
+
 
   filterRentProducts(event: any) {
     const search = (event.target.value || '').toLowerCase();
-    debugger
     this.filteredRentProducts = this.rentProductList.filter((item:any) =>
       item.product.toLowerCase().includes(search)
     );

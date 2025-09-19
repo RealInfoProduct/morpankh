@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, NgClass } from '@angular/common';
 
 import { MasterRoutes, MasterRoutingModule } from './master-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,6 +23,10 @@ import { RentProductComponent, rentproductMasterDialogComponent } from './rent-p
 import { RentComponent, rentDialogComponent } from './rent/rent.component';
 import { NgxMatNativeDateModule, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { AccountComponent, accountDialogComponent } from './account/account.component';
+import { IncomeExpenseComponent } from './income-expense/income-expense.component';
+import { ExpenseDialogComponent } from './income-expense/expense-dialog/expense-dialog.component';
+import { BalanceComponent } from './balance/balance.component';
+import { DayByDayComponent } from './day-by-day/day-by-day.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +44,11 @@ import { AccountComponent, accountDialogComponent } from './account/account.comp
     RentProductComponent,
     RentComponent,
     AccountComponent,
-    accountDialogComponent
+    accountDialogComponent,
+    IncomeExpenseComponent,
+    ExpenseDialogComponent,
+    BalanceComponent,
+    DayByDayComponent,
   ],
   imports: [
     CommonModule,
@@ -63,6 +71,7 @@ import { AccountComponent, accountDialogComponent } from './account/account.comp
         deps: [HttpClient],
       },
     }),
+    NgClass,
   ],
   providers: [DatePipe],
 })

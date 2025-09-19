@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { addDoc, collectionData, deleteDoc, doc, Firestore, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
-import { ProductList, RegisterUser, PurchaseList, RentProductList, RentList } from '../interface/invoice';
+import { ProductList, RegisterUser, PurchaseList, RentProductList, RentList, ExpensesList, BalanceList } from '../interface/invoice';
 import { collection } from '@firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Auth } from '@angular/fire/auth';
-import { from } from 'rxjs';
+import { from, Observable } from 'rxjs';
 
 
 @Injectable({
@@ -124,6 +124,70 @@ export class FirebaseService {
   updateRent(updateId: RentList, payload: any) {
     let dataRef = doc(this.fService, `RentList/${updateId}`);
     return updateDoc(dataRef, payload)
+  }
+
+    /////////////////////// Expenses List Data ////////////////////////
+
+
+  addExpenses(payload: ExpensesList) {
+    payload.id = doc(collection(this.fService, 'id')).id
+    return addDoc(collection(this.fService, 'ExpensesList'), payload)
+  }
+
+  getAllExpenses() {
+    let dataRef = collection(this.fService, 'ExpensesList')
+    return collectionData(dataRef, { idField: 'id' })
+  }
+
+  deleteExpenses(deleteId: any) {
+    let docRef = doc(collection(this.fService, 'ExpensesList'), deleteId);
+    return deleteDoc(docRef)
+  }
+
+  updateExpenses(updateId: ExpensesList, payload: any) {
+    let dataRef = doc(this.fService, `ExpensesList/${updateId}`);
+    return updateDoc(dataRef, payload)
+  }
+
+   /////////////////////// Balance List Data ////////////////////////
+
+
+  // addBalance(payload: BalanceList) {
+  //   payload.id = doc(collection(this.fService, 'id')).id
+  //   return addDoc(collection(this.fService, 'BalanceList'), payload)
+  // }
+
+  
+  addBalance(payload: BalanceList): Observable<any> {
+    payload.id = doc(collection(this.fService, 'BalanceList')).id;
+    const collectionRef = collection(this.fService, 'BalanceList');
+    return from(addDoc(collectionRef, payload));
+  }
+
+  getUserBalance() {
+    let dataRef = collection(this.fService, 'BalanceList')
+    return collectionData(dataRef, { idField: 'id' })
+  }
+
+  getAllBalance() {
+    let dataRef = collection(this.fService, 'BalanceList')
+    return collectionData(dataRef, { idField: 'id' })
+  }
+
+  // updateBalance(updateId: BalanceList, payload: any) {
+  //   let dataRef = doc(this.fService, `BalanceList/${updateId}`);
+  //   return updateDoc(dataRef, payload)
+  // }
+
+  updateBalance(updateId: string, payload: any): Observable<void> {
+    const dataRef = doc(this.fService, `BalanceList/${updateId}`);
+    const updatePromise = updateDoc(dataRef, payload);
+    return from(updatePromise); // Converts Promise to Observable
+  }
+
+  deleteBalance(deleteId: any) {
+    let docRef = doc(collection(this.fService, 'BalanceList'), deleteId);
+    return deleteDoc(docRef)
   }
 
 }

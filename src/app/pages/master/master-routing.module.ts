@@ -11,6 +11,9 @@ import { InvoiceViewComponent } from './invoice-view/invoice-view.component';
 import { RentProductComponent } from './rent-product/rent-product.component';
 import { RentComponent } from './rent/rent.component';
 import { AccountComponent } from './account/account.component';
+import { IncomeExpenseComponent } from './income-expense/income-expense.component';
+import { BalanceComponent } from './balance/balance.component';
+import { DayByDayComponent } from './day-by-day/day-by-day.component';
 
 
 export const MasterRoutes: Routes = [
@@ -118,16 +121,49 @@ export const MasterRoutes: Routes = [
         },
       },
       {
-              path: 'viewinvoice/:id',
-              component: InvoiceViewComponent,
-              data: {
-                title: 'View Invoice',
-                urls: [
-                  { title: 'Master', url: '/master/viewinvoice' },
-                  { title: 'View Invoice' },
-                ],
-              },
-            },
+        path: 'viewinvoice/:id',
+        component: InvoiceViewComponent,
+        data: {
+          title: 'View Invoice',
+          urls: [
+            { title: 'Master', url: '/master/viewinvoice' },
+            { title: 'View Invoice' },
+          ],
+        },
+      },
+      {
+        path: 'income-expense',
+        component: IncomeExpenseComponent,
+        data: {
+          title: 'Income Expense',
+          urls: [
+            { title: 'Master', url: '/master/income-expense' },
+            { title: 'Income Expense' },
+          ],
+        },
+      },
+      {
+        path: 'balance',
+        component: BalanceComponent,
+        data: {
+          title: 'Balance',
+          urls: [
+            { title: 'Master', url: '/master/balance' },
+            { title: 'Balance' },
+          ],
+        },
+      },
+      {
+        path: 'day-by-day',
+        component: DayByDayComponent,
+        data: {
+          title: 'day-by-day',
+          urls: [
+            { title: 'Master', url: '/master/day-by-day' },
+            { title: 'day-by-day' },
+          ],
+        },
+      }
     ],
   }
 ];

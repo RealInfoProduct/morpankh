@@ -71,5 +71,24 @@ export interface RentList {
     orderDate:any,
     returnAmount:any,
     aadharCard:any,
+    total?:any,
+    userId:any
+}
+
+export interface ExpensesList {
+    id:any,
+    billno?:any,
+    amount:any,
+    bank:string,
+    notes:any,
+    paymenttype:any,
+    accounttype:any,
+    date:any,
+    userId:any
+}
+export interface BalanceList {
+    id:any,
+    cashBalance:any,
+    bankDetails:any,
     userId:any
 }

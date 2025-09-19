@@ -1,0 +1,112 @@
+
+
+            <mat-card class="cardWithShadow">
+                <mat-card-content class="p-24">
+                    <div class="row justify-content-between">
+                        <div class="col-lg-3">
+                            <mat-form-field appearance="outline" class="w-100 hide-hint">
+                                <input matInput placeholder="Search Expenses" (keyup)="applyFilter($any($event.target).value)"/>
+                                <mat-icon matSuffix>
+                                    <i-tabler name="search" class="icon-20"></i-tabler>
+                                </mat-icon>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-lg-3">
+                        <mat-radio-group [value]="'All'" (change)="onFilterChange($event)" aria-label="Account type">
+                            <mat-radio-button *ngFor="let item of AccountList" [value]="item">
+                                {{ item }}
+                            </mat-radio-button>
+                        </mat-radio-group>
+
+                    </div>
+                    <div class="col-lg-2 d-flex f-s-12 p-l-0 f-w-900">
+                             <div  [ngStyle]="{'color':totalByAccountType.Expense  === 'Expense' ? 'green' : 'red'}">
+                                <strong>Total Expense:</strong> {{ totalByAccountType.Expense || 0  }}
+                            </div>
+                         <div [ngStyle]="{'color':totalByAccountType.Income  === 'Income' ? 'red' : 'green'}">
+                                <strong>Total Income:</strong> {{ totalByAccountType.Income || 0  }}
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 d-flex align-items-center justify-content-end">
+                             <button mat-flat-button color="primary" (click)="addBalance()">
+                                Add Balance </button>
+                        </div>
+
+                        <div class="col-lg-2 d-flex align-items-center justify-content-end">
+                            <button mat-flat-button color="primary" (click)="addexpenses('Add', {})">
+                                Add Income/Expenses </button>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="cardWithShadow">
+                <mat-card-content class="p-24">
+                    <div class="table-responsive">
+                        <table mat-table [dataSource]="expensesDataSource" class="w-100">
+            
+                            <ng-container matColumnDef="date">
+                                <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Date</th>
+                                <td mat-cell *matCellDef="let element;let i = index" class="f-s-12">{{element.date.toDate() | date:'dd/MM/yyyy'}}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="billNo">
+                                <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Bill No</th>
+                                <td mat-cell *matCellDef="let element" class="f-s-12">{{element.billno}}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="amount">
+                                <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Amount</th>
+                                <td mat-cell *matCellDef="let element" class="f-s-12" [ngStyle]="{'color': element.accounttype === 'Expense' ? 'red' : 'green'}">{{element.amount}}</td>
+                            </ng-container>
+            
+                            <ng-container matColumnDef="notes">
+                                <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Notes</th>
+                                <td mat-cell *matCellDef="let element;let i = index" class="f-s-12">{{element.notes}}</td>
+                            </ng-container>
+            
+                            <ng-container matColumnDef="accounttype">
+                                <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Account Type</th>
+                                <td mat-cell *matCellDef="let element;let i = index" class="f-s-12" [ngStyle]="{'color': element.accounttype === 'Expense' ? 'red' : 'green'}">{{element.accounttype}}</td>
+                            </ng-container>
+            
+                            <ng-container matColumnDef="paymenttype">
+                                <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Payment Type</th>
+                                <td mat-cell *matCellDef="let element;let i = index" class="f-s-12">
+                                    <ng-container *ngIf="element.paymenttype === 'Cash'">
+                                        {{element.paymenttype}}
+                                    </ng-container>
+                                    <ng-container *ngIf="element.paymenttype !== 'Cash'">
+                                        {{element.paymenttype + " ( "+ getBankNameById(element.bank) +" )"}}
+                                    </ng-container>
+                                </td>
+                            </ng-container>
+
+                              <ng-container matColumnDef="action">
+                                <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">
+                                    {{'FirmMaster.Action' | translate}}
+                                </th>
+                                <td mat-cell *matCellDef="let element" class="action-link">
+                                    <a class="m-r-10 cursor-pointer"><i-tabler name="edit" (click)="addexpenses('Edit', element)"
+                                        class="icon-18"></i-tabler></a>
+                                    <a class="m-r-10 cursor-pointer">
+                                    <i-tabler name="trash" (click)="addexpenses('Delete', element)" class="icon-18"></i-tabler>
+                                    </a>
+                                </td>
+                                </ng-container>
+            
+                            <tr mat-header-row *matHeaderRowDef="expensesdisplayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: expensesdisplayedColumns"></tr>
+                            <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+                                <td class="mat-cell" [attr.colspan]="expensesdisplayedColumns.length">
+                                    No record found
+                                </td>
+                            </tr>
+                        </table>
+                        <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+    

@@ -23,6 +23,24 @@ export const navItems: NavItem[] = [
     route: '/master/rentproducts',
   },
   {
+    displayName: 'Day by day',
+    iconName: 'hanger-2',
+    route: '/master/day-by-day',
+  },
+  {
+    navCap: 'Financial',
+  },
+   {
+    displayName: 'Income/Expense',
+    iconName: 'hanger-2',
+    route: '/master/income-expense',
+  },
+  {
+    displayName: 'Balance',
+    iconName: 'hanger-2',
+    route: '/master/balance',
+  },
+  {
     navCap: 'Master',
   },
   {
@@ -50,7 +68,7 @@ export const navItems: NavItem[] = [
     iconName: 'list-details',
     route: '/master/invoicelist',
   },
-  
+ 
 
   // {
   //   displayName: 'Account',
