@@ -72,11 +72,11 @@
         <div class="col-lg-3">
           <mat-form-field appearance="outline" class="w-100 m-t-10">
             <mat-label>Rent Products</mat-label>
-            <mat-select formControlName="rentProducts" placeholder="Rent Product"
+            <mat-select formControlName="rentProducts" placeholder="Rent Product" 
               (selectionChange)="onRentProductChange($event)">
-              <input matInput class="search" type="text" placeholder="Search..." (keyup)="filterRentProducts($event)"
+              <input matInput class="search" type="text" placeholder="Search..." (keyup)="filterRentProducts($event, i)" 
                 style="border: none; outline: none;">
-              <mat-option [value]="item.id" *ngFor="let item of filteredRentProducts">{{item.productNumber}} -
+              <mat-option [value]="item.id" *ngFor="let item of filteredRentProducts[i]">{{item.productNumber}} -
                 {{item.productName}}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -144,21 +144,19 @@
     </div>
     <mat-divider></mat-divider>
     <div class="row">
-      <div class="col-lg-8">
+      <div class="col-lg-3 d-flex align-items-center">
         <mat-label>Total</mat-label>
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <input type="number" matInput required formControlName="total" placeholder="Total" (ngModelChange)="rentCalculation($event)"  />
         </mat-form-field>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-8">
+    
+      <div class="col-lg-3 d-flex align-items-center">
         <mat-label>Advance</mat-label>
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <input type="number" matInput required formControlName="advance" placeholder="Advance"
             (ngModelChange)="rentCalculation($event)" />
@@ -167,22 +165,20 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-8">
+      <div class="col-lg-3 d-flex align-items-center">
         <mat-label>Deposite</mat-label>
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <input type="number" matInput required formControlName="deposite" placeholder="Deposite"
             (ngModelChange)="rentCalculation($event)" />
         </mat-form-field>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-8">
+ 
+      <div class="col-lg-3 d-flex align-items-center">
         <mat-label>Return Amount</mat-label>
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <input type="number" matInput required formControlName="returnAmount" placeholder="Return Amount" />
         </mat-form-field>

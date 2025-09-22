@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { FirebaseService } from 'src/app/services/firebase.service';
@@ -10,11 +11,13 @@ import { LoaderService } from 'src/app/services/loader.service';
   templateUrl: './day-by-day.component.html',
   styleUrls: ['./day-by-day.component.scss']
 })
-export class DayByDayComponent implements OnInit {
+export class DayByDayComponent implements OnInit,AfterViewInit {
   displayedColumns: string[] = ['billNo', 'porduct', 'pickupdate', 'returndate', 'rent', 'status'];
   daybydayDataSource = new MatTableDataSource<any>([]);
   rentList: any[] = [];
   rentProductList: any[] = [];
+  dateForm: FormGroup;
+  selectedTabIndex :any = 0;
 
   @ViewChild(MatTable, { static: true }) table!: MatTable<any>;
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
@@ -22,7 +25,8 @@ export class DayByDayComponent implements OnInit {
   constructor(
     private firebaseService: FirebaseService,
     private loaderService: LoaderService,
-     private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private fb : FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -44,8 +48,43 @@ export class DayByDayComponent implements OnInit {
         rent.includes(filter)
       );
     };
-    
+
+    this.dateForm = this.fb.group({
+      start: [null],
+      end: [null]
+    })
+
+    this.dateForm.valueChanges.subscribe(() => {
+      this.filterByDateRange();
+    });
   }
+
+  ngAfterViewInit(): void {
+  // this.daybydayDataSource.paginator = this.paginator;
+}
+
+
+  filterByDateRange() {
+    const { start, end } = this.dateForm.value;
+    let filtered = this.rentList.filter(item => {
+      return this.selectedTabIndex === 1
+        ? item.status === 'Completed'
+        : item.status !== 'Completed';
+    });
+
+    if (start instanceof Date && end instanceof Date) {
+      const startMs = new Date(start).setHours(0,0,0,0);
+      const endMs   = new Date(end).setHours(23,59,59,999);
+      filtered = filtered.filter(item => {
+        if (!item.pickupDateTime || typeof item.pickupDateTime.seconds !== 'number') return false;
+        const pickupMs = item.pickupDateTime.seconds * 1000;
+        return pickupMs >= startMs && pickupMs <= endMs;
+      });
+    }
+
+    this.daybydayDataSource.data = filtered;
+  }
+
 
   applyFilter(filterValue: string): void {
     this.daybydayDataSource.filter = filterValue.trim().toLowerCase();
@@ -68,11 +107,25 @@ export class DayByDayComponent implements OnInit {
     this.loaderService.setLoader(true);
     this.firebaseService.getAllRent().subscribe((res: any[]) => {
       const userId = localStorage.getItem('userId');
-      const filtered = res?.filter(r => r.userId === userId) || [];
-      this.rentList = filtered.flatMap(r => r.rentDetails || []).sort((a, b) => a.pickupDateTime?.toDate() - b.pickupDateTime?.toDate());
-      this.daybydayDataSource.data = this.rentList;
+      const rents = res?.filter(r => r.userId === userId) || [];
+      
+      this.rentList = rents.flatMap(r => r.rentDetails || []).sort((a, b) => a.pickupDateTime?.toDate() - b.pickupDateTime?.toDate());
+      this.updateDataSource("pending");
       this.getRentListProduct();
     });
+  }
+  
+  onTabChange(event: any): void {
+    this.selectedTabIndex = event.index;
+    this.filterByDateRange();
+    
+  }
+  
+  updateDataSource(status: "completed" | "pending"): void {
+    this.daybydayDataSource.data = this.rentList.filter(order =>
+      status === "completed" ? order.status === "Completed" : order.status !== "Completed"
+    );
+    // this.daybydayDataSource.paginator = this.paginator;
   }
 
   getRentListProduct(): void {

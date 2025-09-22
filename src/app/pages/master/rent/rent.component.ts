@@ -1,9 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Inject, OnInit, Optional, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
-import { RentList } from 'src/app/interface/invoice';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -133,8 +132,6 @@ export class RentComponent implements OnInit {
 
   applyFilter(filterValue: string): void {
     this.rentDataSource.filter = filterValue.trim().toLowerCase();
-
-
   }
 
   getSerialNumber(index: number): number {
@@ -290,12 +287,28 @@ export class RentComponent implements OnInit {
           return acc + (parseFloat(item.total) || 0);
         }, 0);
 
-        this.rentDataSource = new MatTableDataSource(this.rentList);
+          const pendingOrders = this.rentList.filter((order:any) =>
+            !order.rentDetails?.length ||
+            order.rentDetails.some((detail:any) => detail.status !== "Completed")
+          );
+
+        this.rentDataSource = new MatTableDataSource(pendingOrders);
         this.rentDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false)
         this.getRentProductList()
       }
     })
+  }
+
+  onTabChange(event: any): void {
+    this.updateDataSource(event.index === 1 ? "Completed" : "pending");
+  }
+
+  private updateDataSource(status: "Completed" | "pending"): void {
+    this.rentDataSource.data = this.rentList.filter((order:any) =>
+            !order.rentDetails?.length ||
+            status === 'Completed' ? order.rentDetails.every((detail:any) => detail.status === status) : order.rentDetails.some((detail:any) => detail.status !== 'Completed')
+    );
   }
 
   openConfigSnackBar(snackbarTitle: any) {
@@ -490,6 +503,7 @@ export class rentDialogComponent implements OnInit {
 
   addRentDetail() {
     this.rentDetails.push(this.createRentDetailGroup());
+    this.filteredRentProducts.push([...this.rentProductList]);
   }
 
   calculateTotal(): any {
@@ -507,7 +521,6 @@ export class rentDialogComponent implements OnInit {
       ele['billNo'] = this.productForm.value.billNo;
       ele['id'] = ele?.id || this.generateUniqueId();
     });
-
     const payload = this.productForm.value
     this.dialogRef.close({ event: this.action, data: payload });
   }
@@ -528,8 +541,8 @@ export class rentDialogComponent implements OnInit {
         this.rentProductList.forEach((element: any) => {
           element['product'] = element?.productNumber + '-' + element?.productName
         })
-
-        this.filteredRentProducts = [...this.rentProductList];
+        // this.filteredRentProducts = [...this.rentProductList];
+        this.filteredRentProducts = this.rentDetails.controls.map(() => [...this.rentProductList]);
         this.loaderService.setLoader(false)
       }
     });
@@ -574,9 +587,9 @@ export class rentDialogComponent implements OnInit {
     this.productForm.get('returnAmount')?.setValue(returnAmount, { emitEvent: false });
   }
 
-  filterRentProducts(event: any) {
+  filterRentProducts(event: any, i:any) {
     const search = (event.target.value || '').toLowerCase();
-    this.filteredRentProducts = this.rentProductList.filter((item: any) =>
+    this.filteredRentProducts[i] = this.rentProductList.filter((item: any) =>
       item.product.toLowerCase().includes(search)
     );
   }

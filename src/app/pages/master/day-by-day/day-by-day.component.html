@@ -9,55 +9,127 @@
                     </mat-icon>
                 </mat-form-field>
             </div>
+            <div class="col-lg-3">
+                <mat-form-field appearance="outline" class="example-form-field">
+                    <mat-label>Pickup Date Range</mat-label>
+                    <form [formGroup]="dateForm">
+                    <mat-date-range-input [rangePicker]="campaignOnePicker" (click)="filterByDateRange()">
+                        <input matStartDate placeholder="Start date" formControlName="start">
+                        <input matEndDate placeholder="End date" formControlName="end">
+                    </mat-date-range-input>
+                    </form>
+                    <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-6"></div>
         </div>
     </mat-card-content>
 </mat-card>
 
-<mat-card class="cardWithShadow">
-    <mat-card-content class="p-24">
-        <div class="table-responsive">
-            <table mat-table [dataSource]="daybydayDataSource" multiTemplateDataRows class="w-100">
-                <ng-container matColumnDef="billNo">
-                    <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
-                    <td mat-cell *matCellDef="let element" class="f-s-12">{{element.billNo}}</td>
-                </ng-container>
-                <ng-container matColumnDef="porduct">
-                    <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Product Name</th>
-                    <td mat-cell *matCellDef="let element" class="f-s-12">{{element.product}}</td>
-                </ng-container>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChange($event)">
+    <mat-tab label="Pending">
+        <mat-card class="cardWithShadow">
+            <mat-card-content class="p-24">
+                <div class="table-responsive">
+                    <table mat-table [dataSource]="daybydayDataSource" multiTemplateDataRows class="w-100">
+                        <ng-container matColumnDef="billNo">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.billNo}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="porduct">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Product Name</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.product}}</td>
+                        </ng-container>
 
-                <ng-container matColumnDef="pickupdate">
-                    <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pickupdate</th>
-                    <td mat-cell *matCellDef="let element" class="f-s-12 color-blue cursor-pointer">{{
-                        element.pickupDateTime?.toDate() | date: 'dd/MM/yyyy hh:mm a' }}</td>
-                </ng-container>
+                        <ng-container matColumnDef="pickupdate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pickupdate</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12 color-blue cursor-pointer">{{
+                                element.pickupDateTime?.toDate() | date: 'dd/MM/yyyy hh:mm a' }}</td>
+                        </ng-container>
 
-                <ng-container matColumnDef="returndate">
-                    <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Returndate</th>
-                    <td mat-cell *matCellDef="let element" class="f-s-12">{{element.returnDateTime?.toDate() | date:
-                        'dd/MM/yyyy hh:mm a'}}</td>
-                </ng-container>
+                        <ng-container matColumnDef="returndate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Returndate</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.returnDateTime?.toDate() |
+                                date:
+                                'dd/MM/yyyy hh:mm a'}}</td>
+                        </ng-container>
 
-                <ng-container matColumnDef="rent">
-                    <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Rent</th>
-                    <td mat-cell *matCellDef="let element" class="f-s-12">{{element.rent}}</td>
-                </ng-container>
+                        <ng-container matColumnDef="rent">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Rent</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.rent}}</td>
+                        </ng-container>
 
-                <ng-container matColumnDef="status">
-                    <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
-                    <td mat-cell *matCellDef="let element" class="f-s-12">{{element.status}}</td>
-                </ng-container>
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.status}}</td>
+                        </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"></tr>
-                <tr class="mat-row" style="text-align: center;" *matNoDataRow>
-                    <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-                        No record found
-                    </td>
-                </tr>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row">
+                        </tr>
+                        <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+                            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                                No record found
+                            </td>
+                        </tr>
 
-            </table>
-            <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
-        </div>
-    </mat-card-content>
-</mat-card>
+                    </table>
+                    <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-tab>
+    <mat-tab label="Completed">
+        <mat-card class="cardWithShadow">
+            <mat-card-content class="p-24">
+                <div class="table-responsive">
+                    <table mat-table [dataSource]="daybydayDataSource" multiTemplateDataRows class="w-100">
+                        <ng-container matColumnDef="billNo">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.billNo}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="porduct">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Product Name</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.product}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="pickupdate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pickupdate</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12 color-blue cursor-pointer">{{
+                                element.pickupDateTime?.toDate() | date: 'dd/MM/yyyy hh:mm a' }}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="returndate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Returndate</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.returnDateTime?.toDate() |
+                                date:
+                                'dd/MM/yyyy hh:mm a'}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="rent">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Rent</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.rent}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.status}}</td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row">
+                        </tr>
+                        <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+                            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                                No record found
+                            </td>
+                        </tr>
+
+                    </table>
+                    <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-tab>
+</mat-tab-group>
