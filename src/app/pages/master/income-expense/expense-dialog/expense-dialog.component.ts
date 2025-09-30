@@ -27,6 +27,11 @@ export class ExpenseDialogComponent implements OnInit{
      'Expense' 
    ]
 
+   statustype: any = [
+     'Paid',
+     'Pending' 
+   ]
+
    bankList:any =[
     'dome',
    ]
@@ -57,8 +62,9 @@ export class ExpenseDialogComponent implements OnInit{
        id:[''],
        date: [new Date()],
        billno:[''],
-       paymenttype:[''],
-       accounttype:[''],
+       paymenttype:['Cash'],
+       accounttype:['Income'],
+       status:['Paid'],
        bank:[''],
        notes:[''],
        amount:['']
@@ -73,6 +79,7 @@ export class ExpenseDialogComponent implements OnInit{
       billno: this.ExpenseForm.value.billno,
       paymenttype: this.ExpenseForm.value.paymenttype,
       accounttype: this.ExpenseForm.value.accounttype,
+      status: this.ExpenseForm.value.status,
       bank: this.ExpenseForm.value.bank,
       amount: this.ExpenseForm.value.amount,
       notes: this.ExpenseForm.value.notes,
@@ -194,9 +201,9 @@ export class ExpenseDialogComponent implements OnInit{
         if (res) {
           const BalanceList = res.find((id: any) => id.userId === localStorage.getItem("userId"));
           this.selectedBankUpdateData = BalanceList;
-          this.selectedBankDetails = BalanceList.bankDetails
-          const data = BalanceList.bankDetails.find((b: any) => b.selected === true);
-          this.ExpenseForm.controls['bank'].setValue(data.id)
+          this.selectedBankDetails = BalanceList?.bankDetails
+          const data = BalanceList?.bankDetails.find((b: any) => b.selected === true);
+          this.ExpenseForm.controls['bank'].setValue(data?.id)
           this.loaderService.setLoader(false);
         }
       });

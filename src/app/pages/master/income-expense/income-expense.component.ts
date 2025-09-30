@@ -29,6 +29,7 @@ export class IncomeExpenseComponent implements OnInit {
     // 'bank',
     'paymenttype',
     'accounttype',
+    'statustype',
     'action'
   ];
 
@@ -68,6 +69,7 @@ export class IncomeExpenseComponent implements OnInit {
           billno: result.data.billno,
           paymenttype: result.data.paymenttype,
           accounttype: result.data.accounttype,
+          status: result.data.status,
           bank: result.data.bank,
           amount: result.data.amount,
           notes: result.data.notes,
@@ -95,6 +97,7 @@ export class IncomeExpenseComponent implements OnInit {
               billno: result.data.billno,
               paymenttype: result.data.paymenttype,
               accounttype: result.data.accounttype,
+              status: result.data.status,
               bank: result.data.bank,
               amount: result.data.amount,
               notes: result.data.notes,

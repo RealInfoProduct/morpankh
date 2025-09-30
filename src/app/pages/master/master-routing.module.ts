@@ -14,6 +14,8 @@ import { AccountComponent } from './account/account.component';
 import { IncomeExpenseComponent } from './income-expense/income-expense.component';
 import { BalanceComponent } from './balance/balance.component';
 import { DayByDayComponent } from './day-by-day/day-by-day.component';
+import { InvestmentComponent } from './investment/investment.component';
+import { PartnersComponent } from './partners/partners.component';
 
 
 export const MasterRoutes: Routes = [
@@ -150,6 +152,28 @@ export const MasterRoutes: Routes = [
           urls: [
             { title: 'Master', url: '/master/balance' },
             { title: 'Balance' },
+          ],
+        },
+      },
+      {
+        path: 'investment',
+        component: InvestmentComponent,
+        data: {
+          title: 'Investment',
+          urls: [
+            { title: 'Master', url: '/master/investment' },
+            { title: 'Investment' },
+          ],
+        },
+      },
+      {
+        path: 'partners',
+        component: PartnersComponent,
+        data: {
+          title: 'Partners',
+          urls: [
+            { title: 'Master', url: '/master/partners' },
+            { title: 'Partners' },
           ],
         },
       },

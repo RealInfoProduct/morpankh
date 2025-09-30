@@ -122,7 +122,7 @@ constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
           this.bankDetails.push(this.createBankDetailGroup());
         }
      let total = 0;
-      this.balanceList.bankDetails?.forEach((bank: any) => {
+      this.balanceList?.bankDetails?.forEach((bank: any) => {
         total += parseFloat(bank.balance) || 0;
       });
 

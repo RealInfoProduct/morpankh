@@ -41,6 +41,16 @@ export const navItems: NavItem[] = [
     route: '/master/balance',
   },
   {
+    displayName: 'Investment',
+    iconName: 'hanger-2',
+    route: '/master/investment',
+  },
+  {
+    displayName: 'Partners',
+    iconName: 'hanger-2',
+    route: '/master/partners',
+  },
+  {
     navCap: 'Master',
   },
   {

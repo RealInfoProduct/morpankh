@@ -27,6 +27,10 @@ import { IncomeExpenseComponent } from './income-expense/income-expense.componen
 import { ExpenseDialogComponent } from './income-expense/expense-dialog/expense-dialog.component';
 import { BalanceComponent } from './balance/balance.component';
 import { DayByDayComponent } from './day-by-day/day-by-day.component';
+import { InvestmentComponent } from './investment/investment.component';
+import { PartnersComponent } from './partners/partners.component';
+import { PartnersDialogComponent } from './partners/partners-dialog/partners-dialog.component';
+import { InvestmentDialogComponent } from './investment/investment-dialog/investment-dialog.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +53,10 @@ import { DayByDayComponent } from './day-by-day/day-by-day.component';
     ExpenseDialogComponent,
     BalanceComponent,
     DayByDayComponent,
+    InvestmentComponent,
+    PartnersComponent,
+    PartnersDialogComponent,
+    InvestmentDialogComponent,
   ],
   imports: [
     CommonModule,

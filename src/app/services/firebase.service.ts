@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { addDoc, collectionData, deleteDoc, doc, Firestore, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
-import { ProductList, RegisterUser, PurchaseList, RentProductList, RentList, ExpensesList, BalanceList } from '../interface/invoice';
+import { ProductList, RegisterUser, PurchaseList, RentProductList, RentList, ExpensesList, BalanceList, PartnersList, InvestmentList } from '../interface/invoice';
 import { collection } from '@firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Auth } from '@angular/fire/auth';
@@ -49,6 +49,52 @@ export class FirebaseService {
 
   updateProduct(updateId: ProductList, payload: any) {
     let dataRef = doc(this.fService, `ProductList/${updateId}`);
+    return updateDoc(dataRef, payload)
+  }
+
+  /////////////////////// Partners List Data ////////////////////////
+
+
+  addPartners(payload: PartnersList) {
+    payload.id = doc(collection(this.fService, 'id')).id
+    return addDoc(collection(this.fService, 'PartnersList'), payload)
+  }
+
+  getAllPartners() {
+    let dataRef = collection(this.fService, 'PartnersList')
+    return collectionData(dataRef, { idField: 'id' })
+  }
+
+  deletePartners(deleteId: any) {
+    let docRef = doc(collection(this.fService, 'PartnersList'), deleteId);
+    return deleteDoc(docRef)
+  }
+
+  updatePartners(updateId: PartnersList, payload: any) {
+    let dataRef = doc(this.fService, `PartnersList/${updateId}`);
+    return updateDoc(dataRef, payload)
+  }
+
+  /////////////////////// Investment List Data ////////////////////////
+
+
+  addInvestment(payload: InvestmentList) {
+    payload.id = doc(collection(this.fService, 'id')).id
+    return addDoc(collection(this.fService, 'InvestmentList'), payload)
+  }
+
+  getAllInvestment() {
+    let dataRef = collection(this.fService, 'InvestmentList')
+    return collectionData(dataRef, { idField: 'id' })
+  }
+
+  deleteInvestment(deleteId: any) {
+    let docRef = doc(collection(this.fService, 'InvestmentList'), deleteId);
+    return deleteDoc(docRef)
+  }
+
+  updateInvestment(updateId: InvestmentList, payload: any) {
+    let dataRef = doc(this.fService, `InvestmentList/${updateId}`);
     return updateDoc(dataRef, payload)
   }
 

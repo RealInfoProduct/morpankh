@@ -21,6 +21,23 @@ export interface ProductList {
     userId :any
 }
 
+export interface PartnersList {
+    id: string,
+    firstName: string,
+    middleName: string,
+    lastName: string,
+    mobileNumber: any,
+    userId :any
+}
+export interface InvestmentList {
+    id: string,
+    name: string,
+    amount: any,
+    note: string,
+    date: any,
+    userId :any
+}
+
 export interface RentProductList {
     id: string,
     productNumber: number,
@@ -83,6 +100,7 @@ export interface ExpensesList {
     notes:any,
     paymenttype:any,
     accounttype:any,
+    status:any,
     date:any,
     userId:any
 }

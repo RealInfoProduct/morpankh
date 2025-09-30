@@ -34,6 +34,7 @@
                     </mat-radio-button>
                 </mat-radio-group>
             </div>
+            
                 <div class="col-lg-6" *ngIf="ExpenseForm.controls['paymenttype'].value === 'G-Pay'">
                     <mat-form-field appearance="outline" class="w-100 m-t-8">
                         <mat-label>Bank</mat-label>
@@ -43,11 +44,18 @@
                     </mat-form-field>
                 </div>
                 <div class="col-lg-6">
-                <mat-form-field appearance="outline" class="w-100 m-t-10">
-                    <mat-label>Notes</mat-label>
-                    <input type="text" matInput formControlName="notes" placeholder="Notes" />
-                </mat-form-field>
-            </div>
+                    <mat-form-field appearance="outline" class="w-100 m-t-10">
+                        <mat-label>Notes</mat-label>
+                        <input type="text" matInput formControlName="notes" placeholder="Notes" />
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6 status mt-10">
+                    <mat-radio-group formControlName="status" class="d-block" required>
+                        <mat-radio-button *ngFor="let item of statustype" [value]="item">
+                            {{ item }}
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </div>
             <div class="col-lg-6">
                 <mat-form-field appearance="outline" class="w-100 m-t-10">
                     <mat-label>Amount</mat-label>
@@ -60,7 +68,7 @@
 <ng-container *ngIf="action !== 'Delete'">
     <mat-divider></mat-divider>
     <mat-dialog-actions class="p-24 justify-content-end">
-        <button mat-stroked-button color="warn" mat-dialog-close (click)="doAction();">Save & Close</button>
+        <button mat-stroked-button color="warn" mat-dialog-close (click)="doAction();"  [disabled]="!ExpenseForm.valid">Save & Close</button>
         <button mat-flat-button [disabled]="!ExpenseForm.valid" color="primary" (click)="doAction();">Save</button>
     </mat-dialog-actions>
 </ng-container>

@@ -71,6 +71,11 @@
                                 <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Account Type</th>
                                 <td mat-cell *matCellDef="let element;let i = index" class="f-s-12" [ngStyle]="{'color': element.accounttype === 'Expense' ? 'red' : 'green'}">{{element.accounttype}}</td>
                             </ng-container>
+
+                            <ng-container matColumnDef="statustype">
+                                <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Status Type</th>
+                                <td mat-cell *matCellDef="let element;let i = index" class="f-s-12" >{{element.status}}</td>
+                            </ng-container>
             
                             <ng-container matColumnDef="paymenttype">
                                 <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Payment Type</th>
