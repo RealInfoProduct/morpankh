@@ -49,9 +49,9 @@ export class ExpenseDialogComponent implements OnInit{
    }
  
    ngOnInit(): void {
-     this.ExpenseFormlist()
-     this.getBalanceList()
-      if (this.action === 'Edit' || this.action === 'Delete') {
+    this.ExpenseFormlist()
+    this.getBalanceList()
+    if (this.action === 'Edit' || this.action === 'Delete') {
       this.ExpenseForm.patchValue(this.local_data);
       this.ExpenseForm.controls['date'].setValue(new Date(this.local_data.date.seconds * 1000));
     }
@@ -80,7 +80,7 @@ export class ExpenseDialogComponent implements OnInit{
       paymenttype: this.ExpenseForm.value.paymenttype,
       accounttype: this.ExpenseForm.value.accounttype,
       status: this.ExpenseForm.value.status,
-      bank: this.ExpenseForm.value.bank,
+      bank: this.ExpenseForm.value.bank || '',
       amount: this.ExpenseForm.value.amount,
       notes: this.ExpenseForm.value.notes,
       userId: localStorage.getItem("userId")
