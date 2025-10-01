@@ -172,69 +172,6 @@ export class RentComponent implements OnInit {
     });
   }
 
-  // sendWhatsAppMessage(order: any) {
-  //   const product = this.rentList.find((id: any) => id?.rentProducts === order?.rentProducts)?.product;
-  //   const formatDate = (timestamp: any): string => {
-  //     if (!timestamp) return '';
-
-  //     let date: Date;
-
-  //     if (typeof timestamp === 'string') {
-  //       date = new Date(timestamp);
-  //     } else if (timestamp instanceof Date) {
-  //       date = timestamp;
-  //     } else if (timestamp.seconds) {
-  //       date = new Date(timestamp.seconds * 1000);
-  //     } else {
-  //       return '';
-  //     }
-
-  //     return this.datePipe.transform(date, 'dd/MM/yyyy hh:mm a') ?? '';
-  //   };
-    
-  //   const pickupDateStr = formatDate(order?.pickupDateTime);
-  //   const returnDateStr = formatDate(order?.returnDateTime);
-  //   const orderDate = formatDate(order?.orderDate);
-
-
-  //   const message = `Hello ${order.customerName},
-  //   Your Saree Rental Order has been confirmed ✅
-
-  //   📌 Order Details:
-    
-  //   - Product: ${product}
-  //   - Status: ${order.status}
-  //   - Order Date: ${orderDate}
-  //   - Pickup Date & Time: ${pickupDateStr}
-  //   - Return Date & Time: ${returnDateStr}
-  //   - Rent Amount: ₹${order.rent}
-  //   - Advance Paid: ₹${order.advance} 
-  //   - Deposit: ₹${order.deposite}
-  //   - Remaing Amount: ₹${order.rent - order.advance}
-
-  //   ડીલવરી લેતી વખતે ₹${(order.rent - order.advance) + order.deposite} રકમ આપવાની રહેશે. ડીલેવરી લેવા આવો ત્યારે ડિપોઝિટ કેશ માં લાવવી.
-
-  //   📜 Rules:
-  //   1) ઓર્ડર બુકિંગ થયા પછી કોઈપણ વસ્તુમાં ચેન્જ કે કેન્સલ થશે નહીં અને બિલ ની રકમ પરત મળશે નહીં.
-  //   2) ડીલવરી લેતી વખતે બાકી રહેતી રકમ અને ડિપોઝિટ આપવાની રહેશે. ડીલેવરી લેવા આવો ત્યારે ડિપોઝિટ કેશ માં લાવવી.
-  //   3) કોઈપણ ઓર્ડર ના બુકિંગ સાથે 50% રકમ જમા કરાવવાની રહેશે.
-  //   4) ચોલીના બ્લાઉઝમાં ફીટીંગ માટે ફરજિયાત હાથ સિલાઈ કરવાની રહેશે, મશીન સિલાઈ હશે તો ૫૦૦ ચાર્જ લેવામાં આવશે.
-  //   5) ભાડેથી લઈ ગયેલ ઓર્ડર આપેલ તારીખ છે કે સમય નહીં પહોંચે તો બે ગણું ભાડું લેવામાં આવશે.
-  //   6) ભાડા ની બધી જ વસ્તુઓ રિટર્ન કરવાની રહેશે
-  //   7) ડીલવરી લેતી વખતે સામાન બરાબર ચેક કરીને લઈ જવો.(ઘરે જઈને સામાન ફરી પહેરીને બરાબર ચેક કરવો અને કોઈ ભૂલ દેખાય તો ૪ કલાક માં જાણ કરવી પછી શો-રૂમની કોઈ જવાબદારી રહેશે નહીં)
-  //   8) શો-રૂમ સમય સવારે ૧૦:૦૦ થી સાંજે ૯:૦૦ સુધીનો રહેશે.
-  //   9) ઉપરના બધા જ નિયમો અને સૂચનો અમે વાંચ્યા છે અને અમને મંજુર છે, અને તેનું સંપૂર્ણ પણે પાલન કરવા અમે બંધાયેલા છીએ. ડીલીવરી ૮:૦૦ સાંજે વાગ્યા સુધીમાં લઈ જવી.
-
-  //   Follow our Instagram or Facebook for new updates:
-  //   Instagram: https://www.instagram.com/_.morpankh_saree._?igsh=MTBkaG5rb2Fxdzg2cw==
-
-  //   Thank you for booking with us 💐`;
-
-  //   const phone = order.mobileNumber;
-  //   const url = `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
-  //   window.open(url, '_blank');
-  // }
-
   sendWhatsAppMessage(order: any) {
     const product = this.rentList.find((id: any) => id?.rentProducts === order?.rentProducts);
   const formatDate = (timestamp: any): string => {
@@ -256,7 +193,7 @@ export class RentComponent implements OnInit {
   };
 
   const orderDate = formatDate(product?.orderDate);
-debugger
+
   // 🔁 Loop through rentDetails array and build the item list
   let rentDetailsMessage = '';
   product?.rentDetails?.forEach((item: any, index: number) => {
@@ -372,7 +309,6 @@ Thank you for booking with us 💐`;
             !order.rentDetails?.length ||
             order.rentDetails.some((detail:any) => detail.status !== "Completed")
           );
-
         this.rentDataSource = new MatTableDataSource(pendingOrders);
         this.rentDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false)
@@ -535,9 +471,9 @@ export class rentDialogComponent implements OnInit {
       const userId = localStorage.getItem("userId");
       if (res && res.length > 0) {
         const userData = res.filter((item: any) => item.userId === userId);
-        this.productForm.get('billNo')?.setValue(userData.length + 1);
+        this.productForm.get('srNo')?.setValue(userData.length + 1);
       } else {
-        this.productForm.get('billNo')?.setValue(1);
+        this.productForm.get('srNo')?.setValue(1);
       }
     });
   }
@@ -546,7 +482,8 @@ export class rentDialogComponent implements OnInit {
   buildForm() {
     this.productForm = this.fb.group({
       id: [''],
-      billNo: ['', Validators.required],
+      srNo: [''],
+      billNo: [''],
       customerName: ['', Validators.required],
       status: ['', Validators.required],
       address: ['', Validators.required],

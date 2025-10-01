@@ -35,7 +35,9 @@ export interface InvestmentList {
     amount: any,
     note: string,
     date: any,
-    userId :any
+    userId :any,
+    paymenttype:any,
+    bank:any
 }
 
 export interface RentProductList {
@@ -73,6 +75,7 @@ export interface PurchaseList {
 
 export interface RentList {
     id:any,
+    srNo?:any,
     billNo?:any,
     rentProducts:string,
     customerName:string,
@@ -108,5 +111,6 @@ export interface BalanceList {
     id:any,
     cashBalance:any,
     bankDetails:any,
-    userId:any
+    userId:any,
+    cashFlow?:any
 }

@@ -16,6 +16,7 @@ export class ExpenseDialogComponent implements OnInit{
   action: any;
    local_data: any;
    selectedBankDetails:any =[]
+   cashFlow:any = []
    selectedBankUpdateData :any
    paymenttype: any = [
      'Cash',
@@ -90,21 +91,21 @@ export class ExpenseDialogComponent implements OnInit{
       this.firebaseService.deleteExpenses(payload.id).then((res: any) => {
         payload.bank = data?.bank;
         payload.accounttype = payload.accounttype === "Expense" ? "Income" : "Expense"
-        this.updateBalance(payload);
+        this.updateBalance(payload , type);
         this.getexpensesList()
         this.openConfigSnackBar('record delete successfully')
       }, (error) => {})
     } else {
       if (payload?.id) {
         this.firebaseService.updateExpenses(payload.id, payload).then((res: any) => {
-          this.updateBalance(payload);
+          this.updateBalance(payload , type);
           this.getexpensesList();
           this.openConfigSnackBar('record update successfully')
         }, (error) => {})
       } else {
         this.firebaseService.addExpenses(payload).then((res) => {
           if (res) {
-            this.updateBalance(payload)
+            this.updateBalance(payload,type)
             this.getexpensesList()
             this.ExpenseForm.reset()
             this.openConfigSnackBar('record create successfully')
@@ -114,64 +115,95 @@ export class ExpenseDialogComponent implements OnInit{
       }
     }
   }
+
+
   
 
-  updateBalance(payload :any){
-    if(this.ExpenseForm.controls['paymenttype'].value === 'G-Pay') {
-      const selectedBank = this.selectedBankDetails.find((bank:any) => bank.id === payload.bank);
-      if (selectedBank) {
-          let updatedBalance = selectedBank.balance;
-          if (payload.accounttype === 'Income') {
-              updatedBalance += payload.amount;
-          } else if (payload.accounttype === 'Expense') {
-              updatedBalance -= payload.amount;
-          }
-  
-          this.selectedBankDetails.forEach((ele:any) => {
-             if(ele.id === payload?.bank) {
-                ele.balance = updatedBalance
-             }
-          })
-          
-          const balancePayload = {
-              id: this.selectedBankUpdateData.id,
-              cashBalance: this.selectedBankUpdateData.cashBalance,
-              bankDetails: this.selectedBankDetails,
-              userId: payload.userId
-          };
-  
-          this.firebaseService.updateBalance(balancePayload.id, balancePayload).subscribe({
-            next: (res: any) => {
-              if (res) {
-                this.ExpenseForm.reset();
-              }
-            },
-            error: (error) => { }
-          })
-        }
+  updateBalance(payload: any, type: any) {
+    if (type === 'delete') {
+        const indexToDelete = this.cashFlow.findIndex((item: any) => item?.transactionId === payload?.id);
+
+      if (indexToDelete === -1) {
+        this.cashFlow.splice(indexToDelete, 1);
+      }
     } else {
-        let updatedCashBalance = this.selectedBankUpdateData.cashBalance;
+      const cashFlowObj = {
+        trasactionType: payload.accounttype,
+        paymentType: payload.paymenttype,
+        createdDate: new Date(),
+        transactionDate: payload.date,
+        amount: payload.amount,
+        transactionId: payload.id,
+        bankId: payload.bank ?? ''
+      };
+  
+      const existingIndex = this.cashFlow.findIndex((item: any) => item?.transactionId === payload?.id);
+  
+      if (existingIndex !== -1) {
+        this.cashFlow[existingIndex] = cashFlowObj;
+      } else {
+        this.cashFlow.push(cashFlowObj);
+      }
+    }
+
+
+    if (this.ExpenseForm.controls['paymenttype'].value === 'G-Pay') {
+      const selectedBank = this.selectedBankDetails.find((bank: any) => bank.id === payload.bank);
+      if (selectedBank) {
+        let updatedBalance = selectedBank.balance;
         if (payload.accounttype === 'Income') {
-            updatedCashBalance += payload.amount;
+          updatedBalance += payload.amount;
         } else if (payload.accounttype === 'Expense') {
-            updatedCashBalance -= payload.amount;
+          updatedBalance -= payload.amount;
         }
 
-        this.selectedBankUpdateData.cashBalance = updatedCashBalance
-        const balancePayload = {
-            id: this.selectedBankUpdateData.id,
-            cashBalance: this.selectedBankUpdateData.cashBalance,
-            bankDetails: this.selectedBankDetails,
-            userId: payload.userId
-        };
+        this.selectedBankDetails.forEach((ele: any) => {
+          if (ele.id === payload?.bank) {
+            ele.balance = updatedBalance
+          }
+        })
 
+        const balancePayload = {
+          id: this.selectedBankUpdateData.id,
+          cashBalance: this.selectedBankUpdateData.cashBalance,
+          bankDetails: this.selectedBankDetails,
+          cashFlow: this.cashFlow,
+          userId: payload.userId
+        };
 
         this.firebaseService.updateBalance(balancePayload.id, balancePayload).subscribe({
           next: (res: any) => {
-            if (res) { }
+            if (res) {
+              this.ExpenseForm.reset();
+            }
           },
           error: (error) => { }
         })
+      }
+    } else {
+      let updatedCashBalance = this.selectedBankUpdateData.cashBalance;
+      if (payload.accounttype === 'Income') {
+        updatedCashBalance += payload.amount;
+      } else if (payload.accounttype === 'Expense') {
+        updatedCashBalance -= payload.amount;
+      }
+
+      this.selectedBankUpdateData.cashBalance = updatedCashBalance
+      const balancePayload = {
+        id: this.selectedBankUpdateData.id,
+        cashBalance: this.selectedBankUpdateData.cashBalance,
+        bankDetails: this.selectedBankDetails,
+        cashFlow: this.cashFlow,
+        userId: payload.userId
+      };
+
+
+      this.firebaseService.updateBalance(balancePayload.id, balancePayload).subscribe({
+        next: (res: any) => {
+          if (res) { }
+        },
+        error: (error) => { }
+      })
     }
   }
  
@@ -202,6 +234,7 @@ export class ExpenseDialogComponent implements OnInit{
           const BalanceList = res.find((id: any) => id.userId === localStorage.getItem("userId"));
           this.selectedBankUpdateData = BalanceList;
           this.selectedBankDetails = BalanceList?.bankDetails
+          this.cashFlow = BalanceList.cashFlow ?? []
           const data = BalanceList?.bankDetails.find((b: any) => b.selected === true);
           this.ExpenseForm.controls['bank'].setValue(data?.id)
           this.loaderService.setLoader(false);

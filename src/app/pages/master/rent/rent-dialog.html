@@ -4,11 +4,34 @@
   <form [formGroup]="productForm">
     <div class="row">
       <div class="col-lg-3">
+        <div class="row">
+          <div class="col-lg-6">
+            <mat-form-field appearance="outline" class="w-100 m-t-10">
+              <mat-label>Sr No</mat-label>
+              <input type="number" matInput formControlName="srNo" placeholder="Bill No" min="0" readonly />
+            </mat-form-field>
+          </div>
+          <div class="col-lg-6">
+            <mat-form-field appearance="outline" class="w-100 m-t-10">
+            <mat-label>Bill No</mat-label>
+            <input type="number" matInput formControlName="billNo" placeholder="Bill No" min="0" />
+          </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
-          <mat-label>Bill No</mat-label>
-          <input type="number" matInput required formControlName="billNo" placeholder="Bill No" min="0" readonly />
+          <mat-label>Sr No</mat-label>
+          <input type="number" matInput formControlName="srNo" placeholder="Bill No" min="0" readonly />
         </mat-form-field>
       </div>
+
+      <div class="col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Bill No</mat-label>
+          <input type="number" matInput formControlName="billNo" placeholder="Bill No" min="0" readonly />
+        </mat-form-field>
+      </div> -->
 
       <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
