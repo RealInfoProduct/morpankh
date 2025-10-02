@@ -37,11 +37,11 @@ export class InvoiceViewComponent {
     this.loaderService.setLoader(true);
     this.firebaseService.getAllPurchase().subscribe((res: any[]) => {
       if (res) {
+        const data = res.filter((id: any) => id.userId === localStorage.getItem("userId"))
         // Convert invoiceNo param to number (because invoiceNo is number in your data)
         const invoiceNoNum = Number(this.invoiceNo);
-
         // Filter by invoiceNo instead of id
-        this.purchaseList = res.filter((item: any) => item.invoiceNo === invoiceNoNum);
+        this.purchaseList = data.filter((item: any) => item.invoiceNo === invoiceNoNum);
         this.filteredPurchaseList = [...this.purchaseList];
 
         const invoice = this.purchaseList[0];

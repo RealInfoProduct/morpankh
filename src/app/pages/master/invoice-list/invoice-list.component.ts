@@ -145,8 +145,7 @@ productgrandTotal(invoiceNo: number): number {
 
   sendWhatsAppInvoiceShell(order: any) {
     const invoiceUrl = `${window.location.origin}/invoicedetails/${order.id}`;
-    debugger
-    const message = `Hello ${order.customerName} 👋,
+      const message = `Hello ${order.customerName} 👋,
 
 📥 Your invoice is ready to download.
 
