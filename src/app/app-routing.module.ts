@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AuthGuardGuard } from './services/auth.guard';
+import { InvoicedownloadComponent } from './invoice-download/invoicedownload/invoicedownload.component';
 
 const routes: Routes = [
   {
@@ -122,6 +123,10 @@ const routes: Routes = [
   {
     path: '**',
     redirectTo: 'authentication/error',
+  },
+  {
+    path: 'invoicedetails/:id',
+    component: InvoicedownloadComponent,
   }
 ];
 

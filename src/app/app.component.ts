@@ -21,7 +21,7 @@ export class AppComponent {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.firebaseService.getUserList().subscribe((res => {
-          if (res) {
+          if (res && this.router.url.split("/")[1] !== 'invoicedetails') {
             const userData: any = res.find((id: any) => id.id === localStorage.getItem("userId"))
               if (!userData?.isActive) {
                   localStorage.clear()

@@ -1,0 +1,163 @@
+/* Card */
+.invoice-card {
+    max-width: 900px;
+    margin: 30px auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.invoice-header {
+    background: #01c0c8;
+    /* green banner */
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    /* allow wrapping on small screens */
+}
+
+.invoice-header .title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.download-btn {
+    background: white !important;
+    color: #01c0c8 !important;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+/* Info Section */
+.info-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 24px;
+    font-size: 14px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.info-section>div {
+    flex: 1 1 45%;
+}
+
+.info-section .label {
+    font-weight: 600;
+    font-size: 15px;
+    color: #444;
+}
+
+.info-section p {
+    margin: 4px 0 0;
+}
+
+/* Bill Info */
+.bill-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 24px;
+    font-size: 14px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.bill-info>div {
+    flex: 1 1 45%;
+}
+
+.bill-info .label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+/* Table */
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.invoice-table th,
+.invoice-table td {
+    padding: 12px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.invoice-table th {
+    background: #f4f6f8;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.invoice-table tr:nth-child(even) {
+    background: #fafafa;
+}
+
+.invoice-table td {
+    border-bottom: 1px solid #eee;
+    word-wrap: break-word;
+}
+
+/* Totals */
+.totals {
+    text-align: right;
+    padding: 24px;
+}
+
+.totals h5 {
+    margin: 5px 0;
+    font-size: 15px;
+}
+
+.totals .grand-total {
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* ✅ Mobile Styles */
+@media (max-width: 768px) {
+    .invoice-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .info-section {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .bill-info {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .invoice-table th,
+    .invoice-table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .totals {
+        text-align: left;
+    }
+}
+.invoice-greeting {
+    font-size: 15px;
+    font-weight: 600;
+    color: #444;
+    margin: 15px 20px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-left: 4px solid #01c0c8;
+    border-right: 4px solid #01c0c8;
+    border-radius: 4px;
+    text-align: center;
+}
