@@ -143,4 +143,20 @@ productgrandTotal(invoiceNo: number): number {
   }, 0);
 }
 
+  sendWhatsAppInvoiceShell(order: any) {
+    const invoiceUrl = `${window.location.origin}/invoicedetails/${order.id}`;
+    debugger
+    const message = `Hello ${order.customerName} 👋,
+
+📥 Your invoice is ready to download.
+
+🔗 Download Invoice:
+${invoiceUrl}
+
+Thank you for choosing Morpankh Saree 💐`;
+
+    const url = `https://web.whatsapp.com/send?phone=${order.customerNumber}&text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  }
+
 }
