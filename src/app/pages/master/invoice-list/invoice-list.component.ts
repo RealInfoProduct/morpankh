@@ -144,11 +144,6 @@ productgrandTotal(invoiceNo: number): number {
 }
 
   sendWhatsAppInvoiceShell(order: any) {
-      if (!order || !order.id || !order.customerName || !order.customerNumber) {
-    alert('No record found');
-    return;
-  }
-
     const invoiceUrl = `${window.location.origin}/invoicedetails/${order.id}`;
       const message = `Hello ${order.customerName} 👋,
 

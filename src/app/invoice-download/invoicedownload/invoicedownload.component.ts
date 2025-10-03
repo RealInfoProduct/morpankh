@@ -45,31 +45,34 @@ export class InvoicedownloadComponent {
 
         // Filter by invoiceId instead of id
         this.purchaseList = res.filter((item: any) => item.id === invoiceId);
-        this.filteredPurchaseList = [...this.purchaseList];
-
-        const invoice = this.purchaseList[0];
-
-        if (invoice) {
-          this.invoiceDetail = {
-            id: invoice.invoiceNo,
-            billFrom: invoice.firmName,
-            billFromEmail: invoice.firmAddress,
-            billFromAddress: '',
-            billFromPhone: '',
-            billTo: invoice.customerName,
-            billToEmail: '',
-            billToAddress: '',
-            billToPhone: invoice.customerNumber,
-            orders: [],
-            orderDate: new Date(invoice.invoiceDate?.seconds * 1000),
-            totalCost: this.productsubTotal,
-            vat: 10,
-            grandTotal: this.productgrandTotal,
-            status: invoice.invoiceStatus,
-          };
+        if (this.purchaseList.length > 0) {
+          this.filteredPurchaseList = [...this.purchaseList];
+  
+          const invoice = this.purchaseList[0];
+  
+          if (invoice) {
+            this.invoiceDetail = {
+              id: invoice.invoiceNo,
+              billFrom: invoice.firmName,
+              billFromEmail: invoice.firmAddress,
+              billFromAddress: '',
+              billFromPhone: '',
+              billTo: invoice.customerName,
+              billToEmail: '',
+              billToAddress: '',
+              billToPhone: invoice.customerNumber,
+              orders: [],
+              orderDate: new Date(invoice.invoiceDate?.seconds * 1000),
+              totalCost: this.productsubTotal,
+              vat: 10,
+              grandTotal: this.productgrandTotal,
+              status: invoice.invoiceStatus,
+            };
+          }
+        } else {
+          window.alert('invoice not found')          
         }
-
-        this.loaderService.setLoader(false);
+        this.loaderService.setLoader(false);  
       }
     });
   }
