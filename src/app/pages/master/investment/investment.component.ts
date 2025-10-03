@@ -144,4 +144,9 @@ export class InvestmentComponent implements OnInit {
     })
   }
 
+  getBankNameById(partnersId: string): string {
+    if (!this.partnersList) return '';
+    const partners = this.partnersList.find((b: any) => b.id === partnersId);
+    return partners ? `${partners.firstName} - ${partners.lastName}` : '';
+  }
 }

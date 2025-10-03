@@ -71,6 +71,7 @@ export class InvestmentDialogComponent implements OnInit {
       paymenttype: this.investmentForm.value.paymenttype,
       userId: localStorage.getItem("userId"),
     };
+console.log(payload);
 
 
     if(this.investmentForm.value.paymenttype != 'Cash') {
@@ -78,7 +79,6 @@ export class InvestmentDialogComponent implements OnInit {
     }
     
     // this.dialogRef.close({ event: this.action, data: payload });
-debugger
     if (this.action === 'Add') {
       this.firebaseService.addInvestment(payload).then((res) => {
         if (res) {
@@ -92,7 +92,6 @@ debugger
     }
     if (this.action === 'Edit') {
         this.firebaseService.updateInvestment(payload.id, payload).then((res: any) => {
-          debugger
           // const balance = this.cashFlow.find((id:any) => id.transactionId === payload.id).amount;
           // this.selectedBankUpdateData.cashBalance -= balance;
           if (this.investmentForm.controls['paymenttype'].value === 'G-Pay') {

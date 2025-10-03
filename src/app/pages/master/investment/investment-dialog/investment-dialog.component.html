@@ -5,7 +5,7 @@
       <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100 m-t-8">
             <mat-select value="no" formControlName="name" placeholder="Name">
-                <mat-option [value]="item" *ngFor="let item of partnersList">{{item.firstName + ' '+ item.lastName}}</mat-option>
+                <mat-option [value]="item.id" *ngFor="let item of partnersList">{{item.firstName + ' '+ item.lastName}}</mat-option>
             </mat-select>
         </mat-form-field>
       </div>
