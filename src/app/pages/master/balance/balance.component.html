@@ -57,10 +57,10 @@
                         </div>
                         
                           <div class="col-lg-1 d-flex align-items-center m-b-10">
-                            <a class="m-r-10 cursor-pointer" *ngIf="bankDetails.length > 1">
+                            <a class="m-r-10 cursor-pointer" *ngIf="bankDetails.length > 1  && !CheckBalance">
                                 <i-tabler name="trash" (click)="removeBankDetail(i)"  class="icon-18"></i-tabler>
                             </a>
-                            <a class="m-r-10 cursor-pointer" >
+                            <a class="m-r-10 cursor-pointer" *ngIf="!CheckBalance" >
                                 <i-tabler name="plus" (click)="addBankDetail()" class="icon-18"></i-tabler>
                             </a>
                         </div>
@@ -70,7 +70,7 @@
                 </div>
 
                 <div class="col-1 m-t-20">
-                    <button mat-flat-button [disabled]="!balanceForm.valid" color="primary" (click)="saveBalance()">
+                    <button mat-flat-button [disabled]="!balanceForm.valid" color="primary" (click)="saveBalance()" *ngIf="!CheckBalance">
                         Save
                     </button>
                 </div>

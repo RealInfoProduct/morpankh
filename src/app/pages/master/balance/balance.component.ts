@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
 import { BalanceList } from 'src/app/interface/invoice';
@@ -17,14 +18,23 @@ balanceForm:FormGroup
 balanceList:any =[]
 expensesList:any = []
 totalBalance:any =0
-
+CheckBalance:boolean = false
 selectedBankIndex: number | null = null;
 
 constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
-            private loaderService : LoaderService, private _snackBar: MatSnackBar){}
+            private loaderService : LoaderService, private _snackBar: MatSnackBar,
+           @Optional() @Inject(MAT_DIALOG_DATA) public data: any){}
 
   ngOnInit(): void {
     this.balanceFormList()
+
+    if (this.data?.disabled) {
+      setTimeout(() => {
+        this.balanceForm.disable();
+      }, 100);
+      this.CheckBalance = true
+    }
+
     this.getexpensesList()
   }
 

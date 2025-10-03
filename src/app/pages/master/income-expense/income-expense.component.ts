@@ -222,7 +222,7 @@ export class IncomeExpenseComponent implements OnInit {
     const dialogRef = this.dialog.open(BalanceComponent,
       {
         width: '900px',
-
+        data: { disabled: true }
       });
   }
 
