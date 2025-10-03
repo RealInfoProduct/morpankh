@@ -33,30 +33,35 @@ export class InvestmentDialogComponent implements OnInit {
   ) {
 
     this.local_data = { ...data };
-    
     this.action = this.local_data.action;
 
   }
   ngOnInit(): void {
     const data = Object.keys(this.local_data?.data)?.length === 0 ? null : this.local_data?.data
-    this.buildForm(data)
+    this.buildForm()
+
+    if (this.action === 'Edit' || this.action === 'Delete') {
+      this.investmentForm.patchValue(this.local_data.data);
+      this.investmentForm.controls['date'].setValue(new Date(this.local_data.data.date.seconds * 1000));
+    }
+
     this.getPartnersList();
     this.getBalanceList();
   }
 
   buildForm(data?:any) {
-    debugger
     this.investmentForm = this.fb.group({
-      name: [data ? data?.name : '', Validators.required],
-      amount: [data ? data?.amount : '', Validators.required],
-      note: [data ? data?.note : '', Validators.required],
+      name: ['', Validators.required],
+      amount: ['', Validators.required],
+      note: ['', Validators.required],
       date: [data ? new Date(data?.date.toDate()) : new Date()],
-      paymenttype: [data ? data?.paymenttype : ''],
-      bank: [data ? data?.bank : '']
+      paymenttype: [''],
+      bank: ['']
     })
   }
 
-  doAction(): void {
+  doAction(data?:any): void {
+    
     const payload:any = {
       id: this.local_data.data?.id ? this.local_data.data?.id : '',
       name: this.investmentForm.value.name,
@@ -64,12 +69,16 @@ export class InvestmentDialogComponent implements OnInit {
       note: this.investmentForm.value.note,
       date: this.investmentForm.value.date,
       paymenttype: this.investmentForm.value.paymenttype,
-      bank: this.investmentForm.value.bank,
       userId: localStorage.getItem("userId"),
+    };
+
+
+    if(this.investmentForm.value.paymenttype != 'Cash') {
+      payload.bank =  this.investmentForm.value.bank
     }
     
     // this.dialogRef.close({ event: this.action, data: payload });
-
+debugger
     if (this.action === 'Add') {
       this.firebaseService.addInvestment(payload).then((res) => {
         if (res) {
@@ -83,6 +92,21 @@ export class InvestmentDialogComponent implements OnInit {
     }
     if (this.action === 'Edit') {
         this.firebaseService.updateInvestment(payload.id, payload).then((res: any) => {
+          debugger
+          // const balance = this.cashFlow.find((id:any) => id.transactionId === payload.id).amount;
+          // this.selectedBankUpdateData.cashBalance -= balance;
+          if (this.investmentForm.controls['paymenttype'].value === 'G-Pay') {
+            const balance = this.cashFlow.find((id: any) => id.transactionId === payload.id).amount;
+            this.selectedBankDetails.forEach((ele: any) => {
+              if (ele.id === payload?.bank) {
+                ele.balance -= balance
+              }
+            })
+          } else {
+            const balance = this.cashFlow.find((id: any) => id.transactionId === payload.id).amount;
+            this.selectedBankUpdateData.cashBalance -= balance;
+          }
+
           this.updateBalance(payload, this.action);
           this.openConfigSnackBar('record update successfully')
         }, (error) => {
@@ -92,10 +116,9 @@ export class InvestmentDialogComponent implements OnInit {
     }
     if (this.action === 'Delete') {
       this.firebaseService.deleteInvestment(payload.id).then((res: any) => {
-        payload.bank = payload?.bank;
-        // payload.accounttype = payload.accounttype === "Expense" ? "Income" : "Expense"
         this.updateBalance(payload , this.action);
-        this.openConfigSnackBar('record delete successfully')
+        this.openConfigSnackBar('record delete successfully');
+        this.dialogRef.close();
       }, (error) => {
         console.log("error => ", error);
 
@@ -136,21 +159,30 @@ export class InvestmentDialogComponent implements OnInit {
         this.selectedBankUpdateData = BalanceList;
         this.selectedBankDetails = BalanceList?.bankDetails
         this.cashFlow = BalanceList.cashFlow ?? []
-        const data = BalanceList?.bankDetails.find((b: any) => b.selected === true);
-        this.investmentForm.controls['bank'].setValue(data?.id)
+        // const data = BalanceList?.bankDetails.find((b: any) => b.selected === true);
+        // this.investmentForm.controls['bank'].setValue(data?.id)
+
+         if(this.action === 'Edit' || this.action === 'Delete') {
+            this.investmentForm.controls['bank'].setValue(this.local_data.data.bank)
+          } else {
+            const data = BalanceList?.bankDetails.find((b: any) => b.selected === true);
+            this.investmentForm.controls['bank'].setValue(data?.id)
+          }
+
         this.loaderService.setLoader(false);
       }
     });
   }
 
   updateBalance(payload: any, type:any) {
-    debugger
+    
     if (type === 'Delete') {
       const indexToDelete = this.cashFlow.findIndex((item: any) => item?.transactionId === payload?.id);
 
-      if (indexToDelete === -1) {
+      if (indexToDelete >= -1) {
         this.cashFlow.splice(indexToDelete, 1);
       }
+
     } else {
       const cashFlowObj = {
         trasactionType: 'Investment',
@@ -176,9 +208,9 @@ export class InvestmentDialogComponent implements OnInit {
 
           let updatedBalance = selectedBank.balance;
           if (type === 'Delete') {
-            updatedBalance -= payload.amount;
+            updatedBalance -= Number(payload.amount);
           } else{
-            updatedBalance += payload.amount;
+            updatedBalance += Number(payload.amount);
           }
 
           this.selectedBankDetails.forEach((ele:any) => {

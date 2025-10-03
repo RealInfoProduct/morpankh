@@ -78,9 +78,20 @@ export class FirebaseService {
   /////////////////////// Investment List Data ////////////////////////
 
 
+  // addInvestment(payload: InvestmentList) {
+  //   payload.id = doc(collection(this.fService, 'id')).id
+  //   return addDoc(collection(this.fService, 'InvestmentList'), payload)
+  // }
+
   addInvestment(payload: InvestmentList) {
-    payload.id = doc(collection(this.fService, 'id')).id
-    return addDoc(collection(this.fService, 'InvestmentList'), payload)
+    const expensesCollection = collection(this.fService, 'InvestmentList');
+    const newDocRef = doc(expensesCollection);
+    payload.id = newDocRef.id;
+
+    return setDoc(newDocRef, payload)
+      .then(() => {
+        return newDocRef.id;
+      });
   }
 
   getAllInvestment() {
@@ -175,9 +186,25 @@ export class FirebaseService {
     /////////////////////// Expenses List Data ////////////////////////
 
 
+  // addExpenses(payload: ExpensesList) {
+  //   // payload.id = doc(collection(this.fService, 'id')).id
+  //   // return addDoc(collection(this.fService, 'ExpensesList'), payload)
+
+  //   return addDoc(collection(this.fService, 'ExpensesList'), payload)
+  //     .then((docRef) => {
+  //       return updateDoc(docRef, { id: docRef.id });
+  //     });
+  // }
+
   addExpenses(payload: ExpensesList) {
-    payload.id = doc(collection(this.fService, 'id')).id
-    return addDoc(collection(this.fService, 'ExpensesList'), payload)
+    const expensesCollection = collection(this.fService, 'ExpensesList');
+    const newDocRef = doc(expensesCollection);
+    payload.id = newDocRef.id;
+
+    return setDoc(newDocRef, payload)
+      .then(() => {
+        return newDocRef.id;
+      });
   }
 
   getAllExpenses() {

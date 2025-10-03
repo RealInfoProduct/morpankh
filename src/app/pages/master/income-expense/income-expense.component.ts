@@ -59,70 +59,71 @@ export class IncomeExpenseComponent implements OnInit {
 
   addexpenses(action: string, obj: any) {
     obj.action = action;
-
     const dialogRef = this.dialog.open(ExpenseDialogComponent, { data: obj, width: '650px' });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.event === 'Add') {
-        const payload: ExpensesList = {
-          id: '',
-          date: result.data.date,
-          billno: result.data.billno,
-          paymenttype: result.data.paymenttype,
-          accounttype: result.data.accounttype,
-          status: result.data.status,
-          bank: result.data.bank,
-          amount: result.data.amount,
-          notes: result.data.notes,
-          userId: localStorage.getItem("userId")
-        }
-        console.log(payload);
+    // dialogRef.afterClosed().subscribe((result) => {
+    //   debugger
+    //   if (result?.event === 'Add') {
+    //     const payload: ExpensesList = {
+    //       id: '',
+    //       date: result.data.date,
+    //       billno: result.data.billno,
+    //       paymenttype: result.data.paymenttype,
+    //       accounttype: result.data.accounttype,
+    //       status: result.data.status,
+    //       bank: result.data.bank,
+    //       amount: result.data.amount,
+    //       notes: result.data.notes,
+    //       userId: localStorage.getItem("userId")
+    //     }
+    //     console.log(payload);
 
 
-        this.firebaseService.addExpenses(payload).then((res) => {
-          if (res) {
-            this.getexpensesList()
-            this.openConfigSnackBar('record create successfully')
-          }
-        }, (error) => {
-          console.log("error=>", error);
+    //     this.firebaseService.addExpenses(payload).then((res:any) => {
+    //       if (res) {
+    //         this.getexpensesList()
+    //         this.openConfigSnackBar('record create successfully')
+    //       }
+    //     }, (error) => {
+    //       console.log("error=>", error);
 
-        })
-      }
-      if (result?.event === 'Edit') {
-        this.expensesList.forEach((element: any) => {
-          if (element.id === result.data.id) {
-            const payload: ExpensesList = {
-              id: result.data.id,
-              date: result.data.date,
-              billno: result.data.billno,
-              paymenttype: result.data.paymenttype,
-              accounttype: result.data.accounttype,
-              status: result.data.status,
-              bank: result.data.bank,
-              amount: result.data.amount,
-              notes: result.data.notes,
-              userId: localStorage.getItem("userId")
-            }
-            this.firebaseService.updateExpenses(result.data.id, payload).then((res: any) => {
-              this.getexpensesList()
-              this.openConfigSnackBar('record update successfully')
-            }, (error) => {
-              console.log("error => ", error);
+    //     })
+    //   }
+    //   if (result?.event === 'Edit') {
+        
+    //     this.expensesList.forEach((element: any) => {
+    //       if (element.id === result.data.id) {
+    //         const payload: ExpensesList = {
+    //           id: result.data.id,
+    //           date: result.data.date,
+    //           billno: result.data.billno,
+    //           paymenttype: result.data.paymenttype,
+    //           accounttype: result.data.accounttype,
+    //           status: result.data.status,
+    //           bank: result.data.bank,
+    //           amount: result.data.amount,
+    //           notes: result.data.notes,
+    //           userId: localStorage.getItem("userId")
+    //         }
+    //         this.firebaseService.updateExpenses(result.data.id, payload).then((res: any) => {
+    //           this.getexpensesList()
+    //           this.openConfigSnackBar('record update successfully')
+    //         }, (error) => {
+    //           console.log("error => ", error);
 
-            })
-          }
-        });
-      }
-      if (result?.event === 'Delete') {
-        this.firebaseService.deleteExpenses(result.data.id).then((res: any) => {
-          this.getexpensesList()
-          this.openConfigSnackBar('record delete successfully')
-        }, (error) => {
-          console.log("error => ", error);
+    //         })
+    //       }
+    //     });
+    //   }
+    //   if (result?.event === 'Delete') {
+    //     this.firebaseService.deleteExpenses(result.data.id).then((res: any) => {
+    //       this.getexpensesList()
+    //       this.openConfigSnackBar('record delete successfully')
+    //     }, (error) => {
+    //       console.log("error => ", error);
 
-        })
-      }
-    });
+    //     })
+    //   }
+    // });
 
   }
 
@@ -131,7 +132,6 @@ export class IncomeExpenseComponent implements OnInit {
     this.firebaseService.getAllExpenses().subscribe((res: any) => {
       if (res) {
         this.expensesList = res.filter((id: any) => id.userId === localStorage.getItem("userId"));
-        // this.expensesList.sort((a:any, b:any) => a.orderDate.seconds - b.orderDate.seconds);
         this.allExpenses = this.expensesList
 
              this.totalByAccountType = this.expensesList.reduce((totals: any, item: any) => {

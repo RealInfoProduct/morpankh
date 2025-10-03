@@ -11,7 +11,7 @@
       </div>
       <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
-          <input type="text" matInput required formControlName="amount" placeholder="Amount" />
+          <input type="number" matInput required formControlName="amount" placeholder="Amount" />
         </mat-form-field>
       </div>
       <div class="col-lg-6  mt-10">
@@ -58,7 +58,7 @@
   </div>
   <mat-divider></mat-divider>
   <div mat-dialog-actions class="p-x-24 p-b-24 m-t-10 justify-content-end">
-    <button mat-button (click)="doAction()" mat-flat-button color="warn">
+    <button mat-button (click)="doAction(local_data)" mat-flat-button color="warn">
       {{'actions.' + action | translate}}
     </button>
     <button mat-stroked-button color="warn" (click)="closeDialog()" class="m-l-8">{{'productMasterdialog.Cancel' | translate}}</button>

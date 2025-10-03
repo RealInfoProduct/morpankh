@@ -52,65 +52,64 @@ export class InvestmentComponent implements OnInit {
 
   addParty(action: string, obj: any) {
     // obj.action = action;
-debugger
     const dialogRef = this.dialog.open(InvestmentDialogComponent, { data: {data : obj, action : action}});
 
-    dialogRef.afterClosed().subscribe((result) => {
-        if (result?.event === 'Add') {
-          const payload: InvestmentList = {
-            id: '',
-            name: result.data.name,
-            amount: result.data.amount,
-            note: result.data.note,
-            date: result.data.date,
-            userId: localStorage.getItem("userId"),
-            paymenttype: result.data.paymenttype,
-            bank: result.data.bank
-          }
+    // dialogRef.afterClosed().subscribe((result) => {
+    //     if (result?.event === 'Add') {
+    //       const payload: InvestmentList = {
+    //         id: '',
+    //         name: result.data.name,
+    //         amount: result.data.amount,
+    //         note: result.data.note,
+    //         date: result.data.date,
+    //         userId: localStorage.getItem("userId"),
+    //         paymenttype: result.data.paymenttype,
+    //         bank: result.data.bank
+    //       }
 
-          this.firebaseService.addInvestment(payload).then((res) => {
-            if (res) {
-              this.getInvestmentList()
-              this.openConfigSnackBar('record create successfully')
-            }
-          }, (error) => {
-            console.log("error=>", error);
+    //       this.firebaseService.addInvestment(payload).then((res) => {
+    //         if (res) {
+    //           this.getInvestmentList()
+    //           this.openConfigSnackBar('record create successfully')
+    //         }
+    //       }, (error) => {
+    //         console.log("error=>", error);
 
-          })
-        }
-        if (result?.event === 'Edit') {
-          this.investmentist.forEach((element: any) => {
-            if (element.id === result.data.id) {
-              const payload: InvestmentList = {
-                id: result.data.id,
-                name: result.data.name,
-                amount: result.data.amount,
-                note: result.data.note,
-                date: result.data.date,
-                userId: localStorage.getItem("userId"),
-                paymenttype: result.data.paymenttype,
-                bank: result.data.bank
-              }
-              this.firebaseService.updateInvestment(result.data.id, payload).then((res: any) => {
-                this.getInvestmentList()
-                this.openConfigSnackBar('record update successfully')
-              }, (error) => {
-                console.log("error => ", error);
+    //       })
+    //     }
+    //     if (result?.event === 'Edit') {
+    //       this.investmentist.forEach((element: any) => {
+    //         if (element.id === result.data.id) {
+    //           const payload: InvestmentList = {
+    //             id: result.data.id,
+    //             name: result.data.name,
+    //             amount: result.data.amount,
+    //             note: result.data.note,
+    //             date: result.data.date,
+    //             userId: localStorage.getItem("userId"),
+    //             paymenttype: result.data.paymenttype,
+    //             bank: result.data.bank
+    //           }
+    //           this.firebaseService.updateInvestment(result.data.id, payload).then((res: any) => {
+    //             this.getInvestmentList()
+    //             this.openConfigSnackBar('record update successfully')
+    //           }, (error) => {
+    //             console.log("error => ", error);
 
-              })
-            }
-          });
-        }
-        if (result?.event === 'Delete') {
-          this.firebaseService.deleteInvestment(result.data.id).then((res: any) => {
-            this.getInvestmentList()
-            this.openConfigSnackBar('record delete successfully')
-          }, (error) => {
-            console.log("error => ", error);
+    //           })
+    //         }
+    //       });
+    //     }
+    //     if (result?.event === 'Delete') {
+    //       this.firebaseService.deleteInvestment(result.data.id).then((res: any) => {
+    //         this.getInvestmentList()
+    //         this.openConfigSnackBar('record delete successfully')
+    //       }, (error) => {
+    //         console.log("error => ", error);
 
-          })
-        }
-    });
+    //       })
+    //     }
+    // });
   }
 
   getInvestmentList() {
@@ -118,7 +117,6 @@ debugger
     this.firebaseService.getAllInvestment().subscribe((res: any) => {
       if (res) {
         this.investmentist = res.filter((id: any) => id.userId === localStorage.getItem("userId"))
-        debugger
         this.investmentDataSource = new MatTableDataSource(this.investmentist);
         this.investmentDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false)

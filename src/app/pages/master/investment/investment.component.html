@@ -68,7 +68,7 @@
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
                   <p class="mat-subtitle-1 f-s-16 m-t-0">
-                    {{ element.date?.seconds * 1000 | date:'dd/MM/yyyy' }}
+                    {{ element.date.toDate() | date:'dd/MM/yyyy' }}
                   </p>
                 </div>
               </div>
