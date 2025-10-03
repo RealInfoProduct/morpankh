@@ -118,6 +118,7 @@ export class ExpenseDialogComponent implements OnInit{
             this.updateBalance(payload,type)
             this.getexpensesList()
             this.ExpenseForm.reset()
+             this.ExpenseForm.controls['date'].setValue(new Date())
             this.openConfigSnackBar('record create successfully')
         }, (error) => {})
       }
