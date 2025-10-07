@@ -116,18 +116,25 @@ export class InvestmentComponent implements OnInit {
     // });
   }
 
+ 
   getInvestmentList() {
     this.loaderService.setLoader(true)
     this.firebaseService.getAllInvestment().subscribe((res: any) => {
       if (res) {
-        this.investmentist = res.filter((id: any) => id.userId === localStorage.getItem("userId"))
-        this.investmentList = this.investmentist
-        this.investmentDataSource = new MatTableDataSource(this.investmentist);
+        this.investmentList = res.filter((id: any) => id.userId === localStorage.getItem("userId"));
+
+        this.investmentDataSource = new MatTableDataSource(this.investmentList);
         this.investmentDataSource.paginator = this.paginator;
+
+        this.totalAmount = this.investmentList.reduce((sum: number, item: any) => {
+          return sum + (Number(item.amount) || 0);
+        }, 0);
+
         this.loaderService.setLoader(false)
       }
-    })
+    });
   }
+
 
   openConfigSnackBar(snackbarTitle: any) {
     this._snackBar.open(snackbarTitle, 'Splash', {
@@ -154,20 +161,21 @@ export class InvestmentComponent implements OnInit {
     return partners ? `${partners.firstName} - ${partners.lastName}` : '';
   }
 
+
   onFilterChange(event: MatSelectChange) {
-      const selectedValue = event.value;
-  
-      if (selectedValue === 'All') {
-        this.investmentist = [...this.investmentList];
-         this.totalAmount = this.investmentist.reduce((sum: any, item: any) => sum + (item.amount || 0), 0);
-      this.investmentDataSource = new MatTableDataSource(this.investmentist);
+    const selectedValue = event.value;
+    if (selectedValue === 'All') {
+      this.investmentDataSource = new MatTableDataSource(this.investmentList);
       this.investmentDataSource.paginator = this.paginator;
-      } else {
-        this.investmentists = this.investmentist.filter((item:any) => item.name === selectedValue);
-        this.totalAmount = this.investmentists.reduce((sum: any, item: any) => sum + (item.amount || 0), 0);
-        this.investmentDataSource = new MatTableDataSource(this.investmentists);
-        this.investmentDataSource.paginator = this.paginator;
-      }
+      this.totalAmount = this.investmentList.reduce((sum: number, item: any) => { return sum + (Number(item.amount) || 0); }, 0);
+    } else {
+      const filteredData = this.investmentList.filter((item: any) => item.name === selectedValue);
+      this.investmentDataSource = new MatTableDataSource(filteredData);
+      this.investmentDataSource.paginator = this.paginator;
+      this.totalAmount = filteredData.reduce((sum: number, item: any) => { return sum + (Number(item.amount) || 0); }, 0);
     }
+  }
+
+
   
 }
