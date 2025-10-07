@@ -23,7 +23,7 @@
           </mat-form-field>
         </div> -->
         <div class="col-lg-2 d-flex">
-          <strong>Total Rent:</strong> {{ totalRent || 0 }}
+          <strong>Total Rent:</strong> ₹  {{ totalRent || 0 }}
         </div>
         <div class="col-lg-2 d-flex align-items-center justify-content-end">
           <button mat-flat-button color="primary" (click)="addParty('Add', {})">
@@ -104,6 +104,9 @@
                   {{'productMaster.Action' | translate}}
                 </th>
                 <td mat-cell *matCellDef="let element" class="f-s-12" class="action-link">
+                  <a class="m-r-10 cursor-pointer">
+                    <i-tabler name="edit" (click)="addParty('Edit', element)" class="icon-18"></i-tabler>
+                  </a>
                   <a class="m-r-10 cursor-pointer">
                     <i-tabler name="trash" (click)="addParty('Delete', element)" class="icon-18"></i-tabler>
                   </a>

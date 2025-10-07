@@ -40,12 +40,12 @@
                             <div class="row text-align">
                                 <div class="col-lg-6">
                                     <div [ngStyle]="{'color':totalByAccountType.Expense  === 'Expense' ? 'green' : 'red'}">
-                                        <strong>Expense:</strong> {{ totalByAccountType.Expense || 0 }}
+                                        <strong>Expense:</strong> ₹  {{ totalByAccountType.Expense || 0 }}
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div [ngStyle]="{'color':totalByAccountType.Income  === 'Income' ? 'red' : 'green'}">
-                                        <strong>Income:</strong> {{ totalByAccountType.Income || 0 }}
+                                        <strong>Income:</strong> ₹  {{ totalByAccountType.Income || 0 }}
                                     </div>
                                 </div>
                             </div>
