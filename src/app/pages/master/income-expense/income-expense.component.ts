@@ -9,6 +9,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { ExpensesList, RentList } from 'src/app/interface/invoice';
 import { BalanceComponent } from '../balance/balance.component';
 import { MatRadioChange } from '@angular/material/radio';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-income-expense',
@@ -37,6 +38,11 @@ export class IncomeExpenseComponent implements OnInit {
     'All',
     'Expense',
     'Income'
+  ]
+
+  StatusList = [
+    'Paid',
+    'Pending'
   ]
 
   allExpenses: any[] = [];
@@ -200,7 +206,7 @@ export class IncomeExpenseComponent implements OnInit {
   //   this.expensesDataSource.paginator = this.paginator;
   // }
 
-  onFilterChange(event: MatRadioChange) {
+  onFilterChange(event: MatSelectChange) {
     const selectedValue = event.value;
 
     if (selectedValue === 'All') {
@@ -208,6 +214,15 @@ export class IncomeExpenseComponent implements OnInit {
     } else {
       this.expensesList = this.allExpenses.filter(item => item.accounttype === selectedValue);
     }
+    // this.totalAmount = this.expensesList.reduce((sum: any, item: any) => sum + (item.amount || 0), 0);
+  
+    this.expensesDataSource = new MatTableDataSource(this.expensesList);
+    this.expensesDataSource.paginator = this.paginator;
+  }
+
+  onFilterChangestatus(event: MatSelectChange) {
+    const selectedValue = event.value;
+      this.expensesList = this.allExpenses.filter(item => item.status === selectedValue);
     // this.totalAmount = this.expensesList.reduce((sum: any, item: any) => sum + (item.amount || 0), 0);
   
     this.expensesDataSource = new MatTableDataSource(this.expensesList);

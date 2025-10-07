@@ -2,8 +2,8 @@
 
             <mat-card class="cardWithShadow">
                 <mat-card-content class="p-24">
-                    <div class="row justify-content-between">
-                        <div class="col-lg-3">
+                    <div class="row">
+                        <div class="col-lg-2">
                             <mat-form-field appearance="outline" class="w-100 hide-hint">
                                 <input matInput placeholder="Search Expenses" (keyup)="applyFilter($any($event.target).value)"/>
                                 <mat-icon matSuffix>
@@ -12,29 +12,52 @@
                             </mat-form-field>
                         </div>
 
-                        <div class="col-lg-3">
-                        <mat-radio-group [value]="'All'" (change)="onFilterChange($event)" aria-label="Account type">
+                        <!-- <mat-radio-group [value]="'All'" (change)="onFilterChange($event)" aria-label="Account type">
                             <mat-radio-button *ngFor="let item of AccountList" [value]="item">
                                 {{ item }}
                             </mat-radio-button>
-                        </mat-radio-group>
-
-                    </div>
-                    <div class="col-lg-2 d-flex f-s-12 p-l-0 f-w-900">
-                             <div  [ngStyle]="{'color':totalByAccountType.Expense  === 'Expense' ? 'green' : 'red'}">
-                                <strong>Expense:</strong> {{ totalByAccountType.Expense || 0  }}
+                        </mat-radio-group> -->
+                            <div class="col-lg-2">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Status</mat-label>
+                                    <mat-select [value]="'All'" (selectionChange)="onFilterChange($event)">
+                                        <mat-option [value]="item" *ngFor="let item of AccountList">{{item}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                             </div>
-                         <div [ngStyle]="{'color':totalByAccountType.Income  === 'Income' ? 'red' : 'green'}">
-                                <strong>Income:</strong> {{ totalByAccountType.Income || 0  }}
+
+                            <div class="col-lg-2">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Status</mat-label>
+                                    <mat-select (selectionChange)="onFilterChangestatus($event)">
+                                        <mat-option [value]="item" *ngFor="let item of StatusList">{{item}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+
+                        <!-- <div class="col-lg-1"></div> -->
+                        <div class="col-lg-4 f-s-12 f-w-900">
+                            <div class="row text-align">
+                                <div class="col-lg-6">
+                                    <div [ngStyle]="{'color':totalByAccountType.Expense  === 'Expense' ? 'green' : 'red'}">
+                                        <strong>Expense:</strong> {{ totalByAccountType.Expense || 0 }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div [ngStyle]="{'color':totalByAccountType.Income  === 'Income' ? 'red' : 'green'}">
+                                        <strong>Income:</strong> {{ totalByAccountType.Income || 0 }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        <!-- <div class="col-lg-1"></div> -->
 
-                        <div class="col-lg-2 d-flex align-items-center justify-content-end">
+                        <div class="col-lg-2 d-flex align-items-center ">
                              <button mat-flat-button color="primary" (click)="addBalance()">
                                 Check Balance </button>
-                        </div>
+                        <!-- </div>
 
-                        <div class="col-lg-1 d-flex align-items-center justify-content-end">
+                        <div class="col-lg-1 d-flex align-items-center justify-content-end"> -->
                             <button mat-flat-button color="primary" (click)="addexpenses('Add', {})">
                                Add </button>
                         </div>

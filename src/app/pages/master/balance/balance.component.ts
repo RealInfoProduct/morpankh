@@ -1,8 +1,10 @@
-import { AfterViewInit, Component, Inject, OnInit, Optional } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { forkJoin } from 'rxjs';
 import { BalanceList } from 'src/app/interface/invoice';
 import { FirebaseService } from 'src/app/services/firebase.service';
@@ -19,8 +21,21 @@ balanceList:any =[]
 expensesList:any = []
 totalBalance:any =0
 CheckBalance:boolean = false
+CheckBalanceTable:boolean = false
 selectedBankIndex: number | null = null;
+cashFlowList:any =[]
 
+cashFlowListdisplayedColumns=[
+  'transactionDate',
+  'paymentType',
+  'trasactionType',
+  'amount',
+  'createdDate'
+]
+
+cashFlowListDataSource = new  MatTableDataSource(this.cashFlowList);
+@ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
             private loaderService : LoaderService, private _snackBar: MatSnackBar,
            @Optional() @Inject(MAT_DIALOG_DATA) public data: any){}
@@ -31,8 +46,8 @@ constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
     if (this.data?.disabled) {
       setTimeout(() => {
         this.balanceForm.disable();
+        this.CheckBalance = true
       }, 100);
-      this.CheckBalance = true
     }
 
     this.getexpensesList()
@@ -122,7 +137,9 @@ constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
       if (res) {
         this.balanceList = res.find((id: any) => id.userId === localStorage.getItem("userId"));
         this.balanceForm.controls['cashBalance'].setValue(this.balanceList?.cashBalance);
-
+        this.cashFlowList = [...this.balanceList?.cashFlow]
+        this.cashFlowListDataSource = new  MatTableDataSource(this.cashFlowList);
+        this.cashFlowListDataSource.paginator = this.paginator;
         if(this.balanceList?.bankDetails?.length) {
           this.bankDetails.clear();
           this.balanceList?.bankDetails.forEach((val: any) => {

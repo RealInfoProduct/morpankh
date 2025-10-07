@@ -9,6 +9,20 @@
             </mat-icon>
           </mat-form-field>
         </div>
+        <div class="col-lg-2">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Status</mat-label>
+            <mat-select [value]="'All'"  (selectionChange)="onFilterChange($event)">
+              <mat-option value="All">All</mat-option>
+              <mat-option [value]="item.id" *ngFor="let item of partnersList">{{item.firstName + ' '+ item.lastName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-2 f-s-15 f-w-900">
+          <div>
+            <strong>Total:</strong> {{ totalAmount || 0 }}
+          </div>
+        </div>
         <div class="col-lg-4 d-flex align-items-center justify-content-end">
           <button mat-flat-button color="primary" (click)="addParty('Add', {})">
             Add Investment

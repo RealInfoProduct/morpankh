@@ -3,10 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
-import { InvestmentList, PartnersList } from 'src/app/interface/invoice';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { InvestmentDialogComponent } from './investment-dialog/investment-dialog.component';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-investment',
@@ -23,9 +23,13 @@ export class InvestmentComponent implements OnInit {
     'date',
     'action',
   ];
-  partnersList: any = []
-  cashFlow: any = []
-  investmentist: any = []
+  partnersList: any = [];
+  cashFlow: any = [];
+  investmentist: any = [];
+  investmentListtable:any =[];
+  investmentList:any =[];
+  investmentists:any =[];
+  totalAmount:any = 0;
   investmentDataSource = new MatTableDataSource(this.investmentist);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
@@ -117,6 +121,7 @@ export class InvestmentComponent implements OnInit {
     this.firebaseService.getAllInvestment().subscribe((res: any) => {
       if (res) {
         this.investmentist = res.filter((id: any) => id.userId === localStorage.getItem("userId"))
+        this.investmentList = this.investmentist
         this.investmentDataSource = new MatTableDataSource(this.investmentist);
         this.investmentDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false)
@@ -138,7 +143,6 @@ export class InvestmentComponent implements OnInit {
     this.firebaseService.getAllPartners().subscribe((res: any) => {
       if (res) {
         this.partnersList = res.filter((id: any) => id.userId === localStorage.getItem("userId"))
-
         this.loaderService.setLoader(false)
       }
     })
@@ -149,4 +153,21 @@ export class InvestmentComponent implements OnInit {
     const partners = this.partnersList.find((b: any) => b.id === partnersId);
     return partners ? `${partners.firstName} - ${partners.lastName}` : '';
   }
+
+  onFilterChange(event: MatSelectChange) {
+      const selectedValue = event.value;
+  
+      if (selectedValue === 'All') {
+        this.investmentist = [...this.investmentList];
+         this.totalAmount = this.investmentist.reduce((sum: any, item: any) => sum + (item.amount || 0), 0);
+      this.investmentDataSource = new MatTableDataSource(this.investmentist);
+      this.investmentDataSource.paginator = this.paginator;
+      } else {
+        this.investmentists = this.investmentist.filter((item:any) => item.name === selectedValue);
+        this.totalAmount = this.investmentists.reduce((sum: any, item: any) => sum + (item.amount || 0), 0);
+        this.investmentDataSource = new MatTableDataSource(this.investmentists);
+        this.investmentDataSource.paginator = this.paginator;
+      }
+    }
+  
 }
