@@ -19,8 +19,8 @@ export class DayByDayComponent implements OnInit,AfterViewInit {
   dateForm: FormGroup;
   selectedTabIndex :any = 0;
 
-  @ViewChild(MatTable, { static: true }) table!: MatTable<any>;
-  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
   constructor(
     private firebaseService: FirebaseService,
@@ -57,6 +57,8 @@ export class DayByDayComponent implements OnInit,AfterViewInit {
     this.dateForm.valueChanges.subscribe(() => {
       this.filterByDateRange();
     });
+      this.daybydayDataSource = new MatTableDataSource();
+        this.daybydayDataSource.paginator = this.paginator;
   }
 
   ngAfterViewInit(): void {

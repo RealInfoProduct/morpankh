@@ -408,7 +408,7 @@ Thank you for booking with us 💐`;
 })
 
 export class rentDialogComponent implements OnInit {
-  productForm: FormGroup;
+  rentForm: FormGroup;
   action: string;
   local_data: any;
   statusList: any = [
@@ -440,28 +440,28 @@ export class rentDialogComponent implements OnInit {
       this.setAutoBillNo();
     }
     if (this.action === 'Edit' || this.action === 'Delete') {
-      this.productForm.patchValue(this.local_data);
-      this.productForm.controls['orderDate'].setValue(new Date(this.local_data.orderDate.seconds * 1000));
+      this.rentForm.patchValue(this.local_data);
+      this.rentForm.controls['orderDate'].setValue(new Date(this.local_data.orderDate.seconds * 1000));
 
       if (this.local_data?.rentDetails?.length) {
         this.rentDetails.clear();
         this.local_data?.rentDetails.forEach((val: any) => {
-          (this.productForm.controls['rentDetails'] as FormArray).push(this.createRentDetailGroup(val))
+          (this.rentForm.controls['rentDetails'] as FormArray).push(this.createRentDetailGroup(val))
         });
       }
 
-      this.productForm.value.rentDetails.forEach((ele: any) => {
+      this.rentForm.value.rentDetails.forEach((ele: any) => {
         ele['']
       })
 
       this.rentCalculation('');
     }
 
-    this.productForm.get('pickupDateTime')?.valueChanges.subscribe(() => {
+    this.rentForm.get('pickupDateTime')?.valueChanges.subscribe(() => {
       this.validateDateOrder();
     });
 
-    this.productForm.get('returnDateTime')?.valueChanges.subscribe(() => {
+    this.rentForm.get('returnDateTime')?.valueChanges.subscribe(() => {
       this.validateDateOrder();
     });
   }
@@ -471,24 +471,24 @@ export class rentDialogComponent implements OnInit {
       const userId = localStorage.getItem("userId");
       if (res && res.length > 0) {
         const userData = res.filter((item: any) => item.userId === userId);
-        this.productForm.get('srNo')?.setValue(userData.length + 1);
+        this.rentForm.get('srNo')?.setValue(userData.length + 1);
       } else {
-        this.productForm.get('srNo')?.setValue(1);
+        this.rentForm.get('srNo')?.setValue(1);
       }
     });
   }
 
 
   buildForm() {
-    this.productForm = this.fb.group({
+    this.rentForm = this.fb.group({
       id: [''],
       srNo: [''],
       billNo: [''],
       customerName: ['', Validators.required],
       status: ['', Validators.required],
       address: ['', Validators.required],
-      mobileNumber: ['', Validators.required],
-      othermobileNumber: ['',],
+      mobileNumber: ['', [Validators.required,Validators.pattern(/^\d{10}$/)]],
+      othermobileNumber: ['',[Validators.pattern(/^\d{10}$/)]],
       orderDate: [new Date()],
       advance: ['', Validators.required],
       deposite: ['', Validators.required],
@@ -512,7 +512,7 @@ export class rentDialogComponent implements OnInit {
   }
 
   get rentDetails(): FormArray {
-    return this.productForm.get('rentDetails') as FormArray;
+    return this.rentForm.get('rentDetails') as FormArray;
   }
 
   removeRentDetail(index: number) {
@@ -525,21 +525,21 @@ export class rentDialogComponent implements OnInit {
   }
 
   calculateTotal(): any {
-    const rent = this.productForm.get('rent')?.value || 0;
-    const advance = this.productForm.get('advance')?.value || 0;
-    const deposite = this.productForm.get('deposite')?.value || 0;
+    const rent = this.rentForm.get('rent')?.value || 0;
+    const advance = this.rentForm.get('advance')?.value || 0;
+    const deposite = this.rentForm.get('deposite')?.value || 0;
     const total = deposite - advance - rent;
     return total;
 
   }
 
   doAction(): void {
-    this.productForm.value.rentDetails.forEach((ele: any) => {
+    this.rentForm.value.rentDetails.forEach((ele: any) => {
       ele['status'] = ele?.status || "Booked";
-      ele['billNo'] = this.productForm.value.billNo;
+      ele['billNo'] = this.rentForm.value.billNo;
       ele['id'] = ele?.id || this.generateUniqueId();
     });
-    const payload = this.productForm.value
+    const payload = this.rentForm.value
     this.dialogRef.close({ event: this.action, data: payload });
   }
 
@@ -567,11 +567,11 @@ export class rentDialogComponent implements OnInit {
   }
 
   validateDateOrder(): void {
-    const pickup = new Date(this.productForm.get('pickupDateTime')?.value);
-    const returnDate = new Date(this.productForm.get('returnDateTime')?.value);
+    const pickup = new Date(this.rentForm.get('pickupDateTime')?.value);
+    const returnDate = new Date(this.rentForm.get('returnDateTime')?.value);
 
-    const pickupControl = this.productForm.get('pickupDateTime');
-    const returnControl = this.productForm.get('returnDateTime');
+    const pickupControl = this.rentForm.get('pickupDateTime');
+    const returnControl = this.rentForm.get('returnDateTime');
 
     if (pickup && returnDate) {
       if (pickup.getTime() >= returnDate.getTime()) {
@@ -581,13 +581,13 @@ export class rentDialogComponent implements OnInit {
     }
   }
 
-  onRentProductChange(event: any) {
+  onRentProductChange(event: any,index:number) {
     const data = this.rentProductList.find((id: any) => id.id === event.value)
-    this.productForm.get('rent')?.setValue(data.rent)
+     this.rentDetails.at(index).get('rent')?.setValue(data.rent);
   }
 
   rentCalculation(event: any) {
-    const rentArray = this.productForm.get('rentDetails') as FormArray;
+    const rentArray = this.rentForm.get('rentDetails') as FormArray;
     if (!rentArray) return;
 
     let rentSum = 0;
@@ -596,13 +596,13 @@ export class rentDialogComponent implements OnInit {
       rentSum += rent;
     });
 
-    this.productForm.get('total')?.setValue(rentSum, { emitEvent: false });
+    this.rentForm.get('total')?.setValue(rentSum, { emitEvent: false });
 
-    const advance = Number(this.productForm.get('advance')?.value) || 0;
-    const deposite = Number(this.productForm.get('deposite')?.value) || 0;
+    const advance = Number(this.rentForm.get('advance')?.value) || 0;
+    const deposite = Number(this.rentForm.get('deposite')?.value) || 0;
     const returnAmount = (rentSum - advance) - deposite;
 
-    this.productForm.get('returnAmount')?.setValue(returnAmount, { emitEvent: false });
+    this.rentForm.get('returnAmount')?.setValue(returnAmount, { emitEvent: false });
   }
 
   filterRentProducts(event: any, i:any) {
