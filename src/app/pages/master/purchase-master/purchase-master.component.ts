@@ -18,6 +18,7 @@ import { BarcodeStickerComponent } from '../barcode-sticker/barcode-sticker.comp
 export class PurchaseMasterComponent {
   displayedColumns: string[] = [
     'srno',
+    'productNumber',
     'ProductName',
     'productDes',
     'shellAmount',
@@ -26,7 +27,8 @@ export class PurchaseMasterComponent {
   ];
   productList :any = []
   purchaseList :any = []
-  nextUniqueNumber :number = 0
+  nextUniqueNumber :number = 0;
+  productNumber:number = 1000;
   editRecode :any
   productForm: FormGroup;
   purchaseDataSource = new MatTableDataSource(this.purchaseList);
@@ -83,7 +85,8 @@ export class PurchaseMasterComponent {
       invoiceDate: '',
       firmName: '',
       firmAddress: '',
-      invoiceStatus: ''
+      invoiceStatus: '',
+      productNumber: this.editRecode?.productNumber || this.productNumber
     }
     console.log(payload);
     
@@ -123,7 +126,13 @@ export class PurchaseMasterComponent {
         });
         const productUniqueNumbers = this.purchaseList.map((item: any) => item.productUniqueNumber);
         const maxUniqueNumber = productUniqueNumbers.length ? Math.max(...productUniqueNumbers) : 0;
-        this.nextUniqueNumber = maxUniqueNumber + 1;            
+        this.nextUniqueNumber = maxUniqueNumber + 1;    
+
+        const productNumberData = this.purchaseList.map((item: any) => item.productNumber);
+        const productNumber = productNumberData.length ? Math.max(...productNumberData) : 1000;
+        this.productNumber = productNumber + 1;   
+
+        debugger
         this.purchaseDataSource = new MatTableDataSource(this.purchaseList);
         this.purchaseDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false);

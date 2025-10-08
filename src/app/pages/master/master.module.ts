@@ -31,6 +31,7 @@ import { InvestmentComponent } from './investment/investment.component';
 import { PartnersComponent } from './partners/partners.component';
 import { PartnersDialogComponent } from './partners/partners-dialog/partners-dialog.component';
 import { InvestmentDialogComponent } from './investment/investment-dialog/investment-dialog.component';
+import { ShellConfirmationDialogComponent } from './shell-list/shell-confirmation-dialog/shell-confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { InvestmentDialogComponent } from './investment/investment-dialog/invest
     PartnersComponent,
     PartnersDialogComponent,
     InvestmentDialogComponent,
+    ShellConfirmationDialogComponent,
   ],
   imports: [
     CommonModule,

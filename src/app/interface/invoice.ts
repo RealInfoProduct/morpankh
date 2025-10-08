@@ -70,6 +70,7 @@ export interface PurchaseList {
     firmName: string,
     firmAddress: string,
     invoiceStatus: string,
+    productNumber: number
 
 }
 

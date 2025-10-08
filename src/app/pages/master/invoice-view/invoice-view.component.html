@@ -75,7 +75,7 @@
             <th class="p-16 text-center">#</th>
             <th class="p-16 text-center">Name</th>
             <th class="p-16 text-center">Price (MRP)</th>
-            <th class="p-16 text-center">Discount (%)</th>
+            <th class="p-16 text-center">Discount</th>
             <th class="p-16 text-center">Final Amount</th>
           </tr>
         </thead>
@@ -90,9 +90,9 @@
               {{ getProductName(row.productid) }} ({{ row.productUniqueNumber }})
             </td>
             <td class="p-16 text-center">₹{{ row.shellAmount | number:'1.2-2' }}/-</td>
-            <td class="p-16 text-center">{{ row.shellDiscount || 0 }}%</td>
+            <td class="p-16 text-center">₹{{ row.shellDiscount || 0 }}</td>
             <td class="p-16 text-center">
-              ₹{{ row.shellAmount - ((row.shellDiscount || 0) / 100 * row.shellAmount) | number:'1.2-2' }}/-
+              ₹{{ row.shellAmount - (row.shellDiscount || 0) | number:'1.2-2' }}/-
             </td>
           </tr>
         </tbody>

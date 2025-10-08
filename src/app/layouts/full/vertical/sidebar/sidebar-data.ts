@@ -51,7 +51,7 @@ export const navItems: NavItem[] = [
     route: '/master/partners',
   },
   {
-    navCap: 'Master',
+    navCap: 'Stock',
   },
   {
     displayName: 'Product Master',

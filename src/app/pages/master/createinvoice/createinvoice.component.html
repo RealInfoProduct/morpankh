@@ -174,7 +174,8 @@
                 </td>
 
                 <td class="p-16 text-center">
-                  ₹{{ row.shellAmount - ((discounts[i] || 0) / 100 * row.shellAmount) | number:'1.2-2' }}/-
+                  <!-- ₹{{ row.shellAmount - ((discounts[i] || 0) / 100 * row.shellAmount) | number:'1.2-2' }}/- -->
+                  ₹{{ row.shellAmount - (discounts[i] || 0) | number:'1.2-2' }}/-
                 </td>                
 
               </tr>

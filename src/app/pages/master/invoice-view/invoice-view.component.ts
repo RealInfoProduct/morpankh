@@ -84,16 +84,17 @@ export class InvoiceViewComponent {
   get totalDiscount(): number {
     const total = this.filteredPurchaseList.reduce((total: number, row: any) => {
       const discountPercent = row.shellDiscount || 0;
-      return total + ((discountPercent / 100) * row.shellAmount);
+      // return total + ((discountPercent / 100) * row.shellAmount);
+      return total + discountPercent;
     }, 0);
-    return Math.round(total * 100) / 100;
+    return Math.round(total * 100) / 100
   }
   
   get productgrandTotal(): number {
     const total = this.filteredPurchaseList.reduce((total: number, row: any) => {
       const discountPercent = row.shellDiscount || 0;
-      const discountAmount = (discountPercent / 100) * row.shellAmount;
-      return total + (row.shellAmount - discountAmount);
+      // const discountAmount = (discountPercent / 100) * row.shellAmount;
+      return total + (row.shellAmount - discountPercent);
     }, 0);
     return Math.round(total * 100) / 100;
   }

@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
+import { ShellConfirmationDialogComponent } from './shell-confirmation-dialog/shell-confirmation-dialog.component';
 
 @Component({
   selector: 'app-shell-list',
@@ -18,6 +20,7 @@ export class ShellListComponent implements OnInit {
     'customerName',
     'customerNumber',
     'shellAmount',
+    'action'
   ];
   purchaseList: any = []
   productList: any = []
@@ -27,6 +30,7 @@ export class ShellListComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
   constructor(private firebaseService: FirebaseService,
+    private dialog : MatDialog,
     private fb: FormBuilder,
     private loaderService: LoaderService,) { }
 
@@ -104,6 +108,26 @@ export class ShellListComponent implements OnInit {
 
   getProductName(productid: string) {
     return this.productList.find((id: any) => id.id === productid)?.productName
+  }
+
+  returnProduct(rowData: any) {
+    const dialogRef = this.dialog.open(ShellConfirmationDialogComponent,
+      { data: rowData, width: '400px' }
+    );
+    
+    dialogRef.afterClosed().subscribe((result) => {
+        this.loaderService.setLoader(true)
+        const selectedReturnProduct = this.purchaseList.find((id: any) => id.id === result.data.id)
+        selectedReturnProduct.isShell = false;
+        selectedReturnProduct.finalAmount = 0;
+        selectedReturnProduct.shellDiscount = 0;
+
+        this.firebaseService.updatePurchase(selectedReturnProduct.id, selectedReturnProduct).then((res: any) => {
+          this.getPurchaseList()
+        }, (error) => {
+          console.log("error => ", error);
+        })
+    })
   }
 
 }
