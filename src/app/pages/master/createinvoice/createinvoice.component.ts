@@ -132,6 +132,7 @@ export class CreateinvoiceComponent {
   invoiceStatus :any = 'Pending'
   firmName :any = 'My Invoice'
   firmAddress :any = 'Address'
+  billNo:any 
   invoiceOrderDate = new Date()
 
   getPurchaseList() {
@@ -163,7 +164,6 @@ export class CreateinvoiceComponent {
 
   filteredData() {
     this.purchaseFilter = this.purchaseList
-
     if (!this.searchText) {
       return this.purchaseFilter;
     }
@@ -244,11 +244,12 @@ export class CreateinvoiceComponent {
         invoiceNo: this.nextUniqueInvoiceNumber,
         invoiceDate: this.invoiceOrderDate,
         firmName: this.firmName,
+        billNo: this.billNo,
         firmAddress: this.firmAddress,
         invoiceStatus: this.invoiceStatus,
       };
     });
-  debugger
+  
     // Use Promise.all to wait for all updates to complete
     const updatePromises = this.filteredPurchaseList.map((element: any) => {
       return this.firebaseService.updatePurchase(element.id, element);

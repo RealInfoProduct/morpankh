@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,6 +8,7 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { productMasterDialogComponent } from '../product-master/product-master.component';
 import { DatePipe } from '@angular/common';
+import { ShellConfirmationDialogComponent } from '../shell-list/shell-confirmation-dialog/shell-confirmation-dialog.component';
 
 
 @Component({
@@ -18,6 +19,7 @@ import { DatePipe } from '@angular/common';
 export class InvoiceListComponent {
 displayedColumns: string[] = [
     'id',
+    'billno',
     'customerName',
     'invoiceDate',
     'customerNumber',
@@ -138,8 +140,8 @@ productgrandTotal(invoiceNo: number): number {
   const filteredItems = this.purchaseList.filter((item: any) => item.invoiceNo === invoiceNo);
   return filteredItems.reduce((total: number, row: any) => {
     const discountPercent = row.shellDiscount || 0;
-    const discountAmount = (discountPercent / 100) * row.shellAmount;
-    return total + (row.shellAmount - discountAmount);
+    // const discountAmount = (discountPercent / 100) * row.shellAmount;
+    return total + (row.shellAmount - discountPercent);
   }, 0);
 }
 
@@ -157,5 +159,59 @@ Thank you for choosing Morpankh Saree 💐`;
     const url = `https://web.whatsapp.com/send?phone=${order.customerNumber}&text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   }
+
+
+  returnProduct(rowData: any) {
+      const dialogRef = this.dialog.open(ShellConfirmationDialogComponent,
+        { data: rowData, width: '400px' }
+      );
+      
+      dialogRef.afterClosed().subscribe((result) => {
+          const selectedReturnProduct = this.purchaseList.find((id: any) => id.id === result.data.id)
+          selectedReturnProduct.isShell = false;
+          selectedReturnProduct.finalAmount = 0;
+          selectedReturnProduct.shellDiscount = 0;
+          selectedReturnProduct.customerName = '';
+          selectedReturnProduct.customerNumber = '';
+          selectedReturnProduct.invoiceNo = '';
+  
+          this.firebaseService.updatePurchase(selectedReturnProduct.id, selectedReturnProduct).then((res: any) => {
+            this.getPurchaseList()
+          }, (error) => {
+            console.log("error => ", error);
+          })
+      })
+    }
+
+
+    editRentProduct(result:any) {
+        const payload =  result.data
+       this.firebaseService.updatePurchase(result.data.id, payload).then((res: any) => {
+            this.getPurchaseList()
+          }, (error) => {
+            console.log("error => ", error);
+          })
+      }
+
+   editingRentRowId: string | null = null;
+ 
+   enableRentEdit(rowId: string): void {
+     this.editingRentRowId = rowId;
+   }
+ 
+   rentChange(row: any, event: any): void {
+     row.finalAmount = event.target.value;
+     this.editRentProduct({ data: row })
+     this.editingRentRowId = null;
+   }
+ 
+   cancelRentEdit(): void {
+     this.editingRentRowId = null;
+   }
+ 
+   @HostListener('document:click', ['$event'])
+   onClickRentOutside(event: MouseEvent) {
+     this.cancelRentEdit();
+   }
 
 }
