@@ -6,10 +6,12 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
-import { ExpensesList, RentList } from 'src/app/interface/invoice';
 import { BalanceComponent } from '../balance/balance.component';
-import { MatRadioChange } from '@angular/material/radio';
 import { MatSelectChange } from '@angular/material/select';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import moment from 'moment';
 
 @Component({
   selector: 'app-income-expense',
@@ -17,7 +19,7 @@ import { MatSelectChange } from '@angular/material/select';
   styleUrls: ['./income-expense.component.scss']
 })
 export class IncomeExpenseComponent implements OnInit {
-
+  dateIncomeListForm: FormGroup;
   expensesList: any = [];
   balanceList: any = [];
 
@@ -44,6 +46,8 @@ export class IncomeExpenseComponent implements OnInit {
     'Paid',
     'Pending'
   ]
+  Account: any = [];
+  Status: any = [];
 
   allExpenses: any[] = [];
   totalByAccountType: any = 0;
@@ -55,19 +59,50 @@ export class IncomeExpenseComponent implements OnInit {
 
   constructor(private dialog: MatDialog, private firebaseService: FirebaseService,
     private loaderService: LoaderService,
+    private fb: FormBuilder,
     private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.getexpensesList()
     this.getBalanceList()
+    const today = new Date();
+    const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    this.dateIncomeListForm = this.fb.group({
+      start: [startDate],
+      end: [endDate]
+    });
+  }
 
+  filterDate() {
+    if (!this.expensesList) return;
+    const startDate = this.dateIncomeListForm.value.start ? new Date(this.dateIncomeListForm.value.start) : null;
+    const endDate = this.dateIncomeListForm.value.end ? new Date(this.dateIncomeListForm.value.end) : null;
+
+    if (startDate && endDate) {
+      this.expensesDataSource.data = this.expensesList.filter((invoice: any) => {
+        if (!invoice.date) return false;
+
+        let invoiceDate;
+        if (invoice.date.toDate) {
+          invoiceDate = invoice.date.toDate();
+        } else if (invoice.date instanceof Date) {
+          invoiceDate = invoice.date;
+        } else {
+          return false;
+        }
+
+        return invoiceDate >= startDate && invoiceDate <= endDate;
+      });
+    } else {
+      this.expensesDataSource.data = this.expensesList;
+    }
   }
 
   addexpenses(action: string, obj: any) {
     obj.action = action;
     const dialogRef = this.dialog.open(ExpenseDialogComponent, { data: obj, width: '650px' });
     // dialogRef.afterClosed().subscribe((result) => {
-    //   debugger
     //   if (result?.event === 'Add') {
     //     const payload: ExpensesList = {
     //       id: '',
@@ -95,7 +130,7 @@ export class IncomeExpenseComponent implements OnInit {
     //     })
     //   }
     //   if (result?.event === 'Edit') {
-        
+
     //     this.expensesList.forEach((element: any) => {
     //       if (element.id === result.data.id) {
     //         const payload: ExpensesList = {
@@ -140,29 +175,29 @@ export class IncomeExpenseComponent implements OnInit {
         this.expensesList = res.filter((id: any) => id.userId === localStorage.getItem("userId"));
         this.allExpenses = this.expensesList
 
-             this.totalByAccountType = this.expensesList.reduce((totals: any, item: any) => {
-      if (item.accounttype === 'Expense') {
-       
-        const amount = item.amount || 0;
+        this.totalByAccountType = this.expensesList.reduce((totals: any, item: any) => {
+          if (item.accounttype === 'Expense') {
 
-        if (!totals['Expense']) {
-          totals['Expense'] = 0;
-        }
+            const amount = item.amount || 0;
 
-        totals['Expense'] += amount;
-      } else if (item.accounttype === 'Income') {
-       
-        const amount = item.amount || 0;
+            if (!totals['Expense']) {
+              totals['Expense'] = 0;
+            }
 
-        if (!totals['Income']) {
-          totals['Income'] = 0;
-        }
+            totals['Expense'] += amount;
+          } else if (item.accounttype === 'Income') {
 
-        totals['Income'] += amount;
-      }
+            const amount = item.amount || 0;
 
-      return totals;
-    }, {});
+            if (!totals['Income']) {
+              totals['Income'] = 0;
+            }
+
+            totals['Income'] += amount;
+          }
+
+          return totals;
+        }, {});
         this.expensesDataSource = new MatTableDataSource(this.expensesList);
         this.expensesDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false)
@@ -196,18 +231,8 @@ export class IncomeExpenseComponent implements OnInit {
     });
   }
 
-  // onFilterChange(filterValue: string) {
-  //   if (filterValue === 'All') {
-  //     this.expensesList = [...this.allExpenses];
-  //   } else {
-  //     this.expensesList = this.allExpenses.filter(item => item.accounttype === filterValue);
-  //   }
-  //   this.expensesDataSource = new MatTableDataSource(this.expensesList);
-  //   this.expensesDataSource.paginator = this.paginator;
-  // }
-
   onFilterChange(event: MatSelectChange) {
-    const selectedValue = event.value;
+     const selectedValue = event.value;
 
     if (selectedValue === 'All') {
       this.expensesList = [...this.allExpenses];
@@ -215,18 +240,24 @@ export class IncomeExpenseComponent implements OnInit {
       this.expensesList = this.allExpenses.filter(item => item.accounttype === selectedValue);
     }
     // this.totalAmount = this.expensesList.reduce((sum: any, item: any) => sum + (item.amount || 0), 0);
-  
+
     this.expensesDataSource = new MatTableDataSource(this.expensesList);
     this.expensesDataSource.paginator = this.paginator;
+     this.Account = event.value 
+    ? selectedValue
+    : 'All Account';
   }
 
   onFilterChangestatus(event: MatSelectChange) {
-    const selectedValue = event.value;
-      this.expensesList = this.allExpenses.filter(item => item.status === selectedValue);
+    const selectedsValue = event.value;
+    this.expensesList = this.allExpenses.filter(item => item.status === selectedsValue);
     // this.totalAmount = this.expensesList.reduce((sum: any, item: any) => sum + (item.amount || 0), 0);
-  
+
     this.expensesDataSource = new MatTableDataSource(this.expensesList);
     this.expensesDataSource.paginator = this.paginator;
+      this.Status = event.value 
+    ? selectedsValue
+    : 'All Status';
   }
 
   applyFilter(filterValue: string): void {
@@ -241,5 +272,107 @@ export class IncomeExpenseComponent implements OnInit {
       });
   }
 
- 
+
+  filedownload() {
+    const doc: any = new jsPDF();
+    doc.setFontSize(13);
+    const filteredData: any[] = this.expensesDataSource.data;
+
+    if (!filteredData || filteredData.length === 0) {
+      window.alert("No Income/Expense data available for the selected filters.");
+      return;
+    }
+
+    const startDate = this.dateIncomeListForm.value.start;
+    const endDate = this.dateIncomeListForm.value.end;
+    
+    const formattedStart = new Date(startDate).toLocaleDateString('en-GB');
+    const formattedEnd = new Date(endDate).toLocaleDateString('en-GB');
+    
+    doc.text(`Account : ${this.Account?.length === 0 ? 'All Account' : this.Account} `, 14, 15);
+    doc.text(`Status:  ${this.Status?.length === 0 ? 'All Status ': this.Status}`, 14, 23);
+    doc.text(`Report Date: ${formattedStart} To ${formattedEnd}`, 14, 31);
+
+    const ExpenseAmounttotal = filteredData
+      .filter(item => item.accounttype === 'Expense')
+      .reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
+    const ExpenseAmount = Math.round(ExpenseAmounttotal).toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    doc.text(`Expense Total: ${(ExpenseAmount)}`, 140, 15);
+
+    const IncometotalAmount = filteredData
+      .filter(item => item.accounttype === 'Income')
+      .reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
+    const IncomeAmount = Math.round(IncometotalAmount).toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    doc.text(`Income Total: ${(IncomeAmount)}`, 140, 23);
+
+    const headers = [
+      "Sr.No",
+      "Date",
+      "Bill No",
+      "Notes",
+      "Payment Type",
+      "Account Type",
+      "Status Type",
+      "Amount",
+    ];
+
+    const data = filteredData.map((item, i) => {
+      const dateStr = item.date?.seconds
+        ? moment(item.date.seconds * 1000).format('DD/MM/YYYY')
+        : '';
+      return [
+        i + 1,
+        dateStr,
+        item.billno,
+        item.notes,
+        item.paymenttype,
+        item.accounttype,
+        item.status,
+        item.amount,
+      ];
+    });
+
+    const MIN_ROWS = 32;
+    if (data.length < MIN_ROWS) {
+      for (let idx = data.length; idx < MIN_ROWS; idx++) {
+        data.push([
+          idx + 1,
+          '',
+          '',
+          '',
+          '',
+          ''
+        ]);
+      }
+    }
+
+    doc.setFontSize(10);
+    (doc as any).autoTable({
+      head: [headers],
+      body: data,
+      startY: 40,
+      theme: 'grid',
+      headStyles: {
+        fillColor: [255, 187, 0],
+        textColor: [8, 8, 8],
+        fontStyle: 'bold'
+      },
+      styles: {
+        textColor: [8, 8, 8],
+        fontSize: 8,
+        valign: 'middle',
+        halign: 'center'
+      }
+    });
+
+
+    doc.save(`Income/Expense Report.pdf`);
+  }
+
 }

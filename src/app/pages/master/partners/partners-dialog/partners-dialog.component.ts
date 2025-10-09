@@ -38,7 +38,7 @@ export class PartnersDialogComponent implements OnInit {
       firstName: ['',Validators.required],
       lastName: ['',Validators.required],
       middleName: ['',Validators.required],
-      mobileNumber: ['',Validators.required],
+      mobileNumber: ['',[Validators.pattern(/^\d{10}$/)]],
     })
   }
 

@@ -155,7 +155,10 @@ export class RentComponent implements OnInit {
         this.firebaseService.addRent(payload).then((res) => {
           if (res) {
             this.getRentList()
-            this.sendWhatsAppMessage(payload);
+            // this.sendWhatsAppMessage(payload);
+            if (payload.selected) {
+              this.sendWhatsAppMessage(payload);
+            }
             this.openConfigSnackBar('record create successfully')
           }
         }, (error) => {
@@ -267,7 +270,10 @@ Thank you for booking with us 💐`;
     payload.userId = localStorage.getItem("userId");
 
     this.firebaseService.updateRent(result.data.id, payload).then((res: any) => {
-      this.sendWhatsAppMessage(payload);
+      // this.sendWhatsAppMessage(payload);
+       if (!result.skipWhatsApp && payload.selected) {
+              this.sendWhatsAppMessage(payload);
+            }
       this.getRentList()
 
       this.openConfigSnackBar('record update successfully')
@@ -384,7 +390,7 @@ Thank you for booking with us 💐`;
 
   updateOrderStatus(element: any, row: any, newStatus: string): void {
     row.status = newStatus;
-    this.editRentProduct({ data: element });
+    this.editRentProduct({ data: element, skipWhatsApp: true  });
     this.editOrderRowId = null;
   }
 
@@ -495,6 +501,7 @@ export class rentDialogComponent implements OnInit {
       returnAmount: ['', Validators.required],
       aadharCard: [''],
       total: [''],
+      selected: [''],
       rentDetails: this.fb.array([this.createRentDetailGroup()])
     })
   }

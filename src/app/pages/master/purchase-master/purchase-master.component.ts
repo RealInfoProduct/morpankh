@@ -132,7 +132,6 @@ export class PurchaseMasterComponent {
         const productNumber = productNumberData.length ? Math.max(...productNumberData) : 1000;
         this.productNumber = productNumber + 1;   
 
-        debugger
         this.purchaseDataSource = new MatTableDataSource(this.purchaseList);
         this.purchaseDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false);

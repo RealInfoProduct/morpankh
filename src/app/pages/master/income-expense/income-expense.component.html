@@ -17,7 +17,7 @@
                                 {{ item }}
                             </mat-radio-button>
                         </mat-radio-group> -->
-                            <div class="col-lg-2">
+                            <div class="col-lg-1">
                                 <mat-form-field appearance="outline" class="w-100">
                                     <mat-label>Status</mat-label>
                                     <mat-select [value]="'All'" (selectionChange)="onFilterChange($event)">
@@ -26,7 +26,7 @@
                                 </mat-form-field>
                             </div>
 
-                            <div class="col-lg-2">
+                            <div class="col-lg-1">
                                 <mat-form-field appearance="outline" class="w-100">
                                     <mat-label>Status</mat-label>
                                     <mat-select (selectionChange)="onFilterChangestatus($event)">
@@ -35,8 +35,19 @@
                                 </mat-form-field>
                             </div>
 
-                        <!-- <div class="col-lg-1"></div> -->
-                        <div class="col-lg-4 f-s-12 f-w-900">
+                            <div class="col-lg-2">
+                                <mat-form-field appearance="outline" class="w-100  hide-hint">
+                                    <mat-label>Select Invoice Date</mat-label>
+                                    <mat-date-range-input [rangePicker]="picker" [formGroup]="dateIncomeListForm">
+                                        <input matStartDate placeholder="Start date" formControlName="start">
+                                        <input matEndDate placeholder="End date" formControlName="end">
+                                    </mat-date-range-input>
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-date-range-picker #picker (closed)="filterDate()"></mat-date-range-picker>
+                                </mat-form-field>
+                            </div>
+
+                        <div class="col-lg-3 f-s-12 f-w-900">
                             <div class="row text-align">
                                 <div class="col-lg-6">
                                     <div [ngStyle]="{'color':totalByAccountType.Expense  === 'Expense' ? 'green' : 'red'}">
@@ -50,16 +61,16 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col-lg-1"></div> -->
-
-                        <div class="col-lg-2 d-flex align-items-center ">
-                             <button mat-flat-button color="primary" (click)="addBalance()">
-                                Check Balance </button>
-                        <!-- </div>
-
-                        <div class="col-lg-1 d-flex align-items-center justify-content-end"> -->
-                            <button mat-flat-button color="primary" (click)="addexpenses('Add', {})">
-                               Add </button>
+                            
+                            <div class="col-lg-3 d-flex align-items-center ">
+                                <button (click)="filedownload()" mat-flat-button color="primary">
+                                    <i-tabler name="file-download" class="icon-25"></i-tabler>
+                                </button>
+                                <button mat-flat-button color="primary" (click)="addBalance()">
+                                    Check Balance </button>
+                                
+                                <button mat-flat-button color="primary" (click)="addexpenses('Add', {})">
+                                    Add </button>
                         </div>
                     </div>
                 </mat-card-content>

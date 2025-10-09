@@ -48,10 +48,12 @@ export class DayByDayComponent implements OnInit,AfterViewInit {
         rent.includes(filter)
       );
     };
-
+    const today = new Date();
+    const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     this.dateForm = this.fb.group({
-      start: [null],
-      end: [null]
+      start: [startDate],
+      end: [endDate]
     })
 
     this.dateForm.valueChanges.subscribe(() => {
