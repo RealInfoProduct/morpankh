@@ -37,7 +37,7 @@
       <table mat-table [dataSource]="purchaseDataSource" class="w-100">
         <ng-container matColumnDef="srno">
           <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">P No.</th>
-          <td mat-cell *matCellDef="let element; let i = index">{{ element.productUniqueNumber }}</td>
+          <td mat-cell *matCellDef="let element; let i = index" class="f-s-12">{{ element.productUniqueNumber }}</td>
         </ng-container>
 
         <ng-container matColumnDef="ProductName">

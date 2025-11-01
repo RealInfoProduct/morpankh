@@ -37,7 +37,7 @@
         <table mat-table [dataSource]="investmentDataSource" class="w-100">
           <ng-container matColumnDef="srno">
             <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Sr No.</th>
-            <td mat-cell *matCellDef="let element; let i = index">{{ getSerialNumber(i) }}</td>
+            <td mat-cell *matCellDef="let element; let i = index" class="f-s-12">{{ getSerialNumber(i) }}</td>
           </ng-container>
   
           <ng-container matColumnDef="name">
