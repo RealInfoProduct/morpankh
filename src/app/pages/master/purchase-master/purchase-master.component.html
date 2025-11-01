@@ -77,16 +77,16 @@
       <div class="table-responsive">
         <table mat-table [dataSource]="purchaseDataSource" class="w-100">
           <ng-container matColumnDef="srno">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">PU No.</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">PU No.</th>
             <td mat-cell *matCellDef="let element; let i = index">{{ element.productUniqueNumber }}</td>
           </ng-container>
   
           <ng-container matColumnDef="ProductName">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Name</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Name</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
                     {{getProductName(element.productid)}}
                   </p>
                 </div>
@@ -95,11 +95,11 @@
           </ng-container>
   
           <ng-container matColumnDef="productNumber">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">P. Number</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">P. Number</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
                    {{element.productNumber}}
                   </p>
                 </div>
@@ -108,11 +108,11 @@
           </ng-container>
 
           <ng-container matColumnDef="productDes">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Des</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Des</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
                    {{element.productDes}}
                   </p>
                 </div>
@@ -121,11 +121,11 @@
           </ng-container>
 
           <ng-container matColumnDef="shellAmount">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Shell Price</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Shell Price</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
                    {{element.shellAmount}}
                   </p>
                 </div>
@@ -134,11 +134,11 @@
           </ng-container>
 
           <ng-container matColumnDef="productSize">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Size</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Size</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
                    {{element.productSize}}
                   </p>
                 </div>
@@ -148,7 +148,7 @@
   
     
           <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">
               {{'productMaster.Action' | translate}}
             </th>
             <td mat-cell *matCellDef="let element" class="action-link">

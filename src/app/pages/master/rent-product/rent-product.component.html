@@ -22,15 +22,15 @@
       <div class="table-responsive">
         <table mat-table [dataSource]="productDataSource" class="w-100">
           <ng-container matColumnDef="productNumber">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Product Number</th>
-            <td mat-cell *matCellDef="let element">{{element.productNumber }}</td>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Product Number</th>
+            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.productNumber }}</td>
           </ng-container>
   
           <ng-container matColumnDef="ProductName">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Product Name</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Product Name</th>
             <td mat-cell *matCellDef="let element">
               <div *ngIf="editingRowId !== element.id" class="status-text"
-                (click)="enableEdit(element.id); $event.stopPropagation()">
+                (click)="enableEdit(element.id); $event.stopPropagation()" class="f-s-12">
                 {{ element.productName || 'Enter ProductName' }}
               </div>
               
@@ -43,17 +43,17 @@
           </ng-container>
 
           <ng-container matColumnDef="rent">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Rent</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Rent</th>
             <td mat-cell *matCellDef="let element">
               <!-- <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-13 m-t-0">
                     {{ element.rent }}
                   </p>
                 </div>
               </div> -->
 
-              <div *ngIf="editingRentRowId !== element.id" class="status-text" (click)="enableRentEdit(element.id); $event.stopPropagation()">
+              <div *ngIf="editingRentRowId !== element.id" class="status-text f-s-12" (click)="enableRentEdit(element.id); $event.stopPropagation()">
                 {{ element.rent || 'Enter Rent' }}
               </div>
               
@@ -68,7 +68,7 @@
   
     
           <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">
               {{'productMaster.Action' | translate}}
             </th>
             <td mat-cell *matCellDef="let element" class="action-link">

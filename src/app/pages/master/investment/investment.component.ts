@@ -18,6 +18,7 @@ export class InvestmentComponent implements OnInit {
   displayedColumns: string[] = [
     'srno',
     'name',
+    'paymentType',
     'amount',
     'note',
     'date',

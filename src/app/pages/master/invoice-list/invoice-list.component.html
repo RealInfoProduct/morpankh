@@ -17,21 +17,21 @@
       <div class="table-responsive">
         <table mat-table [dataSource]="purchaseDataSource" class="w-100">
           <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">P No.</th>
-            <td mat-cell *matCellDef="let element; let i = index">{{ element.invoiceNo }}</td>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">P No.</th>
+            <td mat-cell *matCellDef="let element; let i = index" class="f-s-12">{{ element.invoiceNo }}</td>
           </ng-container>
 
           <ng-container matColumnDef="billno">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">B No.</th>
-            <td mat-cell *matCellDef="let element;">{{ element.billNo }}</td>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">B No.</th>
+            <td mat-cell *matCellDef="let element;" class="f-s-12">{{ element.billNo }}</td>
           </ng-container>
   
           <ng-container matColumnDef="customerName">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Customer Name</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Customer Name</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
                     {{ element.customerName }}
                   </p>
                 </div>
@@ -40,11 +40,11 @@
           </ng-container>
 
           <ng-container matColumnDef="invoiceDate">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Invoice Date</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Invoice Date</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t -0">
+                  <p class="mat-subtitle-1 f-s-12 m-t -0">
                     {{ element.invoiceDate }}
                   </p>
                 </div>
@@ -53,11 +53,11 @@
           </ng-container>
 
           <ng-container matColumnDef="customerNumber">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Customer Number</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Customer Number</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
                     {{ element.customerNumber }}
                   </p>
                 </div>
@@ -66,11 +66,11 @@
           </ng-container>
 
           <ng-container matColumnDef="totalcost">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Total Cost</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Total Cost</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
                     {{ productgrandTotal(element.invoiceNo) }}/-
                   </p>
                 </div>
@@ -79,7 +79,7 @@
           </ng-container>
           <!-- {{ productgrandTotal(element.invoiceNo)|| 'Enter Rent' }}/- -->
           <!-- <ng-container matColumnDef="totalcost">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Total Cost</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Total Cost</th>
             <td mat-cell *matCellDef="let element">
               
               <div *ngIf="editingRentRowId !== element.id" class="status-text" (click)="enableRentEdit(element.id); $event.stopPropagation()">
@@ -96,7 +96,7 @@
           </ng-container> -->
 
           <ng-container matColumnDef="invoiceStatus">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Status</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Status</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
@@ -110,7 +110,7 @@
   
     
           <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">
               {{'productMaster.Action' | translate}}
             </th>
             <td mat-cell *matCellDef="let element" class="action-link" style="display: flex;">
