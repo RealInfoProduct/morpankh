@@ -59,7 +59,7 @@ constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
 
   balanceFormList() {
     this.balanceForm = this.fb.group({
-      cashBalance: [''],
+      cashBalance: [{ value: '', disabled: true }],
       bankDetails: this.fb.array([this.createBankDetailGroup()])
     })
   }

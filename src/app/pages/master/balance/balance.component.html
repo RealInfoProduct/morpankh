@@ -1,3 +1,7 @@
+<div class="d-flex align-items-center justify-content-between"  *ngIf="CheckBalance">
+    <h2 mat-dialog-title class="m-b-10">Check Balance</h2>
+    <button mat-stroked-button color="warn" class="m-r-10" mat-dialog-close>x</button>
+</div>
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
     <mat-tab label="Trasaction" >
         <mat-card class="cardWithShadow">
@@ -68,7 +72,7 @@
                             <div class="col-lg-6">
                                 <mat-label>Cash Balance</mat-label>
                                 <mat-form-field appearance="outline" class="w-100 m-t-10">
-                                    <input type="number" matInput min="0" formControlName="cashBalance"
+                                    <input type="number" matInput min="0" formControlName="cashBalance" 
                                         placeholder="Enter cashBalance">
                                 </mat-form-field>
                             </div>
