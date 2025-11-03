@@ -19,7 +19,7 @@ export class BalanceComponent implements OnInit, AfterViewInit {
 balanceForm:FormGroup
 balanceList:any =[]
 expensesList:any = []
-totalBalance:any =0
+totalBalance:any = 0
 CheckBalance:boolean = false
 CheckBalanceTable:boolean = false
 selectedBankIndex: number | null = null;
@@ -70,7 +70,7 @@ constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
       selected: [data?.selected || false],
       bankName: [data?.bankName || ''],
       accountHolderName: [data?.accountHolderName || ''],
-      balance: [data?.balance || '']
+      balance: [data?.balance || 0 ]
     });
   }
 
@@ -100,6 +100,7 @@ constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
   }
 
   saveBalance() {
+    debugger
     const payload = {
       id: this.balanceList?.id || '',
       cashBalance: this.balanceForm.value.cashBalance,
