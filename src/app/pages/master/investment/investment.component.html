@@ -59,9 +59,14 @@
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
                   <p class="mat-subtitle-1 f-s-12 m-t-0">
-                          {{element.paymenttype + " ( "+ getBankNameById(element.bank) +" )"}}
-                  </p>
-                </div>
+                          <ng-container *ngIf="element.paymenttype === 'Cash'">
+                            {{element.paymenttype}}
+                          </ng-container>
+                          <ng-container *ngIf="element.paymenttype !== 'Cash'">
+                            {{element.paymenttype + " ( "+ getBankNameById(element.bank) +" )"}}
+                          </ng-container>
+                        </p>
+                        </div>
               </div>
             </td>
           </ng-container>
