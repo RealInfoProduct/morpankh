@@ -47,7 +47,7 @@
                 <div class="m-l-16">
                   <p class="mat-subtitle-1 f-s-12 m-t-0">
                     <!-- {{ element.name.firstName + ' '+ element.name.lastName }} -->
-                    {{  getBankNameById(element.name)}}
+                    {{  getAccountHolderNameById(element.name)}}
                   </p>
                 </div>
               </div>
@@ -59,7 +59,7 @@
               <div class="d-flex align-items-center">
                 <div class="m-l-16">
                   <p class="mat-subtitle-1 f-s-12 m-t-0">
-                    {{ element.paymenttype }}
+                          {{element.paymenttype + " ( "+ getBankNameById(element.bank) +" )"}}
                   </p>
                 </div>
               </div>

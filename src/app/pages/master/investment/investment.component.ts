@@ -31,6 +31,7 @@ export class InvestmentComponent implements OnInit {
   investmentList:any =[];
   investmentists:any =[];
   totalAmount:any = 0;
+  balanceList:any =[];
   investmentDataSource = new MatTableDataSource(this.investmentist);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
@@ -44,6 +45,7 @@ export class InvestmentComponent implements OnInit {
   ngOnInit(): void {
     this.getInvestmentList();
     this.getPartnersList();
+    this.getBalanceList();
   }
 
   applyFilter(filterValue: string): void {
@@ -156,10 +158,26 @@ export class InvestmentComponent implements OnInit {
     })
   }
 
-  getBankNameById(partnersId: string): string {
+  getAccountHolderNameById(partnersId: string): string {
     if (!this.partnersList) return '';
     const partners = this.partnersList.find((b: any) => b.id === partnersId);
     return partners ? `${partners.firstName} - ${partners.lastName}` : '';
+  }
+
+    getBalanceList() {
+    this.loaderService.setLoader(true)
+    this.firebaseService.getUserBalance().subscribe((res: any) => {
+      if (res) {
+        this.balanceList = res.find((id: any) => id.userId === localStorage.getItem("userId"));
+        this.loaderService.setLoader(false)
+      }
+    })
+  }
+   getBankNameById(bankId: string): string {
+    if (!this.balanceList || !this.balanceList.bankDetails) return '';
+
+    const bank = this.balanceList.bankDetails.find((b: any) => b.id === bankId);
+    return bank ? `${bank.bankName} - ${bank.accountHolderName}` : '';
   }
 
 
