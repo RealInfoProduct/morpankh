@@ -100,7 +100,6 @@ constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
   }
 
   saveBalance() {
-    debugger
     const payload = {
       id: this.balanceList?.id || '',
       cashBalance: this.balanceForm.value.cashBalance,
