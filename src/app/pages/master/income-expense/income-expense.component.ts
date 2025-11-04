@@ -116,7 +116,6 @@ export class IncomeExpenseComponent implements OnInit {
     //       notes: result.data.notes,
     //       userId: localStorage.getItem("userId")
     //     }
-    //     console.log(payload);
 
 
     //     this.firebaseService.addExpenses(payload).then((res:any) => {

@@ -107,7 +107,6 @@ constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
       userId: localStorage.getItem("userId")
     }
     if(this.balanceList?.id) {
-      console.log('payload==>>' , payload);
       
       this.firebaseService.updateBalance(this.balanceList?.id, payload).subscribe({
         next : (res:any) => {

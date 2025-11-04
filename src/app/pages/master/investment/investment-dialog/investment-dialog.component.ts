@@ -71,7 +71,6 @@ export class InvestmentDialogComponent implements OnInit {
       paymenttype: this.investmentForm.value.paymenttype,
       userId: localStorage.getItem("userId"),
     };
-console.log(payload);
 
 
     if(this.investmentForm.value.paymenttype != 'Cash') {

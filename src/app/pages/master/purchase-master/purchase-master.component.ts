@@ -88,7 +88,6 @@ export class PurchaseMasterComponent {
       invoiceStatus: '',
       productNumber: this.editRecode?.productNumber || this.productNumber
     }
-    console.log(payload);
     
     if (payload.id) {
       this.firebaseService.updatePurchase(payload.id, payload).then((res: any) => {
@@ -175,7 +174,6 @@ export class PurchaseMasterComponent {
   }
 
   deleterecode(element :any ){
-    console.log('element==>>' , element);
     
     element.action = 'Delete';
     element.isPurchase = true;
@@ -201,5 +199,5 @@ export class PurchaseMasterComponent {
       exitAnimationDuration,
       data: element,
     });
-  }
+  }  
 }
