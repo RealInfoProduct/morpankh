@@ -13,8 +13,8 @@ import { LoaderService } from 'src/app/services/loader.service';
 })
 export class DayByDayComponent implements OnInit,AfterViewInit {
   displayedColumns: string[] = ['billNo', 'porduct', 'pickupdate', 'returndate', 'rent', 'status'];
-  daybydayDataSource = new MatTableDataSource<any>([]);
   rentList: any[] = [];
+  daybydayDataSource = new MatTableDataSource(this.rentList);
   rentProductList: any[] = [];
   dateForm: FormGroup;
   selectedTabIndex :any = 0;
@@ -64,7 +64,7 @@ export class DayByDayComponent implements OnInit,AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-  // this.daybydayDataSource.paginator = this.paginator;
+  this.daybydayDataSource.paginator = this.paginator;
 }
 
 
@@ -122,6 +122,14 @@ export class DayByDayComponent implements OnInit,AfterViewInit {
   onTabChange(event: any): void {
     this.selectedTabIndex = event.index;
     this.filterByDateRange();
+    this.daybydayDataSource = new MatTableDataSource(this.rentList);
+    
+    if (this.selectedTabIndex === 0) {
+      this.updateDataSource("pending");
+    } else {
+      this.updateDataSource("completed");
+    }
+    this.daybydayDataSource.paginator = this.paginator;
     
   }
   
