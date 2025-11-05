@@ -176,45 +176,59 @@ export class RentComponent implements OnInit {
   }
 
   sendWhatsAppMessage(order: any) {
-    const product = this.rentList.find((id: any) => id?.rentProducts === order?.rentProducts);
-  const formatDate = (timestamp: any): string => {
-    if (!timestamp) return '';
+    // const product = this.rentList.find((id: any) => id?.rentProducts === order?.rentProducts);
+    const product = this.rentList.find((item: any) => item?.id === order?.id);
 
-    let date: Date;
-
-    if (typeof timestamp === 'string') {
-      date = new Date(timestamp);
-    } else if (timestamp instanceof Date) {
-      date = timestamp;
-    } else if (timestamp?.seconds) {
-      date = new Date(timestamp.seconds * 1000);
-    } else {
-      return '';
+    if (!product) {
+      console.error("❌ No matching order found in rentList!");
+      return;
     }
+    const rentProductsId = order?.rentDetails?.[0]?.rentProducts;
+    const rentDetail = product?.rentDetails?.find(
+      (detail: any) => detail?.rentProducts === rentProductsId
+    );
 
-    return this.datePipe.transform(date, 'dd/MM/yyyy hh:mm a') ?? '';
-  };
+    if (!rentDetail) {
+      console.error("❌ No matching rentProducts found inside rentDetails!");
+      return;
+    }
+    const formatDate = (timestamp: any): string => {
+      if (!timestamp) return '';
 
-  const orderDate = formatDate(product?.orderDate);
+      let date: Date;
 
-  // 🔁 Loop through rentDetails array and build the item list
-  let rentDetailsMessage = '';
-  product?.rentDetails?.forEach((item: any, index: number) => {
-    const pickupDateStr = formatDate(item.pickupDateTime);
-    const returnDateStr = formatDate(item.returnDateTime);
-    rentDetailsMessage += `
+      if (typeof timestamp === 'string') {
+        date = new Date(timestamp);
+      } else if (timestamp instanceof Date) {
+        date = timestamp;
+      } else if (timestamp?.seconds) {
+        date = new Date(timestamp.seconds * 1000);
+      } else {
+        return '';
+      }
+
+      return this.datePipe.transform(date, 'dd/MM/yyyy hh:mm a') ?? '';
+    };
+
+    const orderDate = formatDate(product?.orderDate);
+
+    let rentDetailsMessage = '';
+    product?.rentDetails?.forEach((item: any, index: number) => {
+      const pickupDateStr = formatDate(item.pickupDateTime);
+      const returnDateStr = formatDate(item.returnDateTime);
+      rentDetailsMessage += `
     ------------------------------------------
     Product: ${item.product || 'N/A'}
     Pickup Date: ${pickupDateStr}
     Return Date: ${returnDateStr}
-    Rent: ₹${item.rent}
+    Rent: ₹${Number(item.rent)}
     ------------------------------------------\n`;
-  });
-  
-  const totalRent = product?.rentDetails?.reduce((sum: number, item: any) => sum + item.rent, 0) || 0;
-  const remainingAmount = totalRent - product.advance;
-  
-  const message = `Hello ${product.customerName},
+    });
+
+    const totalRent = product?.rentDetails?.reduce((sum: number, item: any) => sum + Number(item.rent), 0) || 0;
+    const remainingAmount = totalRent - product.advance;
+
+    const message = `Hello ${product.customerName},
   Your Saree Rental Order has been confirmed ✅
   
   📌 Order Summary:
@@ -248,10 +262,10 @@ Instagram: https://www.instagram.com/_.morpankh_saree._?igsh=MTBkaG5rb2Fxdzg2cw=
 
 Thank you for booking with us 💐`;
 
-  const phone = product.mobileNumber;
-  const url = `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
-  window.open(url, '_blank');
-}
+    const phone = product.mobileNumber;
+    const url = `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  }
 
 
 

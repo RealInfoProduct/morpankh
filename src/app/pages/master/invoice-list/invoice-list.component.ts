@@ -36,8 +36,7 @@ displayedColumns: string[] = [
   constructor(private dialog: MatDialog , 
     private firebaseService : FirebaseService ,
     private loaderService : LoaderService,
-    private datePipe: DatePipe,
-    private _snackBar: MatSnackBar,) { }
+    private datePipe: DatePipe) { }
 
 
   ngOnInit(): void {
@@ -50,10 +49,8 @@ displayedColumns: string[] = [
   
     this.firebaseService.getAllPurchase().subscribe((res: any) => {
       if (res) {
-        // Filter the purchase list based on userId and isShell
         this.purchaseList = res.filter((item: any) => item.userId === localStorage.getItem("userId") && item.isShell);
   
-        // Remove duplicates based on invoiceNo and sort them by createDate
         const uniqueInvoices = Object.values(
           this.purchaseList.reduce((acc: any, item: any) => {
             acc[item.invoiceNo] = acc[item.invoiceNo] || item;
@@ -61,25 +58,20 @@ displayedColumns: string[] = [
           }, {})
         );
   
-        // Sort by createDate
         uniqueInvoices.sort((a: any, b: any) => {
           const aTime = a.createDate?.seconds || 0;
           const bTime = b.createDate?.seconds || 0;
           return bTime - aTime;
         });
   
-        // Format the invoiceDate for each unique invoice
         uniqueInvoices.forEach((invoice: any) => {
-          // Assuming `invoice.createDate` is a Firebase Timestamp object
-          const date = new Date(invoice.createDate.seconds * 1000); // Convert seconds to milliseconds
-          invoice.invoiceDate = this.datePipe.transform(date, 'fullDate'); // Format the date
+          const date = new Date(invoice.createDate.seconds * 1000);
+          invoice.invoiceDate = this.datePipe.transform(date, 'fullDate');
         });
   
-        // Set the formatted invoices to the data source
         this.purchaseDataSource = new MatTableDataSource(uniqueInvoices);
         this.purchaseDataSource.paginator = this.paginator;
   
-        // Hide the loader
         this.loaderService.setLoader(false);
       }
     });
@@ -121,7 +113,7 @@ displayedColumns: string[] = [
         {
           itemName: element.productDes || 'Product',
           unitPrice: element.purchaseAmount || 0,
-          units: 1, // if you have quantity info, plug it here
+          units: 1, 
           unitTotalPrice: element.finalAmount || 0
         }
       ],
