@@ -338,16 +338,56 @@ Thank you for booking with us 💐`;
     })
   }
 
-  onTabChange(event: any): void {
-    this.updateDataSource(event.index === 1 ? "Completed" : "pending");
+  //   onTabChange(event: any): void {
+  //   this.updateDataSource(event.index === 1 ? "Completed" : "pending");
+  // }
+onTabChange(event: any): void {
+  let status: string;
+
+  switch (event.index) {
+    case 0:
+      status = "pending";
+      break;
+    case 1:
+      status = "Completed";
+      break;
+    case 2:
+      status = "Cancelled";
+      break;
+    default:
+      status = "pending";
   }
 
-  private updateDataSource(status: "Completed" | "pending"): void {
-    this.rentDataSource.data = this.rentList.filter((order:any) =>
-            !order.rentDetails?.length ||
-            status === 'Completed' ? order.rentDetails.every((detail:any) => detail.status === status) : order.rentDetails.some((detail:any) => detail.status !== 'Completed')
-    );
-  }
+  this.updateDataSource(event.index === 0 ? "pending" : status as "Completed" | "pending" | "Cancelled");
+}
+
+
+  // private updateDataSource(status: "Completed" | "pending"| "Cancelled"): void {
+  //   this.rentDataSource.data = this.rentList.filter((order:any) =>
+  //           !order.rentDetails?.length ||
+  //           status === 'Completed' ? order.rentDetails.every((detail:any) => detail.status === status) : order.rentDetails.some((detail:any) => detail.status !== 'Completed')
+  //   );
+  // }
+  private updateDataSource(status: "Completed" | "pending" | "Cancelled"): void {
+  this.rentDataSource.data = this.rentList.filter((order: any) => {
+    if (!order.rentDetails?.length) {
+      return true;
+    }
+
+    if (status === "Completed") {
+      return order.rentDetails.every((detail: any) => detail.status === "Completed");
+    } 
+    else if (status === "Cancelled") {
+      return order.rentDetails.every((detail: any) => detail.status === "Cancelled");
+    } 
+    else {
+      return order.rentDetails.some((detail: any) => 
+        detail.status !== "Completed" && detail.status !== "Cancelled"
+      );
+    }
+  });
+}
+
 
   openConfigSnackBar(snackbarTitle: any) {
     this._snackBar.open(snackbarTitle, 'Splash', {
