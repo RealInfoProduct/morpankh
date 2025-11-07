@@ -49,7 +49,7 @@
 
                         <div class="col-lg-3 f-s-12 f-w-900">
                             <div class="row text-align">
-                                <div class="col-lg-6">
+                                <div class="col-lg-6 expense">
                                     <div [ngStyle]="{'color':totalByAccountType.Expense  === 'Expense' ? 'green' : 'red'}">
                                         <strong>Expense:</strong> ₹  {{ totalByAccountType.Expense || 0 }}
                                     </div>
@@ -67,8 +67,9 @@
                                     <i-tabler name="file-download" class="icon-25"></i-tabler>
                                 </button>
                                 <button mat-flat-button color="primary" (click)="addBalance()">
-                                    Check Balance </button>
-                                
+                                      <!-- <i-tabler name="file-download" class="icon-25"></i-tabler> -->
+                                       <img src="../../../../assets/images/logos/image.png" alt="balance" class="icon-25"/>
+                                    </button>
                                 <button mat-flat-button color="primary" (click)="addexpenses('Add', {})">
                                     Add </button>
                         </div>

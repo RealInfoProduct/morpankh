@@ -25,7 +25,12 @@
         <div class="col-lg-2 d-flex">
           <strong>Total Rent:</strong> ₹  {{ totalRent || 0 }}
         </div>
-        <div class="col-lg-2 d-flex align-items-center justify-content-end">
+        <div class="col-lg-3 d-flex align-items-center justify-content-end">
+          <div class="m-r-10">  
+            <button mat-flat-button color="primary" (click)="updateStatusForAllPendingOrders()">
+              Status Update
+            </button>
+          </div>
           <button mat-flat-button color="primary" (click)="addParty('Add', {})">
            Rent Order
           </button>
@@ -119,23 +124,23 @@
                     <table class="table table-sm table-bordered w-100 mt-2">
                       <thead>
                         <tr>
-                          <th>Bill No</th>
-                          <th>Product</th>
-                          <th>Rent</th>
-                          <th>Pickup</th>
-                          <th>Return</th>
-                          <th>Status</th>
+                          <th class="f-s-14">Bill No</th>
+                          <th class="f-s-14">Product</th>
+                          <th class="f-s-14">Rent</th>
+                          <th class="f-s-14">Pickup</th>
+                          <th class="f-s-14">Return</th>
+                          <th class="f-s-14">Status</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr *ngFor="let detail of element.rentDetails">
-                          <td>{{ detail.billNo }}</td>
-                          <td>{{ detail.product }}</td>
-                          <td>{{ detail.rent }}</td>
-                          <td>{{ detail.pickupDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
-                          <td>{{ detail.returnDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
+                          <td class="f-s-14">{{ detail.billNo }}</td>
+                          <td class="f-s-14">{{ detail.product }}</td>
+                          <td class="f-s-14">{{ detail.rent }}</td>
+                          <td class="f-s-14">{{ detail.pickupDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
+                          <td class="f-s-14">{{ detail.returnDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
   
-                          <td>
+                          <td class="f-s-14">
                             <div *ngIf="editOrderRowId !== detail.id" class="status-text"
                               (click)="enableOrderEdit(detail.id); $event.stopPropagation()">
                               {{ detail.status || 'Select Status' }}

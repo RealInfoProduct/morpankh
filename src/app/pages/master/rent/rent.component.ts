@@ -8,6 +8,7 @@ import { LoaderService } from 'src/app/services/loader.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { UpdatestatusComponent } from './updatestatus/updatestatus.component';
 
 @Component({
   selector: 'app-rent',
@@ -417,6 +418,12 @@ Thank you for booking with us 💐`;
     this.cancelOrder();
   }
 
+    updateStatusForAllPendingOrders(): void { 
+     const dialogRef = this.dialog.open(UpdatestatusComponent,
+      { width: '1000px' }
+    );
+}
+
 }
 
 
@@ -510,12 +517,13 @@ export class rentDialogComponent implements OnInit {
       mobileNumber: ['', [Validators.required,Validators.pattern(/^\d{10}$/)]],
       othermobileNumber: ['',[Validators.pattern(/^\d{10}$/)]],
       orderDate: [new Date()],
-      advance: ['', Validators.required],
-      deposite: ['', Validators.required],
-      returnAmount: ['', Validators.required],
+      advance: [''],
+      deposite: [''],
+      returnAmount: [''],
       aadharCard: [''],
       total: [''],
       selected: [''],
+      pendingAmount: [''],
       rentDetails: this.fb.array([this.createRentDetailGroup()])
     })
   }
@@ -549,6 +557,7 @@ export class rentDialogComponent implements OnInit {
     const rent = this.rentForm.get('rent')?.value || 0;
     const advance = this.rentForm.get('advance')?.value || 0;
     const deposite = this.rentForm.get('deposite')?.value || 0;
+    const pending = this.rentForm.get('pendingAmount')?.value || 0;
     const total = deposite - advance - rent;
     return total;
 
@@ -607,24 +616,87 @@ export class rentDialogComponent implements OnInit {
      this.rentDetails.at(index).get('rent')?.setValue(data.rent);
   }
 
-  rentCalculation(event: any) {
-    const rentArray = this.rentForm.get('rentDetails') as FormArray;
-    if (!rentArray) return;
+  // rentCalculation(event: any) {
+  //   const rentArray = this.rentForm.get('rentDetails') as FormArray;
+  //   if (!rentArray) return;
 
-    let rentSum = 0;
-    rentArray.controls.forEach(group => {
-      const rent = Number(group.get('rent')?.value) || 0;
-      rentSum += rent;
-    });
+  //   let rentSum = 0;
+  //   rentArray.controls.forEach(group => {
+  //     const rent = Number(group.get('rent')?.value) || 0;
+  //     rentSum += rent;
+  //   });
 
-    this.rentForm.get('total')?.setValue(rentSum, { emitEvent: false });
+  //   this.rentForm.get('total')?.setValue(rentSum, { emitEvent: false });
 
-    const advance = Number(this.rentForm.get('advance')?.value) || 0;
-    const deposite = Number(this.rentForm.get('deposite')?.value) || 0;
-    const returnAmount = (rentSum - advance) - deposite;
+  //   const advance = Number(this.rentForm.get('advance')?.value) || 0;
+  //   const deposite = Number(this.rentForm.get('deposite')?.value) || 0;
+  //   // const returnAmount = (rentSum - advance) - deposite;
 
-    this.rentForm.get('returnAmount')?.setValue(returnAmount, { emitEvent: false });
+  //   // this.rentForm.get('returnAmount')?.setValue(returnAmount, { emitEvent: false });
+  //   if (advance === 0 && deposite === 0) {
+  //     this.rentForm.get('pendingAmount')?.setValue(Math.abs(rentSum), { emitEvent: false });
+  //     this.rentForm.get('returnAmount')?.setValue(0, { emitEvent: false });
+  //   } else if (deposite === 0) {
+  //     const pendingAmounts = (rentSum - advance);
+  //     this.rentForm.get('pendingAmount')?.setValue(Math.abs(pendingAmounts), { emitEvent: false });
+  //     this.rentForm.get('returnAmount')?.setValue(0, { emitEvent: false });
+  //   } else if (advance > 0 && deposite > 0) {
+  //     const returnAmount = (rentSum - advance) - deposite;
+  //     this.rentForm.get('pendingAmount')?.setValue(0, { emitEvent: false });
+  //     this.rentForm.get('returnAmount')?.setValue(Math.abs(returnAmount), { emitEvent: false });
+  //   } else if (advance === 0) {
+  //     const pendingAmounts = (rentSum - deposite);
+  //     this.rentForm.get('pendingAmount')?.setValue(Math.abs(pendingAmounts), { emitEvent: false });
+  //     this.rentForm.get('returnAmount')?.setValue(0, { emitEvent: false });
+  //   }else if(rentSum < (advance + deposite)){
+  //    const pendingAmounts = (advance + deposite) - rentSum;
+  //     this.rentForm.get('pendingAmount')?.setValue(Math.abs(pendingAmounts), { emitEvent: false });
+  //      this.rentForm.get('returnAmount')?.setValue(0, { emitEvent: false });
+  //   } else {
+  //     const returnAmount = (rentSum - advance) - deposite;
+  //     this.rentForm.get('returnAmount')?.setValue(Math.abs(returnAmount), { emitEvent: false });
+
+  //     const pending = this.rentForm.get('pendingAmount')?.value || 0;
+  //     this.rentForm.get('pendingAmount')?.setValue(Math.abs(pending), { emitEvent: false });
+  //   }
+
+  // }
+rentCalculation(event: any) {
+  const rentArray = this.rentForm.get('rentDetails') as FormArray;
+  if (!rentArray) return;
+
+  let rentSum = 0;
+  rentArray.controls.forEach(group => {
+    const rent = Number(group.get('rent')?.value) || 0;
+    rentSum += rent;
+  });
+
+  this.rentForm.get('total')?.setValue(rentSum, { emitEvent: false });
+
+  const advance = Number(this.rentForm.get('advance')?.value) || 0;
+  const deposite = Number(this.rentForm.get('deposite')?.value) || 0;
+  const totalPaid = advance + deposite;
+
+  let pendingAmount = 0;
+  let returnAmount = 0;
+
+  if (totalPaid === 0) {
+    pendingAmount = rentSum;
+    returnAmount = 0;
+  } else if (rentSum > totalPaid) {
+    pendingAmount = rentSum - totalPaid;
+    returnAmount = 0;
+  } else if (rentSum < totalPaid) {
+    pendingAmount = 0;
+    returnAmount = totalPaid - rentSum;
+  } else {
+    pendingAmount = 0;
+    returnAmount = 0;
   }
+
+  this.rentForm.get('pendingAmount')?.setValue(Math.abs(pendingAmount), { emitEvent: false });
+  this.rentForm.get('returnAmount')?.setValue(Math.abs(returnAmount), { emitEvent: false });
+}
 
   filterRentProducts(event: any, i:any) {
     const search = (event.target.value || '').toLowerCase();

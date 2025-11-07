@@ -8,4 +8,29 @@
 .text-align{
     text-align: center;
     margin-top: 18px;
+      
+}
+.cardWithShadow {
+    @media (max-width: 1600px) and (min-width: 768px) {
+        .row {
+            gap: 0.75rem;
+
+            .col-lg-3,
+            .col-lg-2,
+            .col-lg-1 {
+                flex: 1 1 45%;
+                max-width: 45%;
+            }
+
+            .text-align {
+                display: flex;
+                justify-content: center;
+            }
+
+            .expense {
+                display: contents;
+            }
+        }
+
+    }
 }
