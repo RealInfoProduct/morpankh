@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Inject, OnInit, Optional, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -22,7 +22,7 @@ import { UpdatestatusComponent } from './updatestatus/updatestatus.component';
     ]),
   ],
 })
-export class RentComponent implements OnInit {
+export class RentComponent implements OnInit,AfterViewInit {
   displayedColumns: string[] = [
     'expand',
     'orderno',
@@ -92,7 +92,9 @@ export class RentComponent implements OnInit {
     });
   }
 
-
+  ngAfterViewInit() {
+  this.rentDataSource.paginator = this.paginator;
+}
 
   toggleRow(row: any) {
     this.expandedRow = this.expandedRow === row ? null : row;
@@ -328,7 +330,7 @@ Thank you for booking with us 💐`;
 
           const pendingOrders = this.rentList.filter((order:any) =>
             !order.rentDetails?.length ||
-            order.rentDetails.some((detail:any) => detail.status !== "Completed")
+            order.rentDetails.some((detail:any) => detail.status !== "Completed" && detail.status !== "Cancelled")
           );
         this.rentDataSource = new MatTableDataSource(pendingOrders);
         this.rentDataSource.paginator = this.paginator;
