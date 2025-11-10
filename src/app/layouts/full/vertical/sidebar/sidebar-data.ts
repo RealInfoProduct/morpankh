@@ -19,12 +19,12 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'Product',
-    iconName: 'hanger-2',
+    iconName: 'building-factory-2',
     route: '/master/rentproducts',
   },
   {
     displayName: 'Day by day',
-    iconName: 'hanger-2',
+    iconName: 'calendar',
     route: '/master/day-by-day',
   },
   {
@@ -32,22 +32,22 @@ export const navItems: NavItem[] = [
   },
    {
     displayName: 'Income/Expense',
-    iconName: 'hanger-2',
+    iconName: 'presentation-analytics',
     route: '/master/income-expense',
   },
   {
     displayName: 'Balance',
-    iconName: 'hanger-2',
+    iconName: 'wallet',
     route: '/master/balance',
   },
   {
     displayName: 'Investment',
-    iconName: 'hanger-2',
+    iconName: 'businessplan',
     route: '/master/investment',
   },
   {
     displayName: 'Partners',
-    iconName: 'hanger-2',
+    iconName: 'users',
     route: '/master/partners',
   },
   {

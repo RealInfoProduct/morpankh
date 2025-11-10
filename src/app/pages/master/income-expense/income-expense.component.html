@@ -3,7 +3,7 @@
             <mat-card class="cardWithShadow">
                 <mat-card-content class="p-24">
                     <div class="row">
-                        <div class="col-lg-2">
+                        <div class="col-lg-2 search-bar">
                             <mat-form-field appearance="outline" class="w-100 hide-hint">
                                 <input matInput placeholder="Search Expenses" (keyup)="applyFilter($any($event.target).value)"/>
                                 <mat-icon matSuffix>
@@ -17,7 +17,7 @@
                                 {{ item }}
                             </mat-radio-button>
                         </mat-radio-group> -->
-                            <div class="col-lg-1">
+                            <div class="col-lg-1 status-filtera">
                                 <mat-form-field appearance="outline" class="w-100">
                                     <mat-label>Status</mat-label>
                                     <mat-select [value]="'All'" (selectionChange)="onFilterChange($event)">
@@ -26,7 +26,7 @@
                                 </mat-form-field>
                             </div>
 
-                            <div class="col-lg-1">
+                            <div class="col-lg-1 status-filter">
                                 <mat-form-field appearance="outline" class="w-100">
                                     <mat-label>Status</mat-label>
                                     <mat-select (selectionChange)="onFilterChangestatus($event)">
@@ -35,7 +35,7 @@
                                 </mat-form-field>
                             </div>
 
-                            <div class="col-lg-2">
+                            <div class="col-lg-2 select-date-range">
                                 <mat-form-field appearance="outline" class="w-100  hide-hint">
                                     <mat-label>Select Invoice Date</mat-label>
                                     <mat-date-range-input [rangePicker]="picker" [formGroup]="dateIncomeListForm">

@@ -1,7 +1,7 @@
 <mat-card class="cardWithShadow">
   <mat-card-content class="p-24">
     <div class="row justify-content-between">
-      <div class="col-lg-4">
+      <div class="col-md-4 search-bar">
         <mat-form-field appearance="outline" class="w-100 hide-hint">
           <input matInput placeholder="Search.." (keyup)="applyFilter($any($event.target).value)" />
           <mat-icon matSuffix>
@@ -9,7 +9,7 @@
           </mat-icon>
         </mat-form-field>
       </div>
-      <div class="col-4">
+      <div class="col-md-4 invoicedate-range">
         <mat-form-field appearance="outline" class="w-100  hide-hint">
           <mat-label>Select Invoice Date</mat-label>
           <mat-date-range-input [rangePicker]="picker" [formGroup]="dateInvoiceListForm">
@@ -20,7 +20,7 @@
           <mat-date-range-picker #picker (closed)="filterDate()"></mat-date-range-picker>
         </mat-form-field>
       </div>
-      <div class="col-1">
+      <div class="col-md-1 file-download-button">
         <div class="d-flex m-t-15 hide-hint align-items-center justify-content-end">
           <button class="file-download w-100" (click)="filedownload()" mat-flat-button color="primary">
             <i-tabler name="file-download" class="icon-25"></i-tabler>

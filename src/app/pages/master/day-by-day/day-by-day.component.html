@@ -1,7 +1,7 @@
 <mat-card class="cardWithShadow">
     <mat-card-content class="p-24">
         <div class="row justify-content-between">
-            <div class="col-lg-3">
+            <div class="col-lg-3 search-bar">
                 <mat-form-field appearance="outline" class="w-100 hide-hint">
                     <input matInput placeholder="Search Expenses" (keyup)="applyFilter($any($event.target).value)" />
                     <mat-icon matSuffix>
@@ -9,8 +9,8 @@
                     </mat-icon>
                 </mat-form-field>
             </div>
-            <div class="col-lg-3">
-                <mat-form-field appearance="outline" class="example-form-field">
+            <div class="col-lg-3 pickupdate-range">
+                <mat-form-field appearance="outline" class="w-100 example-form-field">
                     <mat-label>Pickup Date Range</mat-label>
                     <form [formGroup]="dateForm">
                     <mat-date-range-input [rangePicker]="campaignOnePicker" (click)="filterByDateRange()">

@@ -5,64 +5,51 @@
       </div>
       <mat-divider></mat-divider>
       <div class="row justify-content-between">
-        <!-- <div class="col-lg-4">
-          <mat-form-field appearance="outline" class="w-100 hide-hint">
-            <input matInput placeholder="Search Purchase" (keyup)="applyFilter($any($event.target).value)" />
-            <mat-icon matSuffix>
-              <i-tabler name="search" class="icon-20"></i-tabler>
-            </mat-icon>
-          </mat-form-field>
-        </div>
-        <div class="col-lg-4 d-flex align-items-center justify-content-end">
-          <button mat-flat-button color="primary" (click)="addParty('Add', {})">
-            Add Purchase
-          </button>
-        </div> -->
         <form [formGroup]="productForm">
             <div class="row align-items-center">
-                <div class="col-2">
+                <div class="col-2 date-picker-width">
                     <mat-form-field appearance="outline" class="w-100 m-t-8">
                         <input matInput [matDatepicker]="picker" formControlName="productDate" required />
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
                 </div>
-                <div class="col-2">
+                <div class="col-2  product-select-width">
                     <mat-form-field appearance="outline" class="w-100 m-t-8">
                         <mat-select value="no" formControlName="productid" placeholder="{{'addinvoice.SelectProduct' | translate}}">
                             <mat-option [value]="item" *ngFor="let item of productList">{{item.productName}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div class="col-2">
+                <div class="col-2 purchase-price-width">
                     <mat-form-field appearance="outline" class="w-100 m-t-10">
                         <mat-label>Purchase Price</mat-label>
                         <input type="number" matInput min="0"
                             formControlName="purchaseAmount" placeholder="Enter appearance Price">
                     </mat-form-field>
                 </div>
-                <div class="col-2">
+                <div class="col-2 shell-price-width">
                     <mat-form-field appearance="outline" class="w-100 m-t-10">
                         <mat-label>Shell Price</mat-label>
                         <input type="number" matInput min="0"
                             formControlName="shellAmount" placeholder="Enter Shell Price">
                     </mat-form-field>
                 </div>
-                <div class="col-2">
+                <div class="col-2 description-width">
                     <mat-form-field appearance="outline" class="w-100 m-t-10">
                         <mat-label>Description</mat-label>
                         <input type="text" matInput
                             formControlName="productDes" placeholder="Enter Ddescription">
                     </mat-form-field>
                 </div>
-                <div class="col-1">
+                <div class="col-1 size-width">
                     <mat-form-field appearance="outline" class="w-100 m-t-10">
                         <mat-label>Size</mat-label>
                         <input type="text" matInput
                             formControlName="productSize" placeholder="Enter Size">
                     </mat-form-field>
                 </div>
-                <div class="col-1">
+                <div class="col-1 button-width">
                     <button mat-flat-button [mat-dialog-close]="true" [disabled]="!productForm.valid" color="primary" (click)="addPurchase()">
                         {{editRecode?.id ? 'Edit' : 'Save'}}
                       </button>

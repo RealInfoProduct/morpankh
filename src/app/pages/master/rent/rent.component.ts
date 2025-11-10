@@ -30,6 +30,7 @@ export class RentComponent implements OnInit,AfterViewInit {
     'mobileno',
     'advance',
     'deposite',
+    'pendingAmount',
     'return',
     'orderdate',
     'total',
