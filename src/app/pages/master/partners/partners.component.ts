@@ -7,6 +7,8 @@ import { PartnersList } from 'src/app/interface/invoice';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { PartnersDialogComponent } from './partners-dialog/partners-dialog.component';
+import { Subscription } from 'rxjs';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
   selector: 'app-partners',
@@ -24,6 +26,9 @@ export class PartnersComponent implements OnInit {
     'action',
   ];
   partnersList :any = []
+  isMobile: boolean = false;
+  subcription = new Subscription();
+
   partnersDataSource = new MatTableDataSource(this.partnersList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
@@ -31,11 +36,20 @@ export class PartnersComponent implements OnInit {
   constructor(private dialog: MatDialog , 
     private firebaseService : FirebaseService ,
     private loaderService : LoaderService,
-    private _snackBar: MatSnackBar,) { }
+    private _snackBar: MatSnackBar, private breakpointService: BreakpointService) { }
 
 
   ngOnInit(): void {
+     this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
   this.getPartnersList()
+  }
+
+     ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   applyFilter(filterValue: string): void {

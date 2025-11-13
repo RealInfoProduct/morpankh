@@ -12,7 +12,8 @@
       </div>
     </mat-card-content>
   </mat-card>
-  <mat-card class="cardWithShadow" >
+
+  <mat-card class="cardWithShadow"  *ngIf="!isMobile; else mobileView">
     <mat-card-content class="p-24">
       <div class="table-responsive">
         <table mat-table [dataSource]="purchaseDataSource" class="w-100">
@@ -138,3 +139,95 @@
       </div>
     </mat-card-content>
   </mat-card>
+
+  <ng-template #mobileView>
+  <div *ngFor="let item of purchaseList" class="mb-3">
+    <mat-card class="cardWithShadow">
+      <mat-card-content>
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">P No. :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{ item.invoiceNo }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">B No. :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{item.billNo}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">Customer Name :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{ item.customerName }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">Invoice Date :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{item.invoiceDate}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">Customer Number :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{ item.customerNumber }} </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">Total Cost :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{ productgrandTotal(item.invoiceNo) }}/- </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">Status :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="p-x-8 p-y-4 bg-light f-w-600 rounded-pill f-s-12">{{ item.invoiceStatus }}</div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+</ng-template>

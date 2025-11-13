@@ -7,6 +7,9 @@ import { ProductList, RentProductList } from 'src/app/interface/invoice';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { MatDateRangePicker } from '@angular/material/datepicker';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
   selector: 'app-rent-product',
@@ -21,18 +24,32 @@ displayedColumns: string[] = [
     'action',
   ];
   rentProductList :any = []
+  isMobile: boolean = false;
+    subcription = new Subscription();
   productDataSource = new MatTableDataSource(this.rentProductList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+  //  @ViewChild('campaignOnePicker') campaignOnePicker!: MatDateRangePicker<Date>;
 
   constructor(private dialog: MatDialog , 
     private firebaseService : FirebaseService ,
     private loaderService : LoaderService,
-    private _snackBar: MatSnackBar,) { }
+    private _snackBar: MatSnackBar,
+      private breakpointService: BreakpointService) { }
 
 
   ngOnInit(): void {
+     this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
+
   this.getRentProductList()
+  }
+  
+  ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   applyFilter(filterValue: string): void {

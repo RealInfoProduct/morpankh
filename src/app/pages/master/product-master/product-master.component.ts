@@ -4,7 +4,9 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Subscription } from 'rxjs';
 import { ProductList } from 'src/app/interface/invoice';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 
@@ -21,6 +23,9 @@ export class ProductMasterComponent {
     'action',
   ];
   productList :any = []
+    isMobile: boolean = false;
+    subcription = new Subscription();
+
   productDataSource = new MatTableDataSource(this.productList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
@@ -28,11 +33,20 @@ export class ProductMasterComponent {
   constructor(private dialog: MatDialog , 
     private firebaseService : FirebaseService ,
     private loaderService : LoaderService,
-    private _snackBar: MatSnackBar,) { }
+    private _snackBar: MatSnackBar, private breakpointService: BreakpointService) { }
 
 
   ngOnInit(): void {
+    this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
   this.getProductList()
+  }
+
+    ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   applyFilter(filterValue: string): void {

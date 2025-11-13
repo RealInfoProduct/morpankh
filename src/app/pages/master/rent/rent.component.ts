@@ -9,6 +9,9 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { UpdatestatusComponent } from './updatestatus/updatestatus.component';
+import { Subscription } from 'rxjs';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { InfoDialogComponent } from './info-dialog/info-dialog.component';
 
 @Component({
   selector: 'app-rent',
@@ -44,6 +47,11 @@ export class RentComponent implements OnInit,AfterViewInit {
   totalRent: any = 0;
   expandedRow: any = null;
   isRowHide: any = null;
+   isMobile: boolean = false;
+  subcription = new Subscription();
+  pendingList: any = [];
+  completedList: any = [];
+  cancelledList: any = [];
 
   rentDataSource = new MatTableDataSource(this.rentList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
@@ -55,11 +63,17 @@ export class RentComponent implements OnInit,AfterViewInit {
     private _elementRef: ElementRef,
     private _snackBar: MatSnackBar,
     private fb: FormBuilder,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private breakpointService: BreakpointService
   ) { }
 
 
   ngOnInit(): void {
+     this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
     this.getRentList()
     this.getRentProductList()
 
@@ -91,12 +105,24 @@ export class RentComponent implements OnInit,AfterViewInit {
     this.dateForm.valueChanges.subscribe(() => {
       this.filterByDateRange();
     });
+     this.rentDataSource.data = this.rentList;
+  }
+
+  ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   ngAfterViewInit() {
   this.rentDataSource.paginator = this.paginator;
 }
 
+  openInfoDialog(element: any) {
+    this.dialog.open(InfoDialogComponent, {
+      width: '400px',
+      data: element, 
+    });
+  }
+  
   toggleRow(row: any) {
     this.expandedRow = this.expandedRow === row ? null : row;
   }
@@ -328,11 +354,10 @@ Thank you for booking with us 💐`;
         this.totalRent = this.rentList.reduce((acc: number, item: any) => {
           return acc + (parseFloat(item.total) || 0);
         }, 0);
-
-          const pendingOrders = this.rentList.filter((order:any) =>
-            !order.rentDetails?.length ||
-            order.rentDetails.some((detail:any) => detail.status !== "Completed" && detail.status !== "Cancelled")
-          );
+        const pendingOrders = this.rentList.filter((order:any) =>
+          !order.rentDetails?.length ||
+        order.rentDetails.some((detail:any) => detail.status !== "Completed" && detail.status !== "Cancelled")
+      )
         this.rentDataSource = new MatTableDataSource(pendingOrders);
         this.rentDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false)

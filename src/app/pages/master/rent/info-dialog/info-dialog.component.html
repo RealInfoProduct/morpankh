@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>Customer Info</h2>
+<mat-dialog-content *ngFor="let item of data.rentDetails">
+  <p><strong class="Bill">Bill No : </strong> {{ item.billNo }}</p>
+  <p><strong class="m-r-14">Product : </strong> {{ item.product }}</p>
+  <p><strong class="rent">Rent    : </strong> {{ item.rent }}</p>
+  <p><strong class="m-r-14">Pickup  : </strong> {{ item.pickupDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</p>
+  <p><strong class="m-r-14">Return  : </strong> {{ item.returnDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</p>
+  <p><strong class="m-r-14">Status  : </strong> {{ item.status }}</p>
+  <mat-divider></mat-divider>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="closeDialog()">Close</button>
+</mat-dialog-actions>

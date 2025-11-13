@@ -8,6 +8,8 @@ import { LoaderService } from 'src/app/services/loader.service';
 import { ShellConfirmationDialogComponent } from './shell-confirmation-dialog/shell-confirmation-dialog.component';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { Subscription } from 'rxjs';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 
 @Component({
@@ -27,6 +29,8 @@ export class ShellListComponent implements OnInit {
   ];
   purchaseList: any = []
   productList: any = []
+    isMobile: boolean = false;
+  subcription = new Subscription();
 
   purchaseDataSource = new MatTableDataSource(this.purchaseList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
@@ -35,10 +39,15 @@ export class ShellListComponent implements OnInit {
   constructor(private firebaseService: FirebaseService,
     private dialog : MatDialog,
     private fb: FormBuilder,
-    private loaderService: LoaderService,) { }
+    private loaderService: LoaderService, private breakpointService: BreakpointService) { }
 
 
   ngOnInit(): void {
+    this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
     this.getPurchaseList()
     this.getProductList()
     const today = new Date();
@@ -48,6 +57,10 @@ export class ShellListComponent implements OnInit {
       start: [startDate],
       end: [endDate]
     });
+  }
+
+    ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   filterDate() {

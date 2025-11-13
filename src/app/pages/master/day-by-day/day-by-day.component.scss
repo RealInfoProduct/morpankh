@@ -1,17 +1,15 @@
 @media (max-width: 1279px) and (min-width: 600px) {
+
   .search-bar,
   .pickupdate-range {
     display: inline-block;
     width: 48%;
     margin-top: 0;
   }
-
-  .search-bar {
-    margin-right: 2%;
-  }
 }
 
 @media (max-width: 500px) {
+
   .search-bar,
   .pickupdate-range {
     display: block;
@@ -21,8 +19,20 @@
 }
 
 @media (max-width: 600px) {
-        .pickupdate-range {
-            margin-top: 10px;
-          
-        }   
-    }
+  .pickupdate-range {
+    margin-top: 10px;
+
+  }
+}
+
+.calendar-icons {
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+  visibility: visible;
+}
+
+.datepicker{
+  width: 0;
+  visibility: hidden;
+}

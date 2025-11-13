@@ -83,5 +83,20 @@
 }
 
 .m-r-56{
-      margin-right: 56%;
+        margin-right: 50%;
+}
+
+@media (max-width:1280px) {
+  .totalrent{
+        margin-top: 10px;
+    margin-bottom: 10px;
+
+  }
+}
+
+@media (max-width:950px) {
+  .icons-info {
+    display: flex;
+    justify-content: end;
+  }
 }

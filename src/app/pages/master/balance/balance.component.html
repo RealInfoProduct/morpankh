@@ -4,7 +4,7 @@
 </div>
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
     <mat-tab label="Trasaction" >
-        <mat-card class="cardWithShadow">
+        <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
             <mat-card-content class="p-24">
                 <div class="table-responsive">
                     <table mat-table [dataSource]="cashFlowListDataSource" class="w-100">
@@ -43,8 +43,7 @@
                         <ng-container matColumnDef="createdDate">
                             <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Created Date</th>
                             <td mat-cell *matCellDef="let element;let i = index" class="f-s-12">
-                                {{element.createdDate.toDate() |
-                                date:'dd/MM/yyyy'}}</td>
+                                {{element.createdDate.toDate() | date:'dd/MM/yyyy'}}</td>
                         </ng-container>
 
                         <tr mat-header-row *matHeaderRowDef="cashFlowListdisplayedColumns"></tr>
@@ -60,6 +59,77 @@
 
             </mat-card-content>
         </mat-card>
+
+         <ng-template #mobileView>
+            <div *ngFor="let item of cashFlowList" class="mb-3">
+                <mat-card class="cardWithShadow">
+                    <mat-card-content>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Transaction Date :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.transactionDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Payment Type :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.paymentType}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Trasaction Type :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.trasactionType}}</div>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">amount :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.amount}}</div>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                        </div>
+                        
+                          <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Created Date :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.createdDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+        </ng-template>
     </mat-tab>
 
     <mat-tab label="Bank" >

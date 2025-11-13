@@ -5,8 +5,9 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { BalanceList } from 'src/app/interface/invoice';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 
@@ -24,6 +25,9 @@ CheckBalance:boolean = false
 CheckBalanceTable:boolean = false
 selectedBankIndex: number | null = null;
 cashFlowList:any =[]
+  isMobile: boolean = false;
+  subcription = new Subscription();
+
 
 cashFlowListdisplayedColumns=[
   'transactionDate',
@@ -36,11 +40,18 @@ cashFlowListdisplayedColumns=[
 cashFlowListDataSource = new  MatTableDataSource(this.cashFlowList);
 @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
-constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
+
+constructor(
+  private fb:FormBuilder, private firebaseService : FirebaseService,
             private loaderService : LoaderService, private _snackBar: MatSnackBar,
-           @Optional() @Inject(MAT_DIALOG_DATA) public data: any){}
+           @Optional() @Inject(MAT_DIALOG_DATA) public data: any, private breakpointService: BreakpointService){}
 
   ngOnInit(): void {
+    this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
     this.balanceFormList()
 
     if (this.data?.disabled) {
@@ -55,6 +66,10 @@ constructor(private fb:FormBuilder, private firebaseService : FirebaseService,
 
   ngAfterViewInit(): void {
       this.getBalanceList()
+  }
+
+  ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   balanceFormList() {

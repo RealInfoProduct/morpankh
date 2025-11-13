@@ -9,6 +9,8 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { productMasterDialogComponent } from '../product-master/product-master.component';
 import { BarcodeStickerComponent } from '../barcode-sticker/barcode-sticker.component';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-purchase-master',
@@ -31,6 +33,9 @@ export class PurchaseMasterComponent {
   productNumber:number = 1000;
   editRecode :any
   productForm: FormGroup;
+  isMobile: boolean = false;
+  subcription = new Subscription();
+
   purchaseDataSource = new MatTableDataSource(this.purchaseList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
@@ -39,13 +44,22 @@ export class PurchaseMasterComponent {
     private firebaseService : FirebaseService ,
     private loaderService : LoaderService,
     private fb: FormBuilder,
-    private _snackBar: MatSnackBar,) { }
+    private _snackBar: MatSnackBar, private breakpointService: BreakpointService) { }
 
 
   ngOnInit(): void {
+    this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
   this.buildForm()
   this.getPurchaseList()
   this.getProductList()
+  }
+
+    ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   buildForm() {

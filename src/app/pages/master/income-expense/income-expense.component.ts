@@ -12,6 +12,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import moment from 'moment';
+import { Subscription } from 'rxjs';
+import { MatDateRangePicker } from '@angular/material/datepicker';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
   selector: 'app-income-expense',
@@ -51,18 +54,27 @@ export class IncomeExpenseComponent implements OnInit {
 
   allExpenses: any[] = [];
   totalByAccountType: any = 0;
+   isMobile: boolean = false;
+      subcription = new Subscription();
 
 
   expensesDataSource = new MatTableDataSource(this.expensesList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+   @ViewChild('campaignOnePicker') campaignOnePicker!: MatDateRangePicker<Date>;
 
   constructor(private dialog: MatDialog, private firebaseService: FirebaseService,
     private loaderService: LoaderService,
     private fb: FormBuilder,
-    private _snackBar: MatSnackBar) { }
+    private _snackBar: MatSnackBar,
+   private breakpointService: BreakpointService) { }
 
   ngOnInit(): void {
+     this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
     this.getexpensesList()
     this.getBalanceList()
     const today = new Date();
@@ -73,6 +85,11 @@ export class IncomeExpenseComponent implements OnInit {
       end: [endDate]
     });
   }
+
+   ngOnDestroy(): void {
+    this.subcription.unsubscribe();
+  }
+
 
   filterDate() {
     if (!this.expensesList) return;

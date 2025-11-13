@@ -23,7 +23,7 @@
               <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
           </mat-form-field>
         </div> -->
-      <div class="col-lg-2 d-flex">
+      <div class="col-lg-2 totalrent d-flex">
         <strong>Total Rent:</strong> ₹ {{ totalRent || 0 }}
       </div>
       <div class="col-lg-3 d-flex align-items-center justify-content-end">
@@ -42,7 +42,7 @@
 
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChange($event)">
   <mat-tab label="Pending">
-    <mat-card class="cardWithShadow">
+    <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
       <mat-card-content class="p-24">
         <div class="table-responsive">
           <table mat-table [dataSource]="rentDataSource" multiTemplateDataRows class="w-100">
@@ -190,10 +190,153 @@
         </div>
       </mat-card-content>
     </mat-card>
+
+    <ng-template #mobileView>
+      <div *ngFor="let item of rentList" class="mb-3">
+        <mat-card class="cardWithShadow">
+          <mat-card-content>
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">B No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.billNo}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Customer :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.customerName}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Mobile No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.mobileNumber}}</div>
+                  </div>
+                </div>
+    
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Advance :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.advance}}</div>
+                  </div>
+                </div>
+    
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Deposite :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.deposite}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Pending :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.pendingAmount}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Return :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.returnAmount}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Order :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.orderDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Total :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.total}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Aadhar No :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.aadharCard}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2 icons-info">
+                    <div class="f-s-12" (click)="openInfoDialog(item)">
+                       <i-tabler name="info-square-rounded" class="icon-18"></i-tabler>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="Completed">
-    <mat-card class="cardWithShadow">
+    <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
       <mat-card-content class="p-24">
         <div class="table-responsive">
           <table mat-table [dataSource]="rentDataSource" multiTemplateDataRows class="w-100">
@@ -334,10 +477,151 @@
         </div>
       </mat-card-content>
     </mat-card>
+
+    <ng-template #mobileView>
+     <div *ngFor="let item of rentList" class="mb-3">
+        <mat-card class="cardWithShadow">
+          <mat-card-content>
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">B No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.billNo}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Customer :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.customerName}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Mobile No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.mobileNumber}}</div>
+                  </div>
+                </div>
+    
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Advance :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.advance}}</div>
+                  </div>
+                </div>
+    
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Deposite :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.deposite}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Pending :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.pendingAmount}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Return :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.returnAmount}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Order :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.orderDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Total :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.total}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Aadhar No :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.aadharCard}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+             <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2 icons-info">
+                    <div class="f-s-12"> <i-tabler name="icons-info" class="icon-15"></i-tabler></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="Cancelled">
-    <mat-card class="cardWithShadow">
+    <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
       <mat-card-content class="p-24">
         <div class="table-responsive">
           <table mat-table [dataSource]="rentDataSource" multiTemplateDataRows class="w-100">
@@ -485,5 +769,147 @@
         </div>
       </mat-card-content>
     </mat-card>
+
+    <ng-template #mobileView>
+      <div *ngFor="let item of rentList"  class="mb-3">
+        <mat-card class="cardWithShadow">
+          <mat-card-content>
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">B No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.billNo}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Customer :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.customerName}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Mobile No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.mobileNumber}}</div>
+                  </div>
+                </div>
+    
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Advance :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.advance}}</div>
+                  </div>
+                </div>
+    
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Deposite :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.deposite}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Pending :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.pendingAmount}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Return :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.returnAmount}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Order :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.orderDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Total :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.total}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Aadhar No :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.aadharCard}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+             <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2 icons-info">
+                    <div class="f-s-12"> <i-tabler name="icons-info" class="icon-15"></i-tabler></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+    </ng-template>
   </mat-tab>
+
 </mat-tab-group>

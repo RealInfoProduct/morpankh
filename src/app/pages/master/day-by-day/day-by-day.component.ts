@@ -1,8 +1,12 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDateRangePicker } from '@angular/material/datepicker';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Subscription } from 'rxjs';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 
@@ -14,22 +18,35 @@ import { LoaderService } from 'src/app/services/loader.service';
 export class DayByDayComponent implements OnInit,AfterViewInit {
   displayedColumns: string[] = ['billNo', 'porduct', 'pickupdate', 'returndate', 'rent', 'status'];
   rentList: any[] = [];
-  daybydayDataSource = new MatTableDataSource(this.rentList);
   rentProductList: any[] = [];
   dateForm: FormGroup;
   selectedTabIndex :any = 0;
+  isMobile: boolean = false;
+  mobileViews: boolean = false;
+  subcription = new Subscription();
+  daybydayDataSource = new MatTableDataSource(this.rentList);
+  
 
-   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
+  @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+   @ViewChild('campaignOnePicker') campaignOnePicker!: MatDateRangePicker<Date>;
 
   constructor(
     private firebaseService: FirebaseService,
     private loaderService: LoaderService,
     private datePipe: DatePipe,
-    private fb : FormBuilder
+    private fb : FormBuilder,
+    private breakpointService: BreakpointService
   ) {}
 
   ngOnInit(): void {
+    this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+        this.mobileViews = bpState.isMobile || window.innerWidth <= 960;
+      })
+    );
+
     this.getRentList();
 
     this.daybydayDataSource.filterPredicate = (data: any, filter: string): boolean => {
@@ -59,14 +76,19 @@ export class DayByDayComponent implements OnInit,AfterViewInit {
     this.dateForm.valueChanges.subscribe(() => {
       this.filterByDateRange();
     });
-      this.daybydayDataSource = new MatTableDataSource();
-        this.daybydayDataSource.paginator = this.paginator;
   }
 
   ngAfterViewInit(): void {
-  this.daybydayDataSource.paginator = this.paginator;
-}
+    this.daybydayDataSource.paginator = this.paginator;
+  }
 
+  ngOnDestroy(): void {
+    this.subcription.unsubscribe();
+  }
+
+    openDatePicker(picker: any) {
+      picker.open();
+    }
 
   filterByDateRange() {
     const { start, end } = this.dateForm.value;

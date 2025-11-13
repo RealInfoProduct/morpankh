@@ -9,6 +9,8 @@ import { LoaderService } from 'src/app/services/loader.service';
 import { productMasterDialogComponent } from '../product-master/product-master.component';
 import { DatePipe } from '@angular/common';
 import { ShellConfirmationDialogComponent } from '../shell-list/shell-confirmation-dialog/shell-confirmation-dialog.component';
+import { Subscription } from 'rxjs';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 
 @Component({
@@ -29,6 +31,9 @@ displayedColumns: string[] = [
   ];
   productList :any = []
   purchaseList :any = []
+  isMobile: boolean = false;
+  subcription = new Subscription();
+    
   purchaseDataSource = new MatTableDataSource(this.purchaseList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
@@ -36,12 +41,21 @@ displayedColumns: string[] = [
   constructor(private dialog: MatDialog , 
     private firebaseService : FirebaseService ,
     private loaderService : LoaderService,
-    private datePipe: DatePipe) { }
+    private datePipe: DatePipe,private breakpointService: BreakpointService) { }
 
 
   ngOnInit(): void {
+     this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
     this.getPurchaseList()
     this.getProductList()
+  }
+
+  ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   getPurchaseList() {

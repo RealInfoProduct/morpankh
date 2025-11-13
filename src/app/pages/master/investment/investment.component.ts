@@ -7,6 +7,8 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { InvestmentDialogComponent } from './investment-dialog/investment-dialog.component';
 import { MatSelectChange } from '@angular/material/select';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-investment',
@@ -32,20 +34,35 @@ export class InvestmentComponent implements OnInit {
   investmentists:any =[];
   totalAmount:any = 0;
   balanceList:any =[];
-  investmentDataSource = new MatTableDataSource(this.investmentist);
+  investmentList2:any =[];
+  isMobile: boolean = false;
+  subcription = new Subscription();
+
+  investmentDataSource = new MatTableDataSource(this.investmentList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
   constructor(private dialog: MatDialog,
     private firebaseService: FirebaseService,
     private loaderService: LoaderService,
-    private _snackBar: MatSnackBar,) { }
+    private _snackBar: MatSnackBar, private breakpointService: BreakpointService) { }
 
 
   ngOnInit(): void {
+    this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
     this.getInvestmentList();
     this.getPartnersList();
-    this.getBalanceList();
+    this.getBalanceList();   
+    console.log(this.investmentList2,"investmentList2");
+     
+  }
+
+    ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   applyFilter(filterValue: string): void {
@@ -125,17 +142,19 @@ export class InvestmentComponent implements OnInit {
     this.firebaseService.getAllInvestment().subscribe((res: any) => {
       if (res) {
         this.investmentList = res.filter((id: any) => id.userId === localStorage.getItem("userId"));
-
-        this.investmentDataSource = new MatTableDataSource(this.investmentList);
-        this.investmentDataSource.paginator = this.paginator;
-
+        
+        this.investmentList2  = [...this.investmentList]
         this.totalAmount = this.investmentList.reduce((sum: number, item: any) => {
           return sum + (Number(item.amount) || 0);
         }, 0);
-
+        
+        this.investmentDataSource = new MatTableDataSource(this.investmentList);
+        this.investmentDataSource.paginator = this.paginator;
+          console.log(this.investmentList2,"investmentDataSource");
         this.loaderService.setLoader(false)
       }
     });
+    
   }
 
 
