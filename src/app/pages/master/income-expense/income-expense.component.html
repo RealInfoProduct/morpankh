@@ -151,7 +151,7 @@
             </mat-card>
 
              <ng-template #mobileView>
-            <div *ngFor="let item of expensesList" class="mb-3">
+            <div *ngFor="let item of expensesDataSource.data" class="mb-3">
                 <mat-card class="cardWithShadow">
                     <mat-card-content>
                         <div class="row">
@@ -184,7 +184,7 @@
                                         <div class="f-s-12 f-w-600">Amount :</div>
                                     </div>
                                     <div class="col-7 col-sm-7 col-xs-7 mb-2">
-                                        <div class="f-s-12">{{item.amount}}</div>
+                                        <div class="f-s-12" [ngStyle]="{'color': item.amount === 'Expense' ? 'red' : 'green'}">{{item.amount}}</div>
                                     </div>
                                 </div>
                         
@@ -209,7 +209,7 @@
                                         <div class="f-s-12 f-w-600">Account Type :</div>
                                     </div>
                                     <div class="col-7 col-sm-7 col-xs-7 mb-2">
-                                        <div class="f-s-12">{{item.accounttype}}</div>
+                                        <div class="f-s-12" [ngStyle]="{'color': item.accounttype === 'Expense' ? 'red' : 'green'}">{{item.accounttype}}</div>
                                     </div>
                                 </div>
                             </div>

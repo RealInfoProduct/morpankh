@@ -61,7 +61,7 @@
         </mat-card>
 
          <ng-template #mobileView>
-            <div *ngFor="let item of cashFlowList" class="mb-3">
+            <div *ngFor="let item of cashFlowListDataSource.data" class="mb-3">
                 <mat-card class="cardWithShadow">
                     <mat-card-content>
                         <div class="row">
@@ -81,7 +81,7 @@
                                         <div class="f-s-12 f-w-600">Payment Type :</div>
                                     </div>
                                     <div class="col-7 col-sm-7 col-xs-7 mb-2">
-                                        <div class="f-s-12">{{item.paymentType}}</div>
+                                        <div class="f-s-12" [ngStyle]="{'color': item.paymentType === 'Cash' ? 'red' : 'green'}">{{item.paymentType}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -94,7 +94,11 @@
                                         <div class="f-s-12 f-w-600">Trasaction Type :</div>
                                     </div>
                                     <div class="col-7 col-sm-7 col-xs-7 mb-2">
-                                        <div class="f-s-12">{{item.trasactionType}}</div>
+                                        <div class="f-s-12" [ngClass]="{
+                            'text-blue': item.trasactionType === 'Investment',
+                            'text-green': item.trasactionType === 'Income',
+                            'text-red': item.trasactionType === 'Expense'
+                          }">{{item.trasactionType}}</div>
                                     </div>
                                 </div>
                         

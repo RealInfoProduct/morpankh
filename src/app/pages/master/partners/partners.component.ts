@@ -29,7 +29,7 @@ export class PartnersComponent implements OnInit {
   isMobile: boolean = false;
   subcription = new Subscription();
 
-  partnersDataSource = new MatTableDataSource(this.partnersList);
+  partnersDataSource = new MatTableDataSource<any>(this.partnersList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 

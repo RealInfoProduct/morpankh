@@ -32,7 +32,7 @@ export class ShellListComponent implements OnInit {
     isMobile: boolean = false;
   subcription = new Subscription();
 
-  purchaseDataSource = new MatTableDataSource(this.purchaseList);
+  purchaseDataSource = new MatTableDataSource<any>(this.purchaseList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 

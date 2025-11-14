@@ -58,7 +58,7 @@ export class IncomeExpenseComponent implements OnInit {
       subcription = new Subscription();
 
 
-  expensesDataSource = new MatTableDataSource(this.expensesList);
+  expensesDataSource = new MatTableDataSource<any>(this.expensesList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
    @ViewChild('campaignOnePicker') campaignOnePicker!: MatDateRangePicker<Date>;

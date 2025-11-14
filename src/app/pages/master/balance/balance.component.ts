@@ -37,7 +37,7 @@ cashFlowListdisplayedColumns=[
   'createdDate'
 ]
 
-cashFlowListDataSource = new  MatTableDataSource(this.cashFlowList);
+cashFlowListDataSource = new  MatTableDataSource<any>(this.cashFlowList);
 @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 

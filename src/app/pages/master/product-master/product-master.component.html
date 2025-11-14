@@ -68,7 +68,7 @@
   </mat-card>
 
   <ng-template #mobileView>
-  <div *ngFor="let item of productList; let i = index" class="mb-3">
+  <div *ngFor="let item of productDataSource.filteredData; let i = index" class="mb-3">
     <mat-card class="cardWithShadow">
       <mat-card-content>
         <div class="row">
@@ -96,5 +96,5 @@
       </mat-card-content>
     </mat-card>
   </div>
-  <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </ng-template>

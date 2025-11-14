@@ -26,7 +26,7 @@ displayedColumns: string[] = [
   rentProductList :any = []
   isMobile: boolean = false;
     subcription = new Subscription();
-  productDataSource = new MatTableDataSource(this.rentProductList);
+  productDataSource = new MatTableDataSource<any>(this.rentProductList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
   //  @ViewChild('campaignOnePicker') campaignOnePicker!: MatDateRangePicker<Date>;

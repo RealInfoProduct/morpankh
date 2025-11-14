@@ -15,7 +15,7 @@ import { LoaderService } from 'src/app/services/loader.service';
   templateUrl: './product-master.component.html',
   styleUrls: ['./product-master.component.scss']
 })
-export class ProductMasterComponent {
+export class ProductMasterComponent implements OnInit {
 
   displayedColumns: string[] = [
     'srno',
@@ -26,7 +26,7 @@ export class ProductMasterComponent {
     isMobile: boolean = false;
     subcription = new Subscription();
 
-  productDataSource = new MatTableDataSource(this.productList);
+  productDataSource = new MatTableDataSource<any>(this.productList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
