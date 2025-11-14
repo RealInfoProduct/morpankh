@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Subscription } from 'rxjs';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 
@@ -17,6 +19,8 @@ export class UpdatestatusComponent implements OnInit {
    filteredRentDetails: any[] = [];
    rentProductList: any[] = [];
    rentList: any[] = [];
+     isMobile: boolean = false;
+     subcription = new Subscription();
 
 
    displayedColumns: string[] = ['select','billNo', 'porduct', 'pickupdate', 'returndate', 'rent', 'status'];
@@ -29,13 +33,24 @@ export class UpdatestatusComponent implements OnInit {
   constructor(
     private firebaseService: FirebaseService,
         private loaderService: LoaderService,
-         private _snackBar: MatSnackBar
+         private _snackBar: MatSnackBar,
+         private breakpointService: BreakpointService
   ) { 
 
   }
 
   ngOnInit(): void {
+      this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
     this.getRentList();
+    this.getRentProductList();
+  }
+
+    ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
 // getRentList(): void {
@@ -97,7 +112,6 @@ getRentList(): void {
 
     this.updatestatusDataSource = new MatTableDataSource(this.filteredRentDetails);
     this.updatestatusDataSource.paginator = this.paginator;
-
     this.loaderService.setLoader(false);
   });
 }
@@ -186,6 +200,22 @@ openConfigSnackBar(snackbarTitle: any) {
       horizontalPosition: 'right',
       verticalPosition: 'top',
     });
+  }
+
+    getRentProductList() {
+    this.loaderService.setLoader(true)
+    this.firebaseService.getAllRentProduct().subscribe((res: any) => {
+      if (res) {
+         this.rentProductList = res.filter((id: any) => id.userId === localStorage.getItem("userId"))
+        this.loaderService.setLoader(false)
+      }
+    })
+  }
+
+    getrentProductNameById(partnersId: string): string {
+    if (!this.rentProductList) return '';
+    const partners = this.rentProductList.find((b: any) => b.id === partnersId);
+    return partners ? `${partners.productNumber} - ${partners.productName}` : '';
   }
 
 }

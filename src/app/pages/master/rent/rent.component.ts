@@ -49,11 +49,8 @@ export class RentComponent implements OnInit,AfterViewInit {
   isRowHide: any = null;
    isMobile: boolean = false;
   subcription = new Subscription();
-  pendingList: any = [];
-  completedList: any = [];
-  cancelledList: any = [];
 
-  rentDataSource = new MatTableDataSource(this.rentList);
+  rentDataSource = new MatTableDataSource<any>(this.rentList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
@@ -487,8 +484,11 @@ onTabChange(event: any): void {
   }
 
     updateStatusForAllPendingOrders(): void { 
+        const isSmallScreen = window.innerWidth < 950;
      const dialogRef = this.dialog.open(UpdatestatusComponent,
-      { width: '1000px' }
+      { width: '1000px' ,
+        height: isSmallScreen ? '400px' : '650px' 
+      }
     );
 }
 

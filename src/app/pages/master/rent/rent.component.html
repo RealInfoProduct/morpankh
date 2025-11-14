@@ -190,11 +190,13 @@
         </div>
       </mat-card-content>
     </mat-card>
+    
 
     <ng-template #mobileView>
-      <div *ngFor="let item of rentList" class="mb-3">
+      <div *ngFor="let item of rentDataSource.data" class="mb-3">
         <mat-card class="cardWithShadow">
           <mat-card-content>
+            
             <div class="row">
               <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
                 <div class="row">
@@ -320,7 +322,7 @@
                   <div class="col-5 col-sm-5 col-xs-5 mb-2">
                   </div>
                   <div class="col-7 col-sm-7 col-xs-7 mb-2 icons-info">
-                    <div class="f-s-12" (click)="openInfoDialog(item)">
+                    <div class="f-s-12 openinfodialog" (click)="openInfoDialog(item)">
                        <i-tabler name="info-square-rounded" class="icon-18"></i-tabler>
                       </div>
                   </div>
@@ -479,7 +481,7 @@
     </mat-card>
 
     <ng-template #mobileView>
-     <div *ngFor="let item of rentList" class="mb-3">
+     <div *ngFor="let item of rentDataSource.data" class="mb-3">
         <mat-card class="cardWithShadow">
           <mat-card-content>
             <div class="row">
@@ -771,7 +773,7 @@
     </mat-card>
 
     <ng-template #mobileView>
-      <div *ngFor="let item of rentList"  class="mb-3">
+      <div *ngFor="let item of rentDataSource.data"  class="mb-3">
         <mat-card class="cardWithShadow">
           <mat-card-content>
             <div class="row">
