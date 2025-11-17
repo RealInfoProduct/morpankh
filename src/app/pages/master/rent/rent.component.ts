@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { FirebaseService } from 'src/app/services/firebase.service';
@@ -52,7 +52,8 @@ export class RentComponent implements OnInit,AfterViewInit {
 
   rentDataSource = new MatTableDataSource<any>(this.rentList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+   @ViewChild(MatPaginator) paginator: MatPaginator
 
   constructor(private dialog: MatDialog,
     private firebaseService: FirebaseService,
@@ -114,8 +115,10 @@ export class RentComponent implements OnInit,AfterViewInit {
 }
 
   openInfoDialog(element: any) {
+     const isSmallScreen = window.innerWidth < 950;
     this.dialog.open(InfoDialogComponent, {
       width: '400px',
+       height: isSmallScreen ? '400px' : '650px' ,
       data: element, 
     });
   }
@@ -487,10 +490,33 @@ onTabChange(event: any): void {
         const isSmallScreen = window.innerWidth < 950;
      const dialogRef = this.dialog.open(UpdatestatusComponent,
       { width: '1000px' ,
-        height: isSmallScreen ? '400px' : '650px' 
+        height: isSmallScreen ? '400px' : '540px' 
       }
     );
 }
+
+   pageSize = 5;
+  currentPage = 0;
+  // pageSizeOptions = [3, 6, 9, 12];
+
+  // Get paginated cards
+  get paginatedCards(): any[] {
+    const startIndex = this.currentPage * this.pageSize;
+    return this.rentDataSource.data.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Handle page event
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  // Get display info
+  get displayInfo(): string {
+    const start = this.currentPage * this.pageSize + 1;
+    const end = Math.min((this.currentPage + 1) * this.pageSize, this.rentDataSource.data.length);
+    return `Showing ${start}-${end} of ${this.rentDataSource.data.length} items`;
+  }
 
 }
 

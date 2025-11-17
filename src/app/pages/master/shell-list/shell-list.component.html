@@ -115,7 +115,7 @@
 </mat-card>
 
 <ng-template #mobileView>
-  <div *ngFor="let item of purchaseDataSource.data" class="mb-3">
+  <div *ngFor="let item of paginatedCards" class="mb-3">
     <mat-card class="cardWithShadow">
       <mat-card-content>
         <div class="row">
@@ -181,5 +181,12 @@
       </mat-card-content>
     </mat-card>
   </div>
-  <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+<mat-paginator
+    [length]="purchaseDataSource.data.length"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
 </ng-template>

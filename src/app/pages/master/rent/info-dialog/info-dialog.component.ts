@@ -14,9 +14,8 @@ export class InfoDialogComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-      
   }
-  
+   
   closeDialog() {
     this.dialogRef.close();
   }

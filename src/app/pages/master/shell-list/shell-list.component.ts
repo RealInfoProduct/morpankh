@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
@@ -34,7 +34,8 @@ export class ShellListComponent implements OnInit {
 
   purchaseDataSource = new MatTableDataSource<any>(this.purchaseList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+   @ViewChild(MatPaginator) paginator: MatPaginator
 
   constructor(private firebaseService: FirebaseService,
     private dialog : MatDialog,
@@ -237,6 +238,27 @@ export class ShellListComponent implements OnInit {
     });
 
     doc.save(`Shell Report.pdf`);
+  }
+
+     pageSize = 5;
+  currentPage = 0;
+
+  get paginatedCards(): any[] {
+    const startIndex = this.currentPage * this.pageSize;
+    return this.purchaseDataSource.data.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Handle page event
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  // Get display info
+  get displayInfo(): string {
+    const start = this.currentPage * this.pageSize + 1;
+    const end = Math.min((this.currentPage + 1) * this.pageSize, this.purchaseDataSource.data.length);
+    return `Showing ${start}-${end} of ${this.purchaseDataSource.data.length} items`;
   }
 
 }

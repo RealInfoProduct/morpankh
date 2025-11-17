@@ -1,6 +1,6 @@
 import { Component, HostListener, Inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ProductList, RentProductList } from 'src/app/interface/invoice';
@@ -28,7 +28,8 @@ displayedColumns: string[] = [
     subcription = new Subscription();
   productDataSource = new MatTableDataSource<any>(this.rentProductList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+   @ViewChild(MatPaginator) paginator: MatPaginator
   //  @ViewChild('campaignOnePicker') campaignOnePicker!: MatDateRangePicker<Date>;
 
   constructor(private dialog: MatDialog , 
@@ -185,6 +186,29 @@ displayedColumns: string[] = [
   @HostListener('document:click', ['$event'])
   onClickRentOutside(event: MouseEvent) {
     this.cancelRentEdit();
+  }
+
+     pageSize = 5;
+  currentPage = 0;
+  // pageSizeOptions = [3, 6, 9, 12];
+
+  // Get paginated cards
+  get paginatedCards(): any[] {
+    const startIndex = this.currentPage * this.pageSize;
+    return this.productDataSource.data.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Handle page event
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  // Get display info
+  get displayInfo(): string {
+    const start = this.currentPage * this.pageSize + 1;
+    const end = Math.min((this.currentPage + 1) * this.pageSize, this.productDataSource.data.length);
+    return `Showing ${start}-${end} of ${this.productDataSource.data.length} items`;
   }
 
 }

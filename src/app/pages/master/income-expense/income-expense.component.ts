@@ -5,7 +5,7 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { BalanceComponent } from '../balance/balance.component';
 import { MatSelectChange } from '@angular/material/select';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -60,7 +60,8 @@ export class IncomeExpenseComponent implements OnInit {
 
   expensesDataSource = new MatTableDataSource<any>(this.expensesList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+   @ViewChild(MatPaginator) paginator: MatPaginator
    @ViewChild('campaignOnePicker') campaignOnePicker!: MatDateRangePicker<Date>;
 
   constructor(private dialog: MatDialog, private firebaseService: FirebaseService,
@@ -389,6 +390,25 @@ export class IncomeExpenseComponent implements OnInit {
 
 
     doc.save(`Income/Expense Report.pdf`);
+  }
+
+     pageSize = 5;
+  currentPage = 0;
+
+  get paginatedCards(): any[] {
+    const startIndex = this.currentPage * this.pageSize;
+    return this.expensesDataSource.data.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  get displayInfo(): string {
+    const start = this.currentPage * this.pageSize + 1;
+    const end = Math.min((this.currentPage + 1) * this.pageSize, this.expensesDataSource.data.length);
+    return `Showing ${start}-${end} of ${this.expensesDataSource.data.length} items`;
   }
 
 }

@@ -1,6 +1,6 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { ProductList } from 'src/app/interface/invoice';
@@ -36,7 +36,8 @@ displayedColumns: string[] = [
     
   purchaseDataSource = new MatTableDataSource<any>(this.purchaseList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+   @ViewChild(MatPaginator) paginator: MatPaginator
 
   constructor(private dialog: MatDialog , 
     private firebaseService : FirebaseService ,
@@ -219,5 +220,26 @@ Thank you for choosing Morpankh Saree 💐`;
    onClickRentOutside(event: MouseEvent) {
      this.cancelRentEdit();
    }
+
+      pageSize = 5;
+  currentPage = 0;
+  
+  get paginatedCards(): any[] {
+    const startIndex = this.currentPage * this.pageSize;
+    return this.purchaseDataSource.data.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Handle page event
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  // Get display info
+  get displayInfo(): string {
+    const start = this.currentPage * this.pageSize + 1;
+    const end = Math.min((this.currentPage + 1) * this.pageSize, this.purchaseDataSource.data.length);
+    return `Showing ${start}-${end} of ${this.purchaseDataSource.data.length} items`;
+  }
 
 }

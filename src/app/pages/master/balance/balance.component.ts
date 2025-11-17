@@ -2,7 +2,7 @@ import { AfterViewInit, Component, Inject, OnInit, Optional, ViewChild } from '@
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { forkJoin, Subscription } from 'rxjs';
@@ -39,7 +39,8 @@ cashFlowListdisplayedColumns=[
 
 cashFlowListDataSource = new  MatTableDataSource<any>(this.cashFlowList);
 @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+   @ViewChild(MatPaginator) paginator: MatPaginator
 
 constructor(
   private fb:FormBuilder, private firebaseService : FirebaseService,
@@ -217,5 +218,28 @@ constructor(
         this.loaderService.setLoader(false)
       }
     })
+  }
+
+     pageSize = 5;
+  currentPage = 0;
+  // pageSizeOptions = [3, 6, 9, 12];
+
+  // Get paginated cards
+  get paginatedCards(): any[] {
+    const startIndex = this.currentPage * this.pageSize;
+    return this.cashFlowListDataSource.data.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Handle page event
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  // Get display info
+  get displayInfo(): string {
+    const start = this.currentPage * this.pageSize + 1;
+    const end = Math.min((this.currentPage + 1) * this.pageSize, this.cashFlowListDataSource.data.length);
+    return `Showing ${start}-${end} of ${this.cashFlowListDataSource.data.length} items`;
   }
 }
