@@ -9,13 +9,49 @@ export const navItems: NavItem[] = [
     iconName: 'aperture',
     route: '/dashboards/dashboard1',
   },
-    {
-    displayName: 'Rent',
+  {
+    navCap: 'Rent',
+  },
+  {
+    displayName: 'Order',
     iconName: 'hanger',
     route: '/master/rent',
   },
   {
-    navCap: 'Master',
+    displayName: 'Product',
+    iconName: 'building-factory-2',
+    route: '/master/rentproducts',
+  },
+  {
+    displayName: 'Day by day',
+    iconName: 'calendar',
+    route: '/master/day-by-day',
+  },
+  {
+    navCap: 'Financial',
+  },
+   {
+    displayName: 'Income/Expense',
+    iconName: 'presentation-analytics',
+    route: '/master/income-expense',
+  },
+  {
+    displayName: 'Balance',
+    iconName: 'wallet',
+    route: '/master/balance',
+  },
+  {
+    displayName: 'Investment',
+    iconName: 'businessplan',
+    route: '/master/investment',
+  },
+  {
+    displayName: 'Partners',
+    iconName: 'users',
+    route: '/master/partners',
+  },
+  {
+    navCap: 'Stock',
   },
   {
     displayName: 'Product Master',
@@ -42,11 +78,7 @@ export const navItems: NavItem[] = [
     iconName: 'list-details',
     route: '/master/invoicelist',
   },
-  {
-    displayName: 'Rent Product',
-    iconName: 'hanger-2',
-    route: '/master/rentproducts',
-  },
+ 
 
   // {
   //   displayName: 'Account',

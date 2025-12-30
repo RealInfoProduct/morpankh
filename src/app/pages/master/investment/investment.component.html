@@ -1,0 +1,223 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content class="p-24">
+      <div class="row justify-content-between">
+        <div class="col-lg-4 search-bar">
+          <mat-form-field appearance="outline" class="w-100 hide-hint">
+            <input matInput placeholder="Search Investment" (keyup)="applyFilter($any($event.target).value)" />
+            <mat-icon matSuffix>
+              <i-tabler name="search" class="icon-20"></i-tabler>
+            </mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-2 status-filter">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Status</mat-label>
+            <mat-select [value]="'All'"  (selectionChange)="onFilterChange($event)">
+              <mat-option value="All">All</mat-option>
+              <mat-option [value]="item.id" *ngFor="let item of partnersList">{{item.firstName + ' '+ item.lastName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-2 f-s-15 f-w-900">
+          <div>
+            <strong>Total:</strong>  ₹ {{ totalAmount || 0 }}
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-center justify-content-end">
+          <button mat-flat-button color="primary" (click)="addParty('Add', {})">
+            Add Investment
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="cardWithShadow"  *ngIf="!isMobile; else mobileView">
+    <mat-card-content class="p-24">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="investmentDataSource" class="w-100">
+          <ng-container matColumnDef="srno">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Sr No.</th>
+            <td mat-cell *matCellDef="let element; let i = index" class="f-s-12">{{ getSerialNumber(i) }}</td>
+          </ng-container>
+  
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Name</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex align-items-center">
+                <div class="m-l-16">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
+                    <!-- {{ element.name.firstName + ' '+ element.name.lastName }} -->
+                    {{  getAccountHolderNameById(element.name)}}
+                  </p>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="paymentType">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Payment Type</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex align-items-center">
+                <div class="m-l-16">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
+                          <ng-container *ngIf="element.paymenttype === 'Cash'">
+                            {{element.paymenttype}}
+                          </ng-container>
+                          <ng-container *ngIf="element.paymenttype !== 'Cash'">
+                            {{element.paymenttype + " ( "+ getBankNameById(element.bank) +" )"}}
+                          </ng-container>
+                        </p>
+                        </div>
+              </div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Amount</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex align-items-center">
+                <div class="m-l-16">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
+                    {{ element.amount }}
+                  </p>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="note">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Note</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex align-items-center">
+                <div class="m-l-16">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
+                    {{ element.note }}
+                  </p>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Date</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex align-items-center">
+                <div class="m-l-16">
+                  <p class="mat-subtitle-1 f-s-12 m-t-0">
+                    {{ element.date.toDate() | date:'dd/MM/yyyy' }}
+                  </p>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+  
+    
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">
+              {{'productMaster.Action' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let element" class="action-link">
+              <!-- <a class="m-r-10 cursor-pointer"><i-tabler name="edit" (click)="addParty('Edit', element)"
+                  class="icon-18"></i-tabler></a> -->
+              <a class="m-r-10 cursor-pointer">
+                <i-tabler name="trash" (click)="addParty('Delete', element)" class="icon-18"></i-tabler>
+              </a>
+            </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+              No record found
+            </td>
+          </tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <ng-template #mobileView >
+    <div *ngFor="let item of paginatedCards; let i = index" class="mb-3">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              <div class="row">
+                <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  <div class="f-s-12 f-w-600">Sr No. :</div>
+                </div>
+                <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                  <div class="f-s-12">{{ getSerialNumber(i) }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              <div class="row">
+                <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  <div class="f-s-12 f-w-600">Name :</div>
+                </div>
+                <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                  <div class="f-s-12">{{getAccountHolderNameById(item.name)}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              <div class="row">
+                <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  <div class="f-s-12 f-w-600">Payment Type :</div>
+                </div>
+                <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                  <div class="f-s-12">{{item.paymenttype + " ( "+ getBankNameById(item.bank) +" )"}}</div>
+                </div>
+              </div>
+  
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              <div class="row">
+                <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  <div class="f-s-12 f-w-600">Amount :</div>
+                </div>
+                <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                  <div class="f-s-12">{{item.amount}}</div>
+                </div>
+              </div>
+  
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              <div class="row">
+                <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  <div class="f-s-12 f-w-600">Note :</div>
+                </div>
+                <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                  <div class="f-s-12">{{item.note}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              <div class="row">
+                <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  <div class="f-s-12 f-w-600">Date :</div>
+                </div>
+                <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                  <div class="f-s-12">{{item.date.toDate() | date:'dd/MM/yyyy'}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+   <mat-paginator
+    [length]="investmentList2.length"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
+  </ng-template>

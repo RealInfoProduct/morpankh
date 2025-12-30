@@ -1,0 +1,323 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content class="p-24">
+        <div class="row justify-content-between">
+            <div class="col-lg-3 search-bar">
+                <mat-form-field appearance="outline" class=" hide-hint">
+                    <input matInput placeholder="Search Expenses" (keyup)="applyFilter($any($event.target).value)" />
+                    <mat-icon matSuffix>
+                        <i-tabler name="search" class="icon-20"></i-tabler>
+                    </mat-icon>
+                </mat-form-field>
+         
+                <mat-form-field appearance="outline" class="datepicker" *ngIf="mobileViews">
+                    <form [formGroup]="dateForm">
+                        <mat-date-range-input [rangePicker]="campaignOnePicker" (click)="filterByDateRange()">
+                            <input matStartDate placeholder="Start date" formControlName="start">
+                            <input matEndDate placeholder="End date" formControlName="end">
+                        </mat-date-range-input>
+                        <mat-icon (click)="openDatePicker(campaignOnePicker)" class="calendar-icons">
+                            <i-tabler name="calendar" class="icon-20"></i-tabler>
+                        </mat-icon>
+                    </form>
+                    <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+                </mat-form-field>
+
+            </div>
+            <div class="col-lg-3 pickupdate-range" *ngIf="!mobileViews">
+                <mat-form-field appearance="outline" class="w-100 example-form-field">
+                    <mat-label>Pickup Date Range</mat-label>
+                    <form [formGroup]="dateForm">
+                    <mat-date-range-input [rangePicker]="campaignOnePicker" (click)="filterByDateRange()">
+                        <input matStartDate placeholder="Start date" formControlName="start">
+                        <input matEndDate placeholder="End date" formControlName="end">
+                    </mat-date-range-input>
+                    </form>
+                    <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-6"></div>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChange($event)">
+    <mat-tab label="Pending">
+        <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
+            <mat-card-content class="p-24">
+                <div class="table-responsive" >
+                    <table mat-table [dataSource]="daybydayDataSource" multiTemplateDataRows class="w-100">
+                        <ng-container matColumnDef="billNo">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.billNo}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="porduct">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Product Name</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.product}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="pickupdate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pickupdate</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{ element.pickupDateTime?.toDate() | date: 'dd/MM/yyyy hh:mm a' }}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="returndate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Returndate</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.returnDateTime?.toDate() |date:'dd/MM/yyyy hh:mm a'}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="rent">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Rent</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.rent}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.status}}</td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row">
+                        </tr>
+                        <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+                            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                                No record found
+                            </td>
+                        </tr>
+                    </table>
+                    <mat-paginator #paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                </div>
+                
+            </mat-card-content>
+        </mat-card>
+        
+        <ng-template #mobileView>
+            <div *ngFor="let item of paginatedCards" class="mb-3">
+                <mat-card class="cardWithShadow">
+                    <mat-card-content>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">B No. :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.billNo}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Product Name :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.product}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Pickupdate :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.pickupDateTime?.toDate() | date: 'dd/MM/yyyy hh:mm a'}}</div>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Returndate :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.returnDateTime?.toDate() |date:'dd/MM/yyyy hh:mm a'}}</div>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                        </div>
+                        
+                          <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Rent :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.rent}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Status :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.status}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        
+                    </mat-card-content>
+                </mat-card>
+            </div>
+           <mat-paginator
+    [length]="daybydayDataSource.data.length"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
+        </ng-template>
+
+    </mat-tab>
+    <mat-tab label="Completed">
+        <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
+            <mat-card-content class="p-24">
+                <div class="table-responsive">
+                    <table mat-table [dataSource]="daybydayDataSource" multiTemplateDataRows class="w-100">
+                        <ng-container matColumnDef="billNo">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.billNo}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="porduct">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Product Name</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.product}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="pickupdate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pickupdate</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12 color-blue cursor-pointer">{{
+                                element.pickupDateTime?.toDate() | date: 'dd/MM/yyyy hh:mm a' }}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="returndate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Returndate</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.returnDateTime?.toDate() |
+                                date:
+                                'dd/MM/yyyy hh:mm a'}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="rent">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Rent</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.rent}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
+                            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.status}}</td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row">
+                        </tr>
+                        <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+                            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                                No record found
+                            </td>
+                        </tr>
+
+                    </table>
+                    <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <ng-template #mobileView>
+            <div *ngFor="let item of paginatedCards" class="mb-3">
+                <mat-card class="cardWithShadow">
+                    <mat-card-content>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">B No. :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.billNo}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Product Name :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.product}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Pickupdate :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.pickupDateTime?.toDate() | date: 'dd/MM/yyyy hh:mm a'}}</div>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Returndate :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.returnDateTime?.toDate() |date:'dd/MM/yyyy hh:mm a'}}</div>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                        </div>
+                        
+                          <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Rent :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.rent}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Status :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.status}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <mat-paginator
+    [length]="daybydayDataSource.data.length"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>

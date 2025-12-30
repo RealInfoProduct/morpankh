@@ -1,0 +1,28 @@
+@media (max-width: 1279px) and (min-width: 600px) {
+  .search-bar,
+  .addPartybutton {
+    display: inline-block;
+    width: 48%;
+    margin-top: 0;
+  }
+
+  .search-bar {
+    margin-right: 2%;
+  }
+}
+
+@media (max-width: 500px) {
+  .search-bar,
+  .addPartybutton {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+        .addPartybutton {
+            margin-top: 10px;
+          
+        }   
+    }

@@ -1,100 +1,192 @@
-
 <mat-card class="cardWithShadow">
-    <mat-card-content class="p-24">
-      <div class="row justify-content-between">
-        <div class="col-lg-4">
-            <mat-form-field appearance="outline" class="w-100 hide-hint">
-                <input matInput placeholder="Search.." (keyup)="applyFilter($any($event.target).value)" />
-                <mat-icon matSuffix>
-                  <i-tabler name="search" class="icon-20"></i-tabler>
-                </mat-icon>
-            </mat-form-field>
-        </div>
-        <div class="col-4">
-          <mat-form-field appearance="outline" class="w-100  hide-hint">
-            <mat-label>Select Invoice Date</mat-label>
-            <mat-date-range-input [rangePicker]="picker" [formGroup]="dateInvoiceListForm">
-              <input matStartDate placeholder="Start date" formControlName="start">
-              <input matEndDate placeholder="End date" formControlName="end">
-            </mat-date-range-input>
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker (closed)="filterDate()"></mat-date-range-picker>
-          </mat-form-field>
+  <mat-card-content class="p-24">
+    <div class="row justify-content-between">
+      <div class="col-md-4 search-bar">
+        <mat-form-field appearance="outline" class="w-100 hide-hint">
+          <input matInput placeholder="Search.." (keyup)="applyFilter($any($event.target).value)" />
+          <mat-icon matSuffix>
+            <i-tabler name="search" class="icon-20"></i-tabler>
+          </mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="col-md-4 invoicedate-range">
+        <mat-form-field appearance="outline" class="w-100  hide-hint">
+          <mat-label>Select Invoice Date</mat-label>
+          <mat-date-range-input [rangePicker]="picker" [formGroup]="dateInvoiceListForm">
+            <input matStartDate placeholder="Start date" formControlName="start">
+            <input matEndDate placeholder="End date" formControlName="end">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker (closed)="filterDate()"></mat-date-range-picker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-1 file-download-button">
+        <div class="d-flex m-t-15 hide-hint align-items-center justify-content-end">
+          <button class="file-download w-100" (click)="filedownload()" mat-flat-button color="primary">
+            <i-tabler name="file-download" class="icon-25"></i-tabler>
+          </button>
         </div>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </mat-card-content>
+</mat-card>
 
-<mat-card class="cardWithShadow" >
-    <mat-card-content class="p-24">
-      <div class="table-responsive">
-        <table mat-table [dataSource]="purchaseDataSource" class="w-100">
-          <ng-container matColumnDef="srno">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">P No.</th>
-            <td mat-cell *matCellDef="let element; let i = index">{{ element.productUniqueNumber }}</td>
-          </ng-container>
-  
-          <ng-container matColumnDef="ProductName">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Name</th>
-            <td mat-cell *matCellDef="let element">
-              <div class="d-flex align-items-center">
-                <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
-                    {{getProductName(element.productid)}}
-                  </p>
-                </div>
-              </div>
-            </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="customerName">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Customer Name</th>
-            <td mat-cell *matCellDef="let element">
-              <div class="d-flex align-items-center">
-                <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
-                   {{element.customerName}}
-                  </p>
-                </div>
-              </div>
-            </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="customerNumber">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Customer Number</th>
-            <td mat-cell *matCellDef="let element">
-              <div class="d-flex align-items-center">
-                <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
-                   {{element.customerNumber}}
-                  </p>
-                </div>
-              </div>
-            </td>
-          </ng-container>
+<mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
+  <mat-card-content class="p-24">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="purchaseDataSource" class="w-100">
+        <ng-container matColumnDef="srno">
+          <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">P No.</th>
+          <td mat-cell *matCellDef="let element; let i = index" class="f-s-12">{{ element.productUniqueNumber }}</td>
+        </ng-container>
 
-          <ng-container matColumnDef="shellAmount">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Shell Price</th>
-            <td mat-cell *matCellDef="let element">
-              <div class="d-flex align-items-center">
-                <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
-                   {{element.shellAmount}} / <span class="text-success">{{element.finalAmount}}</span> 
-                  </p>
+        <ng-container matColumnDef="ProductName">
+          <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Name</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center">
+              <div class="m-l-16">
+                <p class="mat-subtitle-1 f-s-12 m-t-0">
+                  {{getProductName(element.productid)}}
+                </p>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customerName">
+          <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Customer Name</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center">
+              <div class="m-l-16">
+                <p class="mat-subtitle-1 f-s-12 m-t-0">
+                  {{element.customerName}}
+                </p>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customerNumber">
+          <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Customer Number</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center">
+              <div class="m-l-16">
+                <p class="mat-subtitle-1 f-s-12 m-t-0">
+                  {{element.customerNumber}}
+                </p>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="shellAmount">
+          <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Shell Price</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center">
+              <div class="m-l-16">
+                <p class="mat-subtitle-1 f-s-12 m-t-0">
+                  {{element.shellAmount}} / <span class="text-success">{{element.finalAmount}}</span>
+                </p>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600 text-center">Action</th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            <a class="m-r-10 cursor-pointer" (click)="returnProduct(element)">
+              <i-tabler name="trash" class="icon-18"></i-tabler>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+            No record found
+          </td>
+        </tr>
+      </table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #mobileView>
+  <div *ngFor="let item of paginatedCards" class="mb-3">
+    <mat-card class="cardWithShadow">
+      <mat-card-content>
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">P No. :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{ item.productUniqueNumber }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">Name :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{getProductName(item.productid)}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">Customer Name :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{ item.customerName }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">Customer Number :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{item.customerNumber}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+            <div class="row">
+              <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                <div class="f-s-12 f-w-600">Shell Price :</div>
+              </div>
+              <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                <div class="f-s-12">{{ item.shellAmount }} /<span class="text-success"> {{ item.finalAmount }}</span>
                 </div>
               </div>
-            </td>
-          </ng-container>
-  
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-          <tr class="mat-row" style="text-align: center;" *matNoDataRow>
-            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-              No record found
-            </td>
-          </tr>
-        </table>
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-      </div>
-    </mat-card-content>
-  </mat-card>
+            </div>
+          </div>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+<mat-paginator
+    [length]="purchaseDataSource.data.length"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
+</ng-template>

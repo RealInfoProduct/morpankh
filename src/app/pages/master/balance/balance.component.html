@@ -1,0 +1,229 @@
+<div class="d-flex align-items-center justify-content-between"  *ngIf="CheckBalance">
+    <h2 mat-dialog-title class="m-b-10">Check Balance</h2>
+    <button mat-stroked-button color="warn" class="closebutton m-r-10" mat-dialog-close>x</button>
+</div>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+    <mat-tab label="Trasaction" >
+        <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
+            <mat-card-content class="p-24">
+                <div class="table-responsive">
+                    <table mat-table [dataSource]="cashFlowListDataSource" class="w-100">
+
+                        <ng-container matColumnDef="transactionDate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Transaction Date
+                            </th>
+                            <td mat-cell *matCellDef="let element;let i = index" class="f-s-12">
+                                {{element.transactionDate.toDate() | date:'dd/MM/yyyy'}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="paymentType">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Payment Type</th>
+                            <td mat-cell *matCellDef="let element;let i = index" class="f-s-12"
+                                [ngStyle]="{'color': element.paymentType === 'Cash' ? 'red' : 'green'}">
+                                {{element?.paymentType}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="trasactionType">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Trasaction Type
+                            </th>
+                            <td mat-cell *matCellDef="let element;let i = index" class="f-s-12" [ngClass]="{
+                            'text-blue': element.trasactionType === 'Investment',
+                            'text-green': element.trasactionType === 'Income',
+                            'text-red': element.trasactionType === 'Expense'
+                          }">
+                                {{element.trasactionType}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="amount">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">amount</th>
+                            <td mat-cell *matCellDef="let element;let i = index" class="f-s-12">{{element.amount}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="createdDate">
+                            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">Created Date</th>
+                            <td mat-cell *matCellDef="let element;let i = index" class="f-s-12">
+                                {{element.createdDate.toDate() | date:'dd/MM/yyyy'}}</td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="cashFlowListdisplayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: cashFlowListdisplayedColumns"></tr>
+                        <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+                            <td class="mat-cell" [attr.colspan]="cashFlowListdisplayedColumns.length">
+                                No record found
+                            </td>
+                        </tr>
+                    </table>
+                    <mat-paginator  #paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+                </div>
+
+            </mat-card-content>
+        </mat-card>
+
+         <ng-template #mobileView>
+            <div *ngFor="let item of paginatedCards" class="mb-3">
+                <mat-card class="cardWithShadow">
+                    <mat-card-content>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Transaction Date :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.transactionDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Payment Type :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12" [ngStyle]="{'color': item.paymentType === 'Cash' ? 'red' : 'green'}">{{item.paymentType}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Trasaction Type :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12" [ngClass]="{
+                            'text-blue': item.trasactionType === 'Investment',
+                            'text-green': item.trasactionType === 'Income',
+                            'text-red': item.trasactionType === 'Expense'
+                          }">{{item.trasactionType}}</div>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">amount :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.amount}}</div>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                        </div>
+                        
+                          <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Created Date :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.createdDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        
+                    </mat-card-content>
+                </mat-card>
+            </div>
+          <mat-paginator
+    [length]="cashFlowListDataSource.data.length"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
+        </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Bank" >
+        <mat-card class="cardWithShadow">
+            <mat-card-content class="p-24">
+                <div class="row justify-content-between">
+
+                    <form [formGroup]="balanceForm">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <mat-label>Cash Balance</mat-label>
+                                <mat-form-field appearance="outline" class="w-100 m-t-10">
+                                    <input type="number" matInput min="0" formControlName="cashBalance" 
+                                        placeholder="Enter cashBalance">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-lg-6">
+                                <mat-label>Bank Balance</mat-label>
+                                <mat-form-field appearance="outline" class="w-100 m-t-10">
+                                    <input type="number" matInput min="0" [value]="totalBalance" disabled
+                                        placeholder="Enter cashBalance">
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div formArrayName="bankDetails">
+                            <div *ngFor="let bankGroup of bankDetails.controls; let i = index" [formGroupName]="i"
+                                class="row">
+
+                                <div class="col-lg-1 d-flex align-items-center">
+                                    <section class="example-section">
+                                        <mat-checkbox formControlName="selected" class="example-margin"
+                                            (change)="onCheckboxChange($event, i)"
+                                            [disabled]="selectedBankIndex !== null && selectedBankIndex !== i">
+                                        </mat-checkbox>
+                                    </section>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <mat-form-field appearance="outline" class="w-100 m-t-10">
+                                        <mat-label>Bank Name</mat-label>
+                                        <input type="text" matInput formControlName="bankName" placeholder="Bank Name">
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <mat-form-field appearance="outline" class="w-100 m-t-10">
+                                        <mat-label>Account Holder Name</mat-label>
+                                        <input type="text" matInput formControlName="accountHolderName"
+                                            placeholder="Account Holder Name">
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <mat-form-field appearance="outline" class="w-100 m-t-10">
+                                        <mat-label>Balance</mat-label>
+                                        <input type="number" matInput formControlName="balance" placeholder="Balance">
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="col-lg-1 d-flex align-items-center m-b-10">
+                                    <a class="m-r-10 cursor-pointer" *ngIf="bankDetails.length > 1  && !CheckBalance">
+                                        <i-tabler name="trash" (click)="removeBankDetail(i)" class="icon-18"></i-tabler>
+                                    </a>
+                                    <a class="m-r-10 cursor-pointer" *ngIf="!CheckBalance">
+                                        <i-tabler name="plus" (click)="addBankDetail()" class="icon-18"></i-tabler>
+                                    </a>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-1 m-t-20">
+                            <button mat-flat-button [disabled]="!balanceForm.valid" color="primary"
+                                (click)="saveBalance()" *ngIf="!CheckBalance">
+                                Save
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-tab>
+</mat-tab-group>

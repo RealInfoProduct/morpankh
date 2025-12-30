@@ -132,6 +132,7 @@ export class CreateinvoiceComponent {
   invoiceStatus :any = 'Pending'
   firmName :any = 'My Invoice'
   firmAddress :any = 'Address'
+  billNo:any 
   invoiceOrderDate = new Date()
 
   getPurchaseList() {
@@ -163,7 +164,6 @@ export class CreateinvoiceComponent {
 
   filteredData() {
     this.purchaseFilter = this.purchaseList
-
     if (!this.searchText) {
       return this.purchaseFilter;
     }
@@ -187,11 +187,11 @@ export class CreateinvoiceComponent {
     this.loaderService.setLoader(false);
   }
   validateDiscount(index: number) {
-    if (this.discounts[index] > 100) {
-      this.discounts[index] = 100;
-    } else if (this.discounts[index] < 0) {
-      this.discounts[index] = 0;
-    }
+    // if (this.discounts[index] > 100) {
+    //   this.discounts[index] = 100;
+    // } else if (this.discounts[index] < 0) {
+    //   this.discounts[index] = 0;
+    // }
   }
 
   getProductName(productid: string) {
@@ -207,17 +207,18 @@ export class CreateinvoiceComponent {
   get totalDiscount(): number {
     const total = this.filteredPurchaseList.reduce((total: number, row: any, i: number) => {
       const discountPercent = this.discounts[i] || 0;
-      const discountAmount = (discountPercent / 100) * row.shellAmount;
-      return total + discountAmount;
+      // const discountAmount = (discountPercent / 100) * row.shellAmount;
+      return total + discountPercent;
     }, 0);
-    return Math.round(total * 100) / 100;
+
+    return Math.round(total);
   }
   
   get productgrandTotal(): number {
     const total = this.filteredPurchaseList.reduce((total: number, row: any, i: number) => {
       const discountPercent = this.discounts[i] || 0;
-      const discountAmount = (discountPercent / 100) * row.shellAmount;
-      return total + (row.shellAmount - discountAmount);
+      // const discountAmount = (discountPercent / 100) * row.shellAmount;
+      return total + (row.shellAmount - discountPercent);
     }, 0);
     return Math.round(total * 100) / 100;
   }
@@ -230,7 +231,7 @@ export class CreateinvoiceComponent {
     this.filteredPurchaseList = this.filteredPurchaseList.map((item: any, i: number) => {
       const discountPercent = this.discounts[i] || 0;
       const discountAmount = (discountPercent / 100) * item.shellAmount;
-      const finalAmount = item.shellAmount - discountAmount;
+      const finalAmount = item.shellAmount - discountPercent;
   
       return {
         ...item,
@@ -243,6 +244,7 @@ export class CreateinvoiceComponent {
         invoiceNo: this.nextUniqueInvoiceNumber,
         invoiceDate: this.invoiceOrderDate,
         firmName: this.firmName,
+        billNo: this.billNo,
         firmAddress: this.firmAddress,
         invoiceStatus: this.invoiceStatus,
       };

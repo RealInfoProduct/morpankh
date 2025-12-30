@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ProductList, PurchaseList } from 'src/app/interface/invoice';
@@ -9,6 +9,8 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { productMasterDialogComponent } from '../product-master/product-master.component';
 import { BarcodeStickerComponent } from '../barcode-sticker/barcode-sticker.component';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-purchase-master',
@@ -18,6 +20,7 @@ import { BarcodeStickerComponent } from '../barcode-sticker/barcode-sticker.comp
 export class PurchaseMasterComponent {
   displayedColumns: string[] = [
     'srno',
+    'productNumber',
     'ProductName',
     'productDes',
     'shellAmount',
@@ -26,24 +29,38 @@ export class PurchaseMasterComponent {
   ];
   productList :any = []
   purchaseList :any = []
-  nextUniqueNumber :number = 0
+  nextUniqueNumber :number = 0;
+  productNumber:number = 1000;
   editRecode :any
   productForm: FormGroup;
-  purchaseDataSource = new MatTableDataSource(this.purchaseList);
+  isMobile: boolean = false;
+  subcription = new Subscription();
+
+  purchaseDataSource = new MatTableDataSource<any>(this.purchaseList);
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+   @ViewChild(MatPaginator) paginator: MatPaginator
 
   constructor(private dialog: MatDialog , 
     private firebaseService : FirebaseService ,
     private loaderService : LoaderService,
     private fb: FormBuilder,
-    private _snackBar: MatSnackBar,) { }
+    private _snackBar: MatSnackBar, private breakpointService: BreakpointService) { }
 
 
   ngOnInit(): void {
+    this.subcription.add(
+      this.breakpointService.breakpoint$.subscribe(bpState => {
+        this.isMobile = bpState.isMobile;
+      })
+    );
   this.buildForm()
   this.getPurchaseList()
   this.getProductList()
+  }
+
+    ngOnDestroy(): void {
+    this.subcription.unsubscribe();
   }
 
   buildForm() {
@@ -83,9 +100,9 @@ export class PurchaseMasterComponent {
       invoiceDate: '',
       firmName: '',
       firmAddress: '',
-      invoiceStatus: ''
+      invoiceStatus: '',
+      productNumber: this.editRecode?.productNumber || this.productNumber
     }
-    console.log(payload);
     
     if (payload.id) {
       this.firebaseService.updatePurchase(payload.id, payload).then((res: any) => {
@@ -123,7 +140,12 @@ export class PurchaseMasterComponent {
         });
         const productUniqueNumbers = this.purchaseList.map((item: any) => item.productUniqueNumber);
         const maxUniqueNumber = productUniqueNumbers.length ? Math.max(...productUniqueNumbers) : 0;
-        this.nextUniqueNumber = maxUniqueNumber + 1;            
+        this.nextUniqueNumber = maxUniqueNumber + 1;    
+
+        const productNumberData = this.purchaseList.map((item: any) => item.productNumber);
+        const productNumber = productNumberData.length ? Math.max(...productNumberData) : 1000;
+        this.productNumber = productNumber + 1;   
+
         this.purchaseDataSource = new MatTableDataSource(this.purchaseList);
         this.purchaseDataSource.paginator = this.paginator;
         this.loaderService.setLoader(false);
@@ -167,7 +189,6 @@ export class PurchaseMasterComponent {
   }
 
   deleterecode(element :any ){
-    console.log('element==>>' , element);
     
     element.action = 'Delete';
     element.isPurchase = true;
@@ -193,5 +214,28 @@ export class PurchaseMasterComponent {
       exitAnimationDuration,
       data: element,
     });
+  }  
+
+     pageSize = 5;
+  currentPage = 0;
+  // pageSizeOptions = [3, 6, 9, 12];
+
+  // Get paginated cards
+  get paginatedCards(): any[] {
+    const startIndex = this.currentPage * this.pageSize;
+    return this.purchaseDataSource.data.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Handle page event
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  // Get display info
+  get displayInfo(): string {
+    const start = this.currentPage * this.pageSize + 1;
+    const end = Math.min((this.currentPage + 1) * this.pageSize, this.purchaseDataSource.data.length);
+    return `Showing ${start}-${end} of ${this.purchaseDataSource.data.length} items`;
   }
 }

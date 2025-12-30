@@ -1,12 +1,20 @@
 {
   "projects": {
-    "default": "mystock-65739"
+    "default": "stock-management-system-4055b",
+    "morpankh": "morpankh-7db46"
   },
   "targets": {
-    "mystock-65739": {
+    "morpankh-7db46": {
       "hosting": {
-        "tr": [
-          "mystockm"
+        "newsite": [
+          "morpankh"
+        ]
+      }
+    },
+    "stock-management-system-4055b": {
+      "hosting": {
+        "newsite": [
+          "stock-management-system-4055b"
         ]
       }
     }

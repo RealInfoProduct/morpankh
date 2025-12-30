@@ -1,4 +1,4 @@
-<mat-card class="cardWithShadow">
+<mat-card class="cardWithShadow" >
     <mat-card-content class="p-24">
       <div class="row justify-content-between">
         <div class="col-lg-4">
@@ -17,44 +17,59 @@
       </div>
     </mat-card-content>
   </mat-card>
-  <mat-card class="cardWithShadow" >
+
+  <mat-card class="cardWithShadow"  *ngIf="!isMobile; else mobileView">
     <mat-card-content class="p-24">
       <div class="table-responsive">
         <table mat-table [dataSource]="productDataSource" class="w-100">
           <ng-container matColumnDef="productNumber">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Product Number</th>
-            <td mat-cell *matCellDef="let element">{{element.productNumber }}</td>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Product Number</th>
+            <td mat-cell *matCellDef="let element" class="f-s-12">{{element.productNumber }}</td>
           </ng-container>
   
           <ng-container matColumnDef="ProductName">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Product Name</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Product Name</th>
             <td mat-cell *matCellDef="let element">
-              <div class="d-flex align-items-center">
-                <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
-                    {{ element.productName }}
-                  </p>
-                </div>
+              <div *ngIf="editingRowId !== element.id" class="status-text"
+                (click)="enableEdit(element.id); $event.stopPropagation()" class="f-s-12">
+                {{ element.productName || 'Enter ProductName' }}
+              </div>
+              
+              <div *ngIf="editingRowId === element.id" class="status-dropdown" (click)="$event.stopPropagation()">
+                <mat-form-field appearance="fill" class="w-100">
+                  <input type="text" matInput [(ngModel)]="element.productName" (change)="productNameChange(element, $event)" autofocus />
+                </mat-form-field>
               </div>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="rent">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Rent</th>
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">Rent</th>
             <td mat-cell *matCellDef="let element">
-              <div class="d-flex align-items-center">
+              <!-- <div class="d-flex align-items-center">
                 <div class="m-l-16">
-                  <p class="mat-subtitle-1 f-s-16 m-t-0">
+                  <p class="mat-subtitle-1 f-s-13 m-t-0">
                     {{ element.rent }}
                   </p>
                 </div>
+              </div> -->
+
+              <div *ngIf="editingRentRowId !== element.id" class="status-text f-s-12" (click)="enableRentEdit(element.id); $event.stopPropagation()">
+                {{ element.rent || 'Enter Rent' }}
+              </div>
+              
+              <div *ngIf="editingRentRowId === element.id" class="status-dropdown" (click)="$event.stopPropagation()">
+                <mat-form-field appearance="fill" class="w-100">
+                  <input type="text" matInput [(ngModel)]="element.rent" (change)="rentChange(element, $event)"
+                    autofocus />
+                </mat-form-field>
               </div>
             </td>
           </ng-container>
   
     
           <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">
+            <th mat-header-cell *matHeaderCellDef class="f-s-13 f-w-600">
               {{'productMaster.Action' | translate}}
             </th>
             <td mat-cell *matCellDef="let element" class="action-link">
@@ -74,7 +89,62 @@
             </td>
           </tr>
         </table>
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
       </div>
     </mat-card-content>
   </mat-card>
+  
+        <ng-template #mobileView>
+            <div *ngFor="let item of paginatedCards" class="mb-3">
+                <mat-card class="cardWithShadow">
+                    <mat-card-content>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Product Number :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.productNumber}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Product Name :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.productName}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        
+                          <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                                <div class="row">
+                                    <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                                        <div class="f-s-12 f-w-600">Rent :</div>
+                                    </div>
+                                    <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                                        <div class="f-s-12">{{item.rent}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        
+                    </mat-card-content>
+                </mat-card>
+            </div>
+           <mat-paginator
+    [length]="productDataSource.data.length"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
+        </ng-template>
+

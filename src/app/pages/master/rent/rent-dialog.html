@@ -1,23 +1,67 @@
 <h2 mat-dialog-title class="m-b-24 b-b-1 p-b-20">{{'actions.' + action | translate}} <ng-container
     *ngIf="!local_data.isPurchase"> Rent Order</ng-container></h2>
 <mat-dialog-content class="mat-typography" *ngIf="action !== 'Delete'; else elseTemplate;">
-  <form [formGroup]="productForm">
+  <form [formGroup]="rentForm">
     <div class="row">
-      <div class="col-lg-4">
+      <div class="col-lg-3">
+        <div class="row">
+          <div class="col-lg-6">
+            <mat-form-field appearance="outline" class="w-100 m-t-10">
+              <mat-label>Sr No</mat-label>
+              <input type="number" matInput formControlName="srNo" placeholder="Bill No" min="0" readonly />
+            </mat-form-field>
+          </div>
+          <div class="col-lg-6">
+            <mat-form-field appearance="outline" class="w-100 m-t-10">
+            <mat-label>Bill No</mat-label>
+            <input type="number" matInput formControlName="billNo" placeholder="Bill No" min="0" />
+          </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
-          <mat-label>Rent Products</mat-label>
-          <mat-select formControlName="rentProducts" placeholder="Rent Product">
-            <mat-option [value]="item.id" *ngFor="let item of rentProductList">{{item.productNumber}} - {{item.productName}}</mat-option>
-          </mat-select>
+          <mat-label>Sr No</mat-label>
+          <input type="number" matInput formControlName="srNo" placeholder="Bill No" min="0" readonly />
         </mat-form-field>
       </div>
-      <div class="col-lg-4">
+
+      <div class="col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Bill No</mat-label>
+          <input type="number" matInput formControlName="billNo" placeholder="Bill No" min="0" readonly />
+        </mat-form-field>
+      </div> -->
+
+      <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <mat-label>Customer Name</mat-label>
           <input type="text" matInput required formControlName="customerName" placeholder="Customer Name" />
         </mat-form-field>
       </div>
-      <div class="col-lg-4">
+
+      <!-- onKeyPress="if(this.value.length==10) return false;" /> -->
+      <div class="col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Mobile Number</mat-label>
+          <input type="number" matInput required formControlName="mobileNumber" placeholder="Mobile Number" min="0"/>
+          <mat-hint *ngIf="rentForm.get('mobileNumber')?.hasError('required') && rentForm.get('mobileNumber')?.touched" class="error-message error-color">
+           Mobilenoisrequired
+          </mat-hint>
+          <mat-hint *ngIf="rentForm.get('mobileNumber')?.hasError('pattern') && rentForm.get('mobileNumber')?.touched" class="error-message error-color">
+           Invalidmobilenoisrequired
+          </mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Address</mat-label>
+          <input type="text" matInput required formControlName="address" placeholder="Address" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-8">
           <mat-label>Status</mat-label>
           <mat-select value="no" formControlName="status" placeholder="Status">
@@ -25,13 +69,21 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div class="col-lg-4">
+
+      <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
-          <mat-label>Mobile Number</mat-label>
-          <input type="number" matInput required formControlName="mobileNumber" placeholder="Mobile Number" />
+          <mat-label>Other Mobile Number</mat-label>
+          <input type="number" matInput formControlName="othermobileNumber" placeholder="Other Mobile Number" min="0" />
+           <mat-hint *ngIf="rentForm.get('othermobileNumber')?.hasError('required') && rentForm.get('othermobileNumber')?.touched" class="error-message error-color">
+           Mobilenoisrequired
+          </mat-hint>
+          <mat-hint *ngIf="rentForm.get('othermobileNumber')?.hasError('pattern') && rentForm.get('othermobileNumber')?.touched" class="error-message error-color">
+           Invalidmobilenoisrequired
+          </mat-hint>
         </mat-form-field>
       </div>
-      <div class="col-lg-4">
+
+      <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-8">
           <mat-label>Order Date</mat-label>
           <input matInput [matDatepicker]="order" formControlName="orderDate" placeholder="Order Date" required />
@@ -39,61 +91,152 @@
           <mat-datepicker #order></mat-datepicker>
         </mat-form-field>
       </div>
-      <div class="col-lg-4">
-        <mat-form-field appearance="outline" class="w-100 m-t-8">
-          <mat-label>Pickup date & time</mat-label>
-          <input matInput [ngxMatDatetimePicker]="picker" placeholder="Pickup date & time"
-            formControlName="pickupDateTime" required />
-          <ngx-mat-datepicker-toggle matSuffix [for]="picker"></ngx-mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepMinute]="30"
-            [touchUi]="true"></ngx-mat-datetime-picker>
-        </mat-form-field>
-      </div>
-      <div class="col-lg-4">
-        <mat-form-field appearance="outline" class="w-100 m-t-8">
-          <mat-label>Return date & time</mat-label>
-          <input matInput [ngxMatDatetimePicker]="return" placeholder="Return date & time"
-            formControlName="returnDateTime" required />
-          <ngx-mat-datepicker-toggle matSuffix [for]="return"></ngx-mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #return [showSpinners]="true" [showSeconds]="false" [stepMinute]="30"
-            [touchUi]="true"></ngx-mat-datetime-picker>
-        </mat-form-field>
-      </div>
-      <div class="col-lg-4">
-        <mat-form-field appearance="outline" class="w-100 m-t-10">
-          <mat-label>Rent Amount</mat-label>
-          <input type="number" matInput required formControlName="rent" placeholder="Rent" />
-        </mat-form-field>
-      </div>
-      <div class="col-lg-4">
-        <mat-form-field appearance="outline" class="w-100 m-t-10">
-          <mat-label>Advance</mat-label>
-          <input type="number" matInput required formControlName="advance" placeholder="Advance" />
-        </mat-form-field>
-      </div>
-      <div class="col-lg-4">
-        <mat-form-field appearance="outline" class="w-100 m-t-10">
-          <mat-label>Deposite</mat-label>
-          <input type="number" matInput required formControlName="deposite" placeholder="Deposite" />
-        </mat-form-field>
-      </div>
-      <div class="col-lg-4">
-        <mat-form-field appearance="outline" class="w-100 m-t-10">
-          <mat-label>Return Amount</mat-label>
-          <input type="number" matInput required formControlName="returnAmount" placeholder="Return Amount"/>
-        </mat-form-field>
-      </div>
-      <div class="col-lg-4">
+
+      <div class="col-lg-3">
         <mat-form-field appearance="outline" class="w-100 m-t-10">
           <mat-label>Aadhar Card</mat-label>
           <input type="number" matInput formControlName="aadharCard" placeholder="Aadhar Card" />
         </mat-form-field>
       </div>
     </div>
+
+  <mat-divider></mat-divider>
+    <div formArrayName="rentDetails" class="m-t-10">
+      <div class="row" *ngFor="let bankGroup of rentDetails.controls; let i = index" [formGroupName]="i">
+
+        <div class="col-lg-3">
+          <mat-form-field appearance="outline" class="w-100 m-t-10">
+            <mat-label>Rent Products</mat-label>
+            <mat-select formControlName="rentProducts" placeholder="Rent Product" 
+              (selectionChange)="onRentProductChange($event,i)">
+              <input matInput class="search" type="text" placeholder="Search..." (keyup)="filterRentProducts($event, i)" 
+                style="border: none; outline: none;">
+              <mat-option [value]="item.id" *ngFor="let item of filteredRentProducts[i]">{{item.productNumber}} -
+                {{item.productName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-2">
+          <mat-form-field appearance="outline" class="w-100 m-t-10">
+            <mat-label>Rent Amount</mat-label>
+            <input type="number" matInput required formControlName="rent" placeholder="Rent"
+             (ngModelChange)="rentCalculation($event)"  />
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-3">
+          <mat-form-field appearance="outline" class="w-100 m-t-8">
+            <mat-label>Pickup date & time</mat-label>
+            <input matInput [ngxMatDatetimePicker]="picker" placeholder="Pickup date & time"
+              formControlName="pickupDateTime" required />
+            <ngx-mat-datepicker-toggle matSuffix [for]="picker"></ngx-mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #picker [showSpinners]="true" [enableMeridian]="enableMeridian"
+              [showSeconds]="false" [stepMinute]="30" [touchUi]="true">
+              <ngx-mat-datepicker-actions>
+                <button mat-button ngxMatDatepickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" ngxMatDatepickerApply>
+                  <mat-icon>done</mat-icon> Apply
+                </button>
+              </ngx-mat-datepicker-actions>
+            </ngx-mat-datetime-picker>
+            <mat-error *ngIf="rentForm.get('pickupDateTime')?.hasError('pickupAfterReturn')">
+              Pickup date/time must be before return date/time
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-3">
+          <mat-form-field appearance="outline" class="w-100 m-t-8">
+            <mat-label>Return date & time</mat-label>
+            <input matInput [ngxMatDatetimePicker]="return" placeholder="Return date & time"
+              formControlName="returnDateTime" required />
+            <ngx-mat-datepicker-toggle matSuffix [for]="return"></ngx-mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #return [showSpinners]="true" [enableMeridian]="enableMeridian"
+              [showSeconds]="false" [stepMinute]="30" [touchUi]="true">
+              <ngx-mat-datepicker-actions>
+                <button mat-button ngxMatDatepickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" ngxMatDatepickerApply>
+                  <mat-icon>done</mat-icon> Apply
+                </button>
+              </ngx-mat-datepicker-actions>
+            </ngx-mat-datetime-picker>
+            <mat-error *ngIf="rentForm.get('returnDateTime')?.hasError('returnBeforePickup')">
+              Return date/time must be after pickup date/time
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-1 d-flex align-items-center m-b-10">
+          <a class="m-r-10 cursor-pointer" *ngIf="rentDetails.length > 1">
+            <i-tabler name="trash" (click)="removeRentDetail(i)" class="icon-18"></i-tabler>
+          </a>
+          <a class="m-r-10 cursor-pointer">
+            <i-tabler name="plus" (click)="addRentDetail()" class="icon-18"></i-tabler>
+          </a>
+        </div>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row">
+      <!-- <div class="col-lg-3 d-flex align-items-center">
+      </div> -->
+      <div class="col-lg-2">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Total</mat-label>
+          <input type="number" matInput  formControlName="total" placeholder="Total" (ngModelChange)="rentCalculation($event)"  />
+        </mat-form-field>
+      </div>
+<!--     
+      <div class="col-lg-3 d-flex align-items-center">
+      </div> -->
+      <div class="col-lg-2">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Advance</mat-label>
+          <input type="number" matInput  formControlName="advance" placeholder="Advance" (ngModelChange)="rentCalculation($event)" />
+        </mat-form-field>
+      </div>
+
+      <!-- <div class="col-lg-3 d-flex align-items-center">
+      </div> -->
+      <div class="col-lg-2">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Deposite</mat-label>
+          <input type="number" matInput  formControlName="deposite" placeholder="Deposite" (ngModelChange)="rentCalculation($event)" />
+        </mat-form-field>
+      </div>
+ 
+      <!-- <div class="col-lg-3 d-flex align-items-center">
+      </div> -->
+      <div class="col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Pending Amount</mat-label>
+          <input type="number" matInput  formControlName="pendingAmount" placeholder="Pending Amount" />
+        </mat-form-field>
+      </div>
+
+      <!-- div class="col-lg-3 d-flex align-items-center">
+      </div> -->
+            <div class="col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 m-t-10">
+          <mat-label>Return Amount</mat-label>
+          <input type="number" matInput  formControlName="returnAmount" placeholder="Return Amount" />
+        </mat-form-field>
+      </div>
+    </div>
+  
+
+
     <mat-divider></mat-divider>
     <mat-dialog-actions class="p-24 justify-content-end">
+      <div class="d-flex align-items-center m-r-56">
+        <section class="example-section">
+          <mat-checkbox formControlName="selected" class="example-margin"></mat-checkbox>
+          <mat-label>Send Message In WhatsApp</mat-label>
+        </section>
+      </div>
       <button mat-stroked-button color="warn" mat-dialog-close>{{'productMasterdialog.Cancel' | translate}}</button>
-      <button mat-flat-button [mat-dialog-close]="true" [disabled]="!productForm.valid" color="primary"
+      <button mat-flat-button [mat-dialog-close]="true" [disabled]="!rentForm.valid" color="primary"
         (click)="doAction();">
         {{'actions.' + action | translate}}
       </button>
@@ -101,7 +244,7 @@
   </form>
 </mat-dialog-content>
 
-  <ng-template #elseTemplate>
+<ng-template #elseTemplate>
   <div class="p-x-24">
     <p>{{'productMasterdialog.Suretodelete' | translate}}<span class="f-w-600">{{local_data.Name}}</span> ?</p>
   </div>
@@ -110,6 +253,7 @@
     <button mat-button (click)="doAction()" mat-flat-button color="warn">
       {{'actions.' + action | translate}}
     </button>
-    <button mat-stroked-button color="warn" (click)="closeDialog()" class="m-l-8">{{'productMasterdialog.Cancel' | translate}}</button>
+    <button mat-stroked-button color="warn" (click)="closeDialog()" class="m-l-8">{{'productMasterdialog.Cancel' |
+      translate}}</button>
   </div>
 </ng-template>

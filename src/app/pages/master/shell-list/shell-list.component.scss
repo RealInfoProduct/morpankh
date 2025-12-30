@@ -1,0 +1,130 @@
+.cardWithShadow {
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .search-bar,
+  .invoicedate-range,
+  .file-download-button {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+  }
+
+  .search-bar {
+    flex: 1 1 40%;
+  }
+
+  .invoicedate-range {
+    flex: 1 1 35%;
+  }
+
+  .file-download-button {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+
+    .file-download {
+      min-width: 50px;
+    }
+  }
+
+  @media (max-width: 1279px) and (min-width: 650px) {
+    .search-bar,
+    .invoicedate-range,
+    .file-download-button {
+      flex: 1 1 48%;
+      margin-bottom: 10px;
+    }
+
+    .search-bar {
+      margin-right: 2%;
+    }
+
+    .file-download-button {
+      justify-content: flex-end;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .row {
+      // flex-direction: column;
+      align-items: stretch;
+    }
+
+    .search-bar,
+    .invoicedate-range,
+    .file-download-button {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .invoicedate-range {
+      width: 100%;
+    }
+
+    .file-download-button {
+      .file-download {
+        width: 100%;
+      }
+    }
+  }
+}
+
+
+
+
+
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.responsive-table th,
+.responsive-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+/* --- Media Query for 950px --- */
+@media (max-width: 950px) {
+  .responsive-table thead {
+    display: none;
+  }
+
+  .responsive-table, 
+  .responsive-table tbody, 
+  .responsive-table tr, 
+  .responsive-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .responsive-table tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 10px;
+  }
+
+  .responsive-table td {
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .responsive-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+  }
+}

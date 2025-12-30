@@ -37,7 +37,7 @@
       <mat-dialog-actions class="p-24 justify-content-end">
        
         <button mat-stroked-button color="warn" mat-dialog-close>{{'productMasterdialog.Cancel' | translate}}</button>
-        <button mat-flat-button [mat-dialog-close]="true" [disabled]="!rentproductForm.valid" color="primary" (click)="doAction();">
+        <button mat-flat-button [disabled]="!rentproductForm.valid" color="primary" (click)="doAction();">
           {{'actions.' + action | translate}}
         </button>
       </mat-dialog-actions>

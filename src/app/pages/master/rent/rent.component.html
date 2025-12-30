@@ -1,142 +1,925 @@
 <mat-card class="cardWithShadow">
-    <mat-card-content class="p-24">
-      <div class="row justify-content-between">
-        <div class="col-lg-4">
-          <mat-form-field appearance="outline" class="w-100 hide-hint">
-            <input matInput placeholder="{{'productMaster.SearchProduct' | translate}}" (keyup)="applyFilter($any($event.target).value)" />
-            <mat-icon matSuffix>
-              <i-tabler name="search" class="icon-20"></i-tabler>
-            </mat-icon>
+  <mat-card-content class="p-24">
+    <div class="row justify-content-between">
+      <div class="col-lg-4">
+        <mat-form-field appearance="outline" class="w-100 hide-hint text-center">
+          <input matInput placeholder="{{'productMaster.SearchProduct' | translate}}"
+            (keyup)="applyFilter($any($event.target).value)" />
+          <mat-icon matSuffix>
+            <i-tabler name="search" class="icon-20"></i-tabler>
+          </mat-icon>
+        </mat-form-field>
+      </div>
+      <!-- <div class="col-lg-2">
+          <mat-form-field appearance="outline" class="example-form-field">
+            <mat-label>Pickup Date Range</mat-label>
+            <form [formGroup]="dateForm">
+              <mat-date-range-input [rangePicker]="campaignOnePicker" (click)="filterByDateRange()">
+                <input matStartDate placeholder="Start date" formControlName="start">
+                <input matEndDate placeholder="End date" formControlName="end">
+              </mat-date-range-input>
+            </form>
+              <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
+              <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
           </mat-form-field>
-        </div>
-        <div class="col-lg-4 d-flex align-items-center justify-content-end">
-          <button mat-flat-button color="primary" (click)="addParty('Add', {})">
-           Rent Order
+        </div> -->
+      <div class="col-lg-2 totalrent d-flex">
+        <strong>Total Rent:</strong> ₹ {{ totalRent || 0 }}
+      </div>
+      <div class="col-lg-3 d-flex align-items-center justify-content-end">
+        <div class="m-r-10">
+          <button mat-flat-button color="primary" (click)="updateStatusForAllPendingOrders()">
+            Status Update
           </button>
         </div>
+        <button mat-flat-button color="primary" (click)="addParty('Add', {})">
+          Rent Order
+        </button>
       </div>
-    </mat-card-content>
-  </mat-card>
-  <mat-card class="cardWithShadow" >
-    <mat-card-content class="p-24">
-      <div class="table-responsive">
-        <table mat-table [dataSource]="rentDataSource" class="w-100">
-          <ng-container matColumnDef="orderno">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
-            <td mat-cell *matCellDef="let element;let i = index" class= "f-s-12">{{i + 1}}</td>
-          </ng-container>
-  
-          <ng-container matColumnDef="porduct">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Porduct</th>
-            <!-- {{ element.rentProducts?.productNumber }} - {{ element.rentProducts?.productName }} -->
-            <td mat-cell *matCellDef="let element" class= "f-s-12 color-blue cursor-pointer" (click)="addParty('Edit', element)">{{getProductnumberName(element)}}</td>
-          </ng-container>
+    </div>
+  </mat-card-content>
+</mat-card>
 
-          <ng-container matColumnDef="customername">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Customer</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.customerName}}</td>
-          </ng-container>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChange($event)">
+  <mat-tab label="Pending">
+    <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
+      <mat-card-content class="p-24">
+        <div class="table-responsive">
+          <table mat-table [dataSource]="rentDataSource" multiTemplateDataRows class="w-100">
+            <ng-container matColumnDef="expand">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="toggleRow(element)">
+                  <mat-icon>
+                    {{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+                  </mat-icon>
+                </button>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="pickupdate">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pickup</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.pickupDateTime.toDate() | date:'dd/MM/yyyy hh:mm a'}}</td>
-          </ng-container>
-          
-          <ng-container matColumnDef="returndate">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Return</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.returnDateTime.toDate() | date:'dd/MM/yyyy hh:mm a'}}</td>
-          </ng-container>
+            <ng-container matColumnDef="orderno">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.billNo}}</td>
+            </ng-container>
 
-          <!-- <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.status}}</td>
-          </ng-container> -->
+            <ng-container matColumnDef="customername">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Customer</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12 color-blue cursor-pointer"
+                (click)="addParty('Edit', element)">{{element.customerName}}</td>
+            </ng-container>
 
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Status</th>
-            <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
-              <div *ngIf="editingRowId !== element.id"
-                  class="status-text f-s-12"
-                  (click)="enableEdit(element.id); $event.stopPropagation()">
-                {{ element.status || 'Select Status' }}
-              </div>
+            <ng-container matColumnDef="mobileno">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Mobile No.</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.mobileNumber}}</td>
+            </ng-container>
 
-              <div *ngIf="editingRowId === element.id"
-                  class="status-dropdown"
-                  (click)="$event.stopPropagation()">
-                <mat-form-field appearance="fill" class="w-100">
-                  <mat-select [value]="element.status"
-                              (selectionChange)="saveStatus(element, $event.value)"
-                              autofocus>
-                    <mat-option value="Pending">Pending</mat-option>
-                    <mat-option value="Completed">Completed</mat-option>
-                    <mat-option value="Cancelled">Cancelled</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Total</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.total}}</td>
+            </ng-container>
 
+            <ng-container matColumnDef="advance">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Advance</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.advance}}</td>
+            </ng-container>
 
+            <ng-container matColumnDef="deposite">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Deposite</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.deposite}}</td>
+            </ng-container>
 
-          <ng-container matColumnDef="mobileno">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Mobile No.</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.mobileNumber}}</td>
-          </ng-container>
+            <ng-container matColumnDef="pendingAmount">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pending</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.pendingAmount}}</td>
+            </ng-container>
 
-           <ng-container matColumnDef="rent">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Rent</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.rent}}</td>
-          </ng-container>
-          
-          <ng-container matColumnDef="advance">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Advance</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.advance}}</td>
-          </ng-container>
-          
-          <ng-container matColumnDef="deposite">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Deposite</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.deposite}}</td>
-          </ng-container>
-          
-          <ng-container matColumnDef="return">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Return</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.returnAmount}}</td>
-          </ng-container>
-          
-          <ng-container matColumnDef="orderdate">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Order</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.orderDate.toDate() | date:'dd/MM/yyyy'}}</td>
-          </ng-container>
-          
-          <ng-container matColumnDef="aadharCard">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Aadhar No</th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12">{{element.aadharCard}}</td>
-          </ng-container>
-  
+            <ng-container matColumnDef="return">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Return</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.returnAmount}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderdate">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Order</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.orderDate.toDate() | date:'dd/MM/yyyy'}}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="aadharCard">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Aadhar No</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.aadharCard}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">
+                {{'productMaster.Action' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-12" class="action-link">
+                <a class="m-r-10 cursor-pointer">
+                  <i-tabler name="edit" (click)="addParty('Edit', element)" class="icon-18"></i-tabler>
+                </a>
+                <a class="m-r-10 cursor-pointer">
+                  <i-tabler name="trash" (click)="addParty('Delete', element)" class="icon-18"></i-tabler>
+                </a>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="expandedDetail">
+              <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+                <div *ngIf="isExpanded(element)" class="p-3 bg-light border">
+                  <table class="table table-sm table-bordered w-100 mt-2">
+                    <thead>
+                      <tr>
+                        <th class="f-s-14">Bill No</th>
+                        <th class="f-s-14">Product</th>
+                        <th class="f-s-14">Rent</th>
+                        <th class="f-s-14">Pickup</th>
+                        <th class="f-s-14">Return</th>
+                        <th class="f-s-14">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let detail of element.rentDetails">
+                        <td class="f-s-14">{{ detail.billNo }}</td>
+                        <td class="f-s-14">{{ detail.product }}</td>
+                        <td class="f-s-14">{{ detail.rent }}</td>
+                        <td class="f-s-14">{{ detail.pickupDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
+                        <td class="f-s-14">{{ detail.returnDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
+
+                        <td class="f-s-14">
+                          <div *ngIf="editOrderRowId !== detail.id" class="status-text"
+                            (click)="enableOrderEdit(detail.id); $event.stopPropagation()">
+                            {{ detail.status || 'Select Status' }}
+                          </div>
+
+                          <div *ngIf="editOrderRowId === detail.id" class="status-dropdown"
+                            (click)="$event.stopPropagation()">
+                            <mat-form-field appearance="fill" class="w-100">
+                              <mat-select [value]="detail.status"
+                                (selectionChange)="updateOrderStatus(element, detail, $event.value)" autofocus>
+                                <mat-option value="Booked">Booked</mat-option>
+                                <mat-option value="In-Progress">In-Progress</mat-option>
+                                <mat-option value="Completed">Completed</mat-option>
+                                <mat-option value="Cancelled">Cancelled</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                        </td>
+
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+              [class.example-expanded-row]="expandedElement === element"
+              (click)="expandedElement = expandedElement === element ? null : element"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"
+              [class.expanded]="expandedRow !== row"></tr>
+            <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                No record found
+              </td>
+            </tr>
+
+          </table>
+          <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+        </div>
+      </mat-card-content>
+    </mat-card>
     
-          <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">
-              {{'productMaster.Action' | translate}}
-            </th>
-            <td mat-cell *matCellDef="let element" class= "f-s-12" class="action-link">
-              <!-- <a class="m-r-10 cursor-pointer"><i-tabler name="edit" (click)="addParty('Edit', element)"
-                  class="icon-18"></i-tabler></a> -->
-              <a class="m-r-10 cursor-pointer">
-                <i-tabler name="trash" (click)="addParty('Delete', element)" class="icon-18"></i-tabler>
-              </a>
-            </td>
-          </ng-container>
-  
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-          <tr class="mat-row" style="text-align: center;" *matNoDataRow>
-            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-              No record found
-            </td>
-          </tr>
-        </table>
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+    <ng-template #mobileView>
+      <div *ngFor="let item of paginatedCards" class="mb-3">
+        <mat-card class="cardWithShadow">
+          <mat-card-content>
+            
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">B No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.billNo}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Customer :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12 color-blue cursor-pointer"   (click)="addParty('Edit', item)">{{item.customerName}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Mobile No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.mobileNumber}}</div>
+                  </div>
+                </div>
+    
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Advance :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.advance}}</div>
+                  </div>
+                </div>
+    
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Deposite :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.deposite}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Pending :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.pendingAmount}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Return :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.returnAmount}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Order :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.orderDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Total :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.total}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Aadhar No :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.aadharCard}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2 icons-info">
+                    <div class="f-s-12 openinfodialog" (click)="openInfoDialog(item)">
+                       <i-tabler name="info-square-rounded" class="icon-18"></i-tabler>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+          </mat-card-content>
+        </mat-card>
       </div>
-    </mat-card-content>
-  </mat-card>
+      <!-- <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator> -->
+       <mat-paginator
+    [length]="rentDataSource.data.length"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="Completed">
+    <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
+      <mat-card-content class="p-24">
+        <div class="table-responsive">
+          <table mat-table [dataSource]="rentDataSource" multiTemplateDataRows class="w-100">
+            <ng-container matColumnDef="expand">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="toggleRow(element)">
+                  <mat-icon>
+                    {{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+                  </mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderno">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.billNo}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="customername">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Customer</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12 color-blue cursor-pointer"
+                (click)="addParty('Edit', element)">{{element.customerName}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="mobileno">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Mobile No.</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.mobileNumber}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Total</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.total}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="advance">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Advance</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.advance}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="deposite">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Deposite</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.deposite}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="pendingAmount">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pending</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.pendingAmount}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="return">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Return</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.returnAmount}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderdate">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Order</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.orderDate.toDate() | date:'dd/MM/yyyy'}}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="aadharCard">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Aadhar No</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.aadharCard}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">
+                {{'productMaster.Action' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-12" class="action-link">
+                <a class="m-r-10 cursor-pointer">
+                  <i-tabler name="trash" (click)="addParty('Delete', element)" class="icon-18"></i-tabler>
+                </a>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="expandedDetail">
+              <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+                <div *ngIf="isExpanded(element)" class="p-3 bg-light border">
+                  <table class="table table-sm table-bordered w-100 mt-2">
+                    <thead>
+                      <tr>
+                        <th>Bill No</th>
+                        <th>Product</th>
+                        <th>Rent</th>
+                        <th>Pickup</th>
+                        <th>Return</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let detail of element.rentDetails">
+                        <td>{{ detail.billNo }}</td>
+                        <td>{{ detail.product }}</td>
+                        <td>{{ detail.rent }}</td>
+                        <td>{{ detail.pickupDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
+                        <td>{{ detail.returnDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
+
+                        <td>
+                          <div *ngIf="editOrderRowId !== detail.id" class="status-text"
+                            (click)="enableOrderEdit(detail.id); $event.stopPropagation()">
+                            {{ detail.status || 'Select Status' }}
+                          </div>
+
+                          <div *ngIf="editOrderRowId === detail.id" class="status-dropdown"
+                            (click)="$event.stopPropagation()">
+                            <mat-form-field appearance="fill" class="w-100">
+                              <mat-select [value]="detail.status"
+                                (selectionChange)="updateOrderStatus(element, detail, $event.value)" autofocus>
+                                <mat-option value="Booked">Booked</mat-option>
+                                <mat-option value="In-Progress">In-Progress</mat-option>
+                                <mat-option value="Completed">Completed</mat-option>
+                                <mat-option value="Cancelled">Cancelled</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+              [class.example-expanded-row]="expandedElement === element"
+              (click)="expandedElement = expandedElement === element ? null : element"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"
+              [class.expanded]="expandedRow !== row"></tr>
+            <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                No record found
+              </td>
+            </tr>
+          </table>
+          <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <ng-template #mobileView>
+     <div *ngFor="let item of rentDataSource.data" class="mb-3">
+        <mat-card class="cardWithShadow">
+          <mat-card-content>
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">B No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.billNo}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Customer :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.customerName}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Mobile No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.mobileNumber}}</div>
+                  </div>
+                </div>
+    
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Advance :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.advance}}</div>
+                  </div>
+                </div>
+    
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Deposite :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.deposite}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Pending :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.pendingAmount}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Return :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.returnAmount}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Order :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.orderDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Total :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.total}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Aadhar No :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.aadharCard}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+             <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2 icons-info">
+                    <div class="f-s-12"> <i-tabler name="icons-info" class="icon-15"></i-tabler></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="Cancelled">
+    <mat-card class="cardWithShadow" *ngIf="!isMobile; else mobileView">
+      <mat-card-content class="p-24">
+        <div class="table-responsive">
+          <table mat-table [dataSource]="rentDataSource" multiTemplateDataRows class="w-100">
+            <ng-container matColumnDef="expand">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="toggleRow(element)">
+                  <mat-icon>
+                    {{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+                  </mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderno">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-70">B No.</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.billNo}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="customername">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Customer</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12 color-blue cursor-pointer"
+                (click)="addParty('Edit', element)">{{element.customerName}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="mobileno">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600 m-w-100">Mobile No.</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.mobileNumber}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Total</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.total}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="advance">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Advance</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.advance}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="deposite">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Deposite</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.deposite}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="pendingAmount">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Pending</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.pendingAmount}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="return">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Return</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.returnAmount}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderdate">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Order</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.orderDate.toDate() | date:'dd/MM/yyyy'}}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="aadharCard">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">Aadhar No</th>
+              <td mat-cell *matCellDef="let element" class="f-s-12">{{element.aadharCard}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef class="f-s-13 p-l-0 f-w-600">
+                {{'productMaster.Action' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-12" class="action-link">
+                <a class="m-r-10 cursor-pointer">
+                  <i-tabler name="edit" (click)="addParty('Edit', element)" class="icon-18"></i-tabler>
+                </a>
+                <a class="m-r-10 cursor-pointer">
+                  <i-tabler name="trash" (click)="addParty('Delete', element)" class="icon-18"></i-tabler>
+                </a>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="expandedDetail">
+              <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+                <div *ngIf="isExpanded(element)" class="p-3 bg-light border">
+                  <table class="table table-sm table-bordered w-100 mt-2">
+                    <thead>
+                      <tr>
+                        <th class="f-s-14">Bill No</th>
+                        <th class="f-s-14">Product</th>
+                        <th class="f-s-14">Rent</th>
+                        <th class="f-s-14">Pickup</th>
+                        <th class="f-s-14">Return</th>
+                        <th class="f-s-14">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let detail of element.rentDetails">
+                        <td class="f-s-14">{{ detail.billNo }}</td>
+                        <td class="f-s-14">{{ detail.product }}</td>
+                        <td class="f-s-14">{{ detail.rent }}</td>
+                        <td class="f-s-14">{{ detail.pickupDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
+                        <td class="f-s-14">{{ detail.returnDateTime?.toDate() | date:'dd/MM/yyyy hh:mm a' }}</td>
+
+                        <td class="f-s-14">
+                          <div *ngIf="editOrderRowId !== detail.id" class="status-text"
+                            (click)="enableOrderEdit(detail.id); $event.stopPropagation()">
+                            {{ detail.status || 'Select Status' }}
+                          </div>
+
+                          <div *ngIf="editOrderRowId === detail.id" class="status-dropdown"
+                            (click)="$event.stopPropagation()">
+                            <mat-form-field appearance="fill" class="w-100">
+                              <mat-select [value]="detail.status"
+                                (selectionChange)="updateOrderStatus(element, detail, $event.value)" autofocus>
+                                <mat-option value="Booked">Booked</mat-option>
+                                <mat-option value="In-Progress">In-Progress</mat-option>
+                                <mat-option value="Completed">Completed</mat-option>
+                                <mat-option value="Cancelled">Cancelled</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                        </td>
+
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+              [class.example-expanded-row]="expandedElement === element"
+              (click)="expandedElement = expandedElement === element ? null : element"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"
+              [class.expanded]="expandedRow !== row"></tr>
+            <tr class="mat-row" style="text-align: center;" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                No record found
+              </td>
+            </tr>
+
+          </table>
+          <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <ng-template #mobileView>
+      <div *ngFor="let item of rentDataSource.data"  class="mb-3">
+        <mat-card class="cardWithShadow">
+          <mat-card-content>
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">B No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.billNo}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Customer :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.customerName}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Mobile No. :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.mobileNumber}}</div>
+                  </div>
+                </div>
+    
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Advance :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.advance}}</div>
+                  </div>
+                </div>
+    
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Deposite :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.deposite}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Pending :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.pendingAmount}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Return :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.returnAmount}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Order :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.orderDate.toDate() | date:'dd/MM/yyyy'}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Total :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.total}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                    <div class="f-s-12 f-w-600">Aadhar No :</div>
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2">
+                    <div class="f-s-12">{{item.aadharCard}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+             <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 col-12 mb-2">
+                <div class="row">
+                  <div class="col-5 col-sm-5 col-xs-5 mb-2">
+                  </div>
+                  <div class="col-7 col-sm-7 col-xs-7 mb-2 icons-info">
+                    <div class="f-s-12"> <i-tabler name="icons-info" class="icon-15"></i-tabler></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+    </ng-template>
+  </mat-tab>
+
+</mat-tab-group>

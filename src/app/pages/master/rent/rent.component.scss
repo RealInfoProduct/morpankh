@@ -1,18 +1,18 @@
 .picker {
-      font-size: 12px;
+  font-size: 12px;
   max-width: 200px;
 }
 
-.m-w-70{
+.m-w-70 {
   min-width: 70px;
 }
 
-.m-w-100{
+.m-w-100 {
   min-width: 100px;
 }
 
-.color-blue{
-      color: blue;
+.color-blue {
+  color: blue;
 }
 
 .status-display {
@@ -22,4 +22,82 @@
 
 .status-select {
   width: 100%;
+}
+
+.color-red {
+  color: red;
+}
+
+
+.status-booked {
+  color: #004085;
+}
+
+.status-in-progress {
+  color: #ffc316;
+}
+
+.status-completed {
+  color: #2fb64f;
+}
+
+.search {
+  width: 90%;
+  padding: 4px;
+  border: none;
+  outline: none;
+  background-color: #efefef;
+  margin: 0px auto;
+  padding: 10px;
+  font-size: 12px;
+  margin-left: 13px;
+  margin-bottom: 13px;
+}
+
+.d-flex{
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.h-0 {
+  height: 0px !important;
+}
+
+.error-color{
+    color: red;
+}
+
+.error-message {
+    position: absolute;
+    left: 0;
+}
+
+.expanded {
+    height: 0px !important;
+
+    .mdc-data-table__cell {
+      padding: 0px !important;
+      border-bottom: none;
+    }
+}
+
+.m-r-56{
+        margin-right: 50%;
+}
+
+@media (max-width:1280px) {
+  .totalrent{
+        margin-top: 10px;
+    margin-bottom: 10px;
+
+  }
+}
+
+@media (max-width:950px) {
+  .icons-info {
+    display: flex;
+    justify-content: end;
+    max-height: 550px;
+  }
 }

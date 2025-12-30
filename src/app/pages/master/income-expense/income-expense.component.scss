@@ -1,0 +1,65 @@
+
+.d-flex{
+        display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.text-align{
+    text-align: center;
+    margin-top: 18px;
+      
+}
+.cardWithShadow {
+    @media (max-width: 1600px) and (min-width: 768px) {
+        .row {
+            // gap: 0.75rem;
+
+            .col-lg-3,
+            .col-lg-2,
+            .col-lg-1 {
+                flex: 1 1 45%;
+                max-width: 45%;
+            }
+
+            .text-align {
+                display: flex;
+                justify-content: center;
+            }
+
+            .expense {
+                display: contents;
+            }
+
+           .income {
+               display: contents;
+             }
+                
+             .m-l-17 {
+                  margin-left: 17px !important;
+               }
+    }
+
+    }
+}
+
+@media(max-width: 763px) {
+    .status-filtera{ 
+           margin-top: 21px;
+    }
+          .expense {
+              display: contents;
+          }
+    
+          .income {
+              display: contents;
+          }
+    
+          .m-l-17 {
+              margin-left: 17px !important;
+          }
+          .text-align{
+            justify-content: center;
+            margin-bottom: 19px;
+        }
+}
